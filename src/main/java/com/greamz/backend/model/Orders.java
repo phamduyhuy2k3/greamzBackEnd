@@ -26,7 +26,7 @@ public class Orders {
     @JsonBackReference(value = "userOrders")
     private AccountModel account;
     private Double totalPrice;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date orderedAt;
     @OneToMany(mappedBy = "orders",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.EAGER)
     @JsonIgnore

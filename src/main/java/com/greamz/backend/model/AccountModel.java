@@ -32,11 +32,11 @@ public class AccountModel  implements UserDetails {
     private String mfaSecret;
     @OneToMany
     private List<Voucher> vouchers;
-    @OneToMany
+    @OneToMany(mappedBy = "account")
     private List<Orders> orders;
-    @OneToMany
+    @OneToMany(mappedBy = "account")
     private List<Review> reviews;
-    @OneToMany
+    @OneToMany(mappedBy = "account")
     private List<Disscusion> disscusions;
     @JsonManagedReference
     @OneToMany(mappedBy = "account",cascade = {CascadeType.PERSIST,CascadeType.REMOVE},fetch = FetchType.EAGER)
