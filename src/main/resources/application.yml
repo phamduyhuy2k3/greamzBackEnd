@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://103.82.39.53:3306/datn?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${MYSQL.HOST}/datn?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: ${MYSQL.USERNAME}
     password: ${MYSQL.PASSWORD}
   servlet:
