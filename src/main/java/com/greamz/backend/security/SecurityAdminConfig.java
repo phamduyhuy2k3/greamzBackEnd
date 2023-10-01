@@ -2,14 +2,19 @@ package com.greamz.backend.security;
 
 
 import com.greamz.backend.config.JwtAuthenticationFilter;
+import com.greamz.backend.enumeration.Role;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -45,9 +50,54 @@ public class SecurityAdminConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
     private LogoutHandler logoutHandler;
-
     @Bean
-    SecurityFilterChain securityFilterChainAdmin(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain securityFilterChain1(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrfConfigurer -> {
+                    csrfConfigurer.disable();
+                })
+
+                .authorizeHttpRequests(authorize ->{
+                    authorize
+                            .requestMatchers("/user/**").hasAuthority(Role.USER.name())
+                            .requestMatchers("/**")
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated();
+                })
+                .formLogin(customizeLoginUser())
+                .logout(customizeLogoutUser());
+
+        return http.build();
+    }
+    public Customizer<FormLoginConfigurer<HttpSecurity>> customizeLoginUser(){
+        return formLoginConfigurer -> formLoginConfigurer
+                .loginPage("/login?unauthorized")
+                .defaultSuccessUrl("/")
+                .loginProcessingUrl("/authenticate")
+
+
+                .failureForwardUrl("/login?error")
+
+                .permitAll();
+    }
+    public Customizer<LogoutConfigurer<HttpSecurity>> customizeLogoutUser(){
+        return new Customizer<LogoutConfigurer<HttpSecurity>>() {
+            @Override
+            public void customize(LogoutConfigurer<HttpSecurity> httpSecurityLogoutConfigurer) {
+                httpSecurityLogoutConfigurer
+                        .logoutUrl("/action_logout")
+                        .deleteCookies("JSESSIOND")
+                        .logoutSuccessUrl("/login?logout=true");
+
+            }
+
+        };
+    }
+    @Bean
+    @Order(10)
+    SecurityFilterChain securityFilterChainUser(HttpSecurity http) throws Exception {
         http
                 .csrf(csrfConfigurer -> {
                         }
@@ -63,6 +113,7 @@ public class SecurityAdminConfig {
                             .requestMatchers(HttpMethod.POST, "/admin/**").hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.GET, "/admin/**").hasAnyAuthority("ADMIN", "STAFF")
                             .requestMatchers("/user/**").hasAuthority("USER")
+                            .requestMatchers("/**").permitAll()
                             .anyRequest().authenticated();
 
                 })
@@ -81,6 +132,7 @@ public class SecurityAdminConfig {
 
         return http.build();
     }
+
     @Bean
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
