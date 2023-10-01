@@ -28,8 +28,6 @@ public class AccountModel  implements UserDetails {
     private String email;
     private String photo;
     private boolean isEnabled;
-    private boolean mfaEnabled;
-    private String mfaSecret;
     @OneToMany
     private List<Voucher> vouchers;
     @OneToMany(mappedBy = "account")

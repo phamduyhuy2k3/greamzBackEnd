@@ -25,7 +25,7 @@ public class Authority implements Serializable {
     @ManyToOne()
     @JsonBackReference
     private AccountModel account;
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
 

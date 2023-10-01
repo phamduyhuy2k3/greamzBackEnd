@@ -4,7 +4,7 @@ package com.greamz.backend.validation.constraint;
 
 
 
-import com.greamz.backend.repository.IAccountRepository;
+import com.greamz.backend.repository.IAccountRepo;
 import com.greamz.backend.validation.annotations.UsernameUnique;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserNameUniqueValidation implements ConstraintValidator<UsernameUnique, String> {
     @Autowired
-    IAccountRepository userRepository;
+    IAccountRepo userRepository;
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {

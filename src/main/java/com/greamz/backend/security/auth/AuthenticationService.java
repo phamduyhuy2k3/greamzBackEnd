@@ -8,8 +8,8 @@ import com.greamz.backend.enumeration.TokenType;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Authority;
 import com.greamz.backend.model.Token;
-import com.greamz.backend.repository.IAccountRepository;
-import com.greamz.backend.repository.ITokenRepository;
+import com.greamz.backend.repository.IAccountRepo;
+import com.greamz.backend.repository.ITokenRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final IAccountRepository repository;
-    private final ITokenRepository tokenRepository;
+    private final IAccountRepo repository;
+    private final ITokenRepo tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;

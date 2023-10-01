@@ -19,8 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AppSecurityConfig {
     @Autowired
     private AccountService accountService;
-    @Autowired
-    private HttpSession session;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

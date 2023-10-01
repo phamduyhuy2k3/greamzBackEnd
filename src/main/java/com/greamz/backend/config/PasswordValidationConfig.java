@@ -1,8 +1,13 @@
 package com.greamz.backend.config;
 
 import org.passay.*;
+import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +15,24 @@ import java.util.Properties;
 
 @Configuration
 public class PasswordValidationConfig {
+
+    @Bean
+    public RestTemplate restTemplate(){
+
+
+
+        return new RestTemplate(getClientHttpRequestFactory());
+    }
+    private ClientHttpRequestFactory getClientHttpRequestFactory() {
+        int timeout = 5000; // Set your desired timeout
+
+        // Use the HttpComponentsClientHttpRequestFactory for automatic redirects
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectTimeout(timeout);
+        factory.setReadTimeout(timeout);
+
+        return factory;
+    }
     @Bean
     public PasswordValidator passwordValidator(){
         Properties props = new Properties();

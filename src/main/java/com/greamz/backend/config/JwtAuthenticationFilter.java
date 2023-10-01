@@ -2,7 +2,7 @@ package com.greamz.backend.config;
 
 
 
-import com.greamz.backend.repository.ITokenRepository;
+import com.greamz.backend.repository.ITokenRepo;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final ITokenRepository tokenRepository;
+    private final ITokenRepo tokenRepository;
 
     @Override
     protected void doFilterInternal(

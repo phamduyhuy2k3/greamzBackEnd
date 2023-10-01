@@ -12,7 +12,6 @@ public class GameCategory {
     private String name;
     private String description;
     private String image;
-    @OneToMany(mappedBy = "gameCategory")
-    private List<GameModel> games;
+
 
 }

@@ -2,7 +2,7 @@ package com.greamz.backend.config;
 
 
 
-import com.greamz.backend.repository.ITokenRepository;
+import com.greamz.backend.repository.ITokenRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LogoutService implements LogoutHandler {
 
-    private final ITokenRepository tokenRepository;
+    private final ITokenRepo tokenRepository;
 
     @Override
     public void logout(
