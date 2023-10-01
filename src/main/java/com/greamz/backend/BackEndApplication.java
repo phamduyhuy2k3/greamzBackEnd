@@ -21,8 +21,8 @@ public class BackEndApplication {
     private DataImporter dataImporter;
     @Autowired
     private GameModelService gameModelService;
-    @PostConstruct
-    public void startImportData() throws Exception {
-        dataImporter.importData("response.json");
-    }
+//    @PostConstruct
+//    public void startImportData() throws Exception {
+//        dataImporter.importData("response.json");
+//    }
 }
