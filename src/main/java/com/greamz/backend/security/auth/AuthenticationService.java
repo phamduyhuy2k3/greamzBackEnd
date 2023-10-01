@@ -38,7 +38,7 @@ public class AuthenticationService {
 
         request.setAuthorities(List.of(authority));
         var user = AccountModel.builder()
-                .mfaEnabled(false)
+
                 .fullname(request.getFullname())
                 .username(request.getUsername())
                 .email(request.getEmail())

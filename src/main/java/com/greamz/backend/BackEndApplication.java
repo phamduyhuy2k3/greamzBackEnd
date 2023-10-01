@@ -23,6 +23,6 @@ public class BackEndApplication {
     private GameModelService gameModelService;
     @PostConstruct
     public void startImportData() throws Exception {
-        dataImporter.importData("data.json");
+        dataImporter.importData("response.json");
     }
 }

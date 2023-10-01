@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${env.MYSQL.HOST}:3306/datn?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${env.MYSQL.USERNAME}
-    password: ${env.MYSQL.PASSWORD}
+    url: jdbc:mysql://103.82.39.53:3306/datn?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL.USERNAME}
+    password: ${MYSQL.PASSWORD}
   servlet:
     multipart:
       max-file-size: 300MB

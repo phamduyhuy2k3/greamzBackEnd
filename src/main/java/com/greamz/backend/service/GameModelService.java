@@ -45,7 +45,7 @@ public class GameModelService {
     }
 
     public void saveGameModelsInBatch(List<GameModel> gameModels) {
-        int batchSize = 100;
+        int batchSize = 1000;
         for (int i = 0; i < gameModels.size(); i += batchSize) {
             List<GameModel> batch = gameModels.subList(i, i + batchSize);
             gameModelRepository.saveAll(batch);
