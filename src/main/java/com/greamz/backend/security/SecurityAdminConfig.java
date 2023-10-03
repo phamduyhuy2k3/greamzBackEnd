@@ -50,51 +50,51 @@ public class SecurityAdminConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
     private LogoutHandler logoutHandler;
-    @Bean
-    @Order(1)
-    public SecurityFilterChain securityFilterChain1(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrfConfigurer -> {
-                    csrfConfigurer.disable();
-                })
-
-                .authorizeHttpRequests(authorize ->{
-                    authorize
-                            .requestMatchers("/user/**").hasAuthority(Role.USER.name())
-                            .requestMatchers("/**")
-                            .permitAll()
-                            .anyRequest()
-                            .authenticated();
-                })
-                .formLogin(customizeLoginUser())
-                .logout(customizeLogoutUser());
-
-        return http.build();
-    }
-    public Customizer<FormLoginConfigurer<HttpSecurity>> customizeLoginUser(){
-        return formLoginConfigurer -> formLoginConfigurer
-                .loginPage("/login?unauthorized")
-                .defaultSuccessUrl("/")
-                .loginProcessingUrl("/authenticate")
-
-
-                .failureForwardUrl("/login?error")
-
-                .permitAll();
-    }
-    public Customizer<LogoutConfigurer<HttpSecurity>> customizeLogoutUser(){
-        return new Customizer<LogoutConfigurer<HttpSecurity>>() {
-            @Override
-            public void customize(LogoutConfigurer<HttpSecurity> httpSecurityLogoutConfigurer) {
-                httpSecurityLogoutConfigurer
-                        .logoutUrl("/action_logout")
-                        .deleteCookies("JSESSIOND")
-                        .logoutSuccessUrl("/login?logout=true");
-
-            }
-
-        };
-    }
+//    @Bean
+//    @Order(1)
+//    public SecurityFilterChain securityFilterChain1(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(csrfConfigurer -> {
+//                    csrfConfigurer.disable();
+//                })
+//
+//                .authorizeHttpRequests(authorize ->{
+//                    authorize
+//                            .requestMatchers("/user/**").hasAuthority(Role.USER.name())
+//                            .requestMatchers("/**")
+//                            .permitAll()
+//                            .anyRequest()
+//                            .authenticated();
+//                })
+//                .formLogin(customizeLoginUser())
+//                .logout(customizeLogoutUser());
+//
+//        return http.build();
+//    }
+//    public Customizer<FormLoginConfigurer<HttpSecurity>> customizeLoginUser(){
+//        return formLoginConfigurer -> formLoginConfigurer
+//                .loginPage("/login?unauthorized")
+//                .defaultSuccessUrl("/")
+//                .loginProcessingUrl("/authenticate")
+//
+//
+//                .failureForwardUrl("/login?error")
+//
+//                .permitAll();
+//    }
+//    public Customizer<LogoutConfigurer<HttpSecurity>> customizeLogoutUser(){
+//        return new Customizer<LogoutConfigurer<HttpSecurity>>() {
+//            @Override
+//            public void customize(LogoutConfigurer<HttpSecurity> httpSecurityLogoutConfigurer) {
+//                httpSecurityLogoutConfigurer
+//                        .logoutUrl("/action_logout")
+//                        .deleteCookies("JSESSIOND")
+//                        .logoutSuccessUrl("/login?logout=true");
+//
+//            }
+//
+//        };
+//    }
     @Bean
     @Order(10)
     SecurityFilterChain securityFilterChainUser(HttpSecurity http) throws Exception {
