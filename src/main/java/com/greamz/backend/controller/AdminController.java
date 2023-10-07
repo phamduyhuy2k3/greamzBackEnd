@@ -10,4 +10,8 @@ public class AdminController {
     public String index() {
         return "index";
     }
+//    @GetMapping("/sign-out")
+//    public String signOut(){
+//        return "/pages/sign-in";
+//    }
 }

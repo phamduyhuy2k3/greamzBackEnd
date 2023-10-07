@@ -13,6 +13,26 @@ app.config(function ($routeProvider) {
             templateUrl: "/pages/orderList.html",
             controller: "oderController"
         })
+        .when("/review", {
+            templateUrl: "/pages/reviewList.html",
+            controller: "reviewController"
+        })
+        .when("/voucher", {
+            templateUrl: "/pages/voucherList.html",
+            controller: "voucherController"
+        })
+        .when("/queue", {
+            templateUrl: "/pages/notifications.html",
+            controller: "queueController"
+        })
+        .when("/user", {
+            templateUrl: "/pages/userList.html",
+            controller: "userController"
+        })
+        .when("/logOut", {
+            templateUrl: "/pages/sign-in.html",
+            controller: "logOutController"
+        })
         .otherwise({
             redirectTo: "/"
         });
