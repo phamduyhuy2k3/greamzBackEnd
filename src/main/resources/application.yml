@@ -1,4 +1,18 @@
 spring:
+  security:
+    oauth2:
+
+      client:
+        registration:
+          google:
+            client-id: 914583679856-b2cqa56h84bor2ovdct6imlb84vgq912.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: "http://localhost:8080/oauth2/callback/"
+            scope:
+              - email
+              - profile
+              - openid
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL.HOST}/datn?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
