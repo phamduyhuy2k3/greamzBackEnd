@@ -1,18 +1,4 @@
-<!--
-=========================================================
-* Material Dashboard 2 - v3.1.0
-=========================================================
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://www.creative-tim.com/license)
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
-<!--   Core JS Files   -->
 <div class="row">
     <div class="col-12">
         <div class="card my-4">
@@ -30,7 +16,7 @@
                                 Profile
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                Type
+                                Role
                             </th>
                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 Status
@@ -60,9 +46,20 @@
                                 <span class="badge badge-sm bg-gradient-success">Online</span>
                             </td>
                             <td class="align-middle">
-                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                   data-toggle="tooltip" data-original-title="Edit user">
+                                <a class="text-secondary font-weight-bold text-xs"
+                                   data-toggle="tooltip"
+                                   data-original-title="Edit user"
+                                   data-bs-target="#userModal"
+                                   data-bs-toggle="modal"
+                                href="#">
                                     Edit
+                                </a>|
+                                <a class="text-secondary font-weight-bold text-xs"
+                                   data-toggle="tooltip" data-original-title="Edit user"
+                                   data-bs-target="#userModal"
+                                   data-bs-toggle="modal"
+                                href="#">
+                                    Delete
                                 </a>
                             </td>
                         </tr>
