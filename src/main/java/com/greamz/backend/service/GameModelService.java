@@ -18,6 +18,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.http.HttpStatusCode;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -66,12 +67,12 @@ public class GameModelService {
                 // Update gameModel with the updatedData or apply your logic here
                 updatedData.setAppid(gameModel.getAppid());
                 {
-                    if(updatedData.getScreenshots() != null){
+                    if (updatedData.getScreenshots() != null) {
                         updatedData.getScreenshots().forEach(screenshot -> {
                             screenshot.setGameModel(updatedData);
                         });
                     }
-                    if(updatedData.getMovies() != null){
+                    if (updatedData.getMovies() != null) {
                         updatedData.getMovies().forEach(movie -> {
                             movie.setGameModel(updatedData);
                         });
@@ -80,7 +81,8 @@ public class GameModelService {
                     gameModelRepository.saveAndFlush(updatedData);
 
                     log.info("Updated gameModel with appid: {}", gameModel.getAppid());
-                };
+                }
+                ;
             } catch (NullPointerException e) {
                 continue;
             } catch (MalformedURLException e) {
@@ -114,4 +116,25 @@ public class GameModelService {
         executorService.shutdown();
     }
 
+    @Transactional
+    public List<GameModel> findAll() {
+        return gameModelRepository.findAll();
+    }
+
+    @Transactional
+    public GameModel findGameByAppid(Long appid) throws NoSuchElementException {
+        return gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
+    }
+
+    @Transactional
+    public GameModel findByAppid(Long appid){
+        return gameModelRepository.findById(appid).orElseThrow(()->new NoSuchElementException("Not found product with id: "+ appid));
+    }
+
+    @Transactional
+    public void deleteGameByAppid(Long appid){
+        GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(()->new NoSuchElementException("Not found product with id: "+ appid));
+        gameModelRepository.deleteById(appid);
+
+    }
 }

@@ -8,14 +8,14 @@ app.config(function ($routeProvider) {
         //game management
         .when("/game", {
             templateUrl: "/pages/gameList.html",
-            controller: "gameController"
+            controller: "GameController"
         })
         //order management
         .when("/order", {
             templateUrl: "/pages/orderList.html",
             controller: "oderController"
         })
-<<<<<<< HEAD
+        // <<<<<<< HEAD
         //user management
         .when("/user", {
             templateUrl: "/pages/profile.html",
@@ -40,7 +40,7 @@ app.config(function ($routeProvider) {
         //     templateUrl: "/sign-in.html",
         //     controller: "signInController"
         // })
-=======
+        // =======
         .when("/review", {
             templateUrl: "/pages/reviewList.html",
             controller: "reviewController"
@@ -61,7 +61,7 @@ app.config(function ($routeProvider) {
             templateUrl: "/pages/sign-in.html",
             controller: "logOutController"
         })
->>>>>>> e1983af60d668323dae317a7dc493ffb6f45ec44
+        // >>>>>>> e1983af60d668323dae317a7dc493ffb6f45ec44
         .otherwise({
             redirectTo: "/"
         });
