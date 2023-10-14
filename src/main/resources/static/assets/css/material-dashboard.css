@@ -2885,7 +2885,7 @@ textarea.form-control-lg {
 .form-select {
   display: block;
   width: 100%;
-  padding: 0.5rem 1rem 0.5rem 0;
+  padding: 0.5rem 1rem 0.5rem 1rem;
   -moz-padding-start: -3px;
   font-size: 0.875rem;
   font-weight: 400;
@@ -10927,7 +10927,7 @@ fieldset:disabled .btn {
 }
 
 .shadow-primary {
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4) !important;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(58, 174, 247, 0.4) !important;
 }
 
 .shadow-secondary {
@@ -21196,7 +21196,7 @@ fieldset:disabled .btn {
 }
 
 .card.card-plain {
-  background-color: transparent;
+  /*background-color: transparent;*/
   box-shadow: none;
 }
 
@@ -22719,7 +22719,7 @@ label,
 }
 
 .bg-gradient-primary {
-  background-image: linear-gradient(195deg, #EC407A 0%, #D81B60 100%);
+  background-image: linear-gradient(195deg, #7d7b7b 0%, #03325b 100%);
 }
 
 .bg-gradient-secondary {
@@ -24411,7 +24411,7 @@ hr.horizontal.gray-light {
 }
 
 .sidenav {
-  z-index: 9999;
+  /*z-index: 9999;*/
 }
 .modal-crud{
   z-index: 10001;
@@ -26211,7 +26211,7 @@ p {
 }
 
 .text-gradient.text-primary {
-  background-image: linear-gradient(195deg, #EC407A, #D81B60);
+  background-image: linear-gradient(195deg, #707071, #010c18);
 }
 
 .text-gradient.text-info {
