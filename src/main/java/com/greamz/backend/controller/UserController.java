@@ -19,7 +19,9 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfileDTO> getProfile(@AuthenticationPrincipal AccountModel username){
-
+//hahahahâhahha
         return ResponseEntity.ok().body(userService.getProfile(username.getUsername()));
     }
+
+
 }

@@ -50,6 +50,7 @@ public class SecurityAdminConfig {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
     private LogoutHandler logoutHandler;
+
 //    @Bean
 //    @Order(1)
 //    public SecurityFilterChain securityFilterChain1(HttpSecurity http) throws Exception {
@@ -128,7 +129,9 @@ public class SecurityAdminConfig {
                             .deleteCookies("JSESSIOND")
                             .logoutSuccessUrl("/admin/login")
                             .addLogoutHandler(logoutHandler);
-                });
+                })
+
+        ;
 
         return http.build();
     }
