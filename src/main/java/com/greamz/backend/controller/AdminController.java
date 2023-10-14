@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 public class AdminController {
-    private final AuthenticationService authenticationService;
+
     @GetMapping({"/", "/index", "/home"})
     public String index() {
         return "redirect:/dashboard";
