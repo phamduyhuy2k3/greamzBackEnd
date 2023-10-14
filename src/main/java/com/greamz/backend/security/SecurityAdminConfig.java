@@ -59,15 +59,14 @@ public class SecurityAdminConfig {
             "/swagger-ui/**",
             "/webjars/**",
             "/swagger-ui.html",
-            "/dashboard/**",
-            "/sign-in",
             "/assets/**",
             "/component/**",
             "/pages/**",
-            "/static/**"
+            "/static/**",
+            "/sign-in"
     };
 //    @Bean
-//    @Order(11)
+//    @Order(-6969)
 //    SecurityFilterChain securityFilterChainAdmin(HttpSecurity http) throws Exception {
 //        http
 //                .csrf(csrfConfigurer -> {
@@ -83,9 +82,8 @@ public class SecurityAdminConfig {
 //                            .anyRequest().authenticated();
 //
 //                })
-//
 //                .formLogin(httpSecurityFormLoginConfigurer -> {
-//                    httpSecurityFormLoginConfigurer.loginPage("/sign-in");
+//                    httpSecurityFormLoginConfigurer.loginPage("/sign-in").permitAll();
 //
 //                })
 //                .logout(logout ->
@@ -99,17 +97,13 @@ public class SecurityAdminConfig {
 //        return http.build();
 //    }
     @Bean
-
     SecurityFilterChain securityFilterChainUser(HttpSecurity http) throws Exception {
         http
                 .csrf(csrfConfigurer -> {
                     csrfConfigurer.disable();
                 })
-
-                .cors(httpSecurityCorsConfigurer ->{
-                    httpSecurityCorsConfigurer.disable();
-                })
-                .securityMatcher("/dashboard/**")
+                .cors(Customizer.withDefaults())
+                .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
                             .requestMatchers(WHITE_LIST_URL).permitAll()
@@ -122,7 +116,7 @@ public class SecurityAdminConfig {
                 })
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-               .logout(logout ->
+                .logout(logout ->
                         logout.logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
