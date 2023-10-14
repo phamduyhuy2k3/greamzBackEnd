@@ -1,6 +1,7 @@
 package com.greamz.backend.controller;
 
 
+import com.greamz.backend.annotations.CurrentUser;
 import com.greamz.backend.dto.UserProfileDTO;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.service.UserService;
@@ -18,8 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileDTO> getProfile(@AuthenticationPrincipal AccountModel username){
-
+    public ResponseEntity<UserProfileDTO> getProfile(@CurrentUser AccountModel username){
+        System.out.println(username.getUsername());
         return ResponseEntity.ok().body(userService.getProfile(username.getUsername()));
     }
 }

@@ -2,7 +2,7 @@ package com.greamz.backend.validation.constraint;
 
 
 
-import com.greamz.backend.validation.annotations.PhoneNumber;
+import com.greamz.backend.annotations.PhoneNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

@@ -1,4 +1,4 @@
-var app = angular.module("myApp", ["ngRoute"]);
+var app = angular.module("myApp", ["ngRoute",'ngCookies']);
 app.config(function ($routeProvider) {
     $routeProvider
         .when("/", {
@@ -15,7 +15,7 @@ app.config(function ($routeProvider) {
             templateUrl: "/pages/orderList.html",
             controller: "oderController"
         })
-<<<<<<< HEAD
+
         //user management
         .when("/user", {
             templateUrl: "/pages/profile.html",
@@ -40,30 +40,34 @@ app.config(function ($routeProvider) {
         //     templateUrl: "/sign-in.html",
         //     controller: "signInController"
         // })
-=======
-        .when("/review", {
-            templateUrl: "/pages/reviewList.html",
-            controller: "reviewController"
-        })
-        .when("/voucher", {
-            templateUrl: "/pages/voucherList.html",
-            controller: "voucherController"
-        })
-        .when("/queue", {
-            templateUrl: "/pages/notifications.html",
-            controller: "queueController"
-        })
-        .when("/user", {
-            templateUrl: "/pages/userList.html",
-            controller: "userController"
-        })
-        .when("/logOut", {
-            templateUrl: "/pages/sign-in.html",
-            controller: "logOutController"
-        })
->>>>>>> e1983af60d668323dae317a7dc493ffb6f45ec44
         .otherwise({
             redirectTo: "/"
         });
 });
+// app.run(function($http, $rootScope,$cookies){
+//     $rootScope.$auth = {
+//         username: null,
+//         email: null,
+//         photo: null,
+//         fullname: null,
+//         authorities: null,
+//     };
+//
+//     $http.get(`/api/v1/user/profile`,{
+//         headers: {
+//             "Content-Type": "application/json",
+//             "Authorization": "Bearer " + $cookies.get("access_token")
+//         }
+//     }).then(
+//         resp => {
+//             $rootScope.$auth = resp.data;
+//
+//     },
+//         err => {
+//
+//             console.log(err);
+//         }
+//
+//     );
+// })
 

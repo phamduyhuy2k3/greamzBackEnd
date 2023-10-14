@@ -1,4 +1,4 @@
-package com.greamz.backend.validation.annotations;
+package com.greamz.backend.annotations;
 
 
 import com.greamz.backend.validation.constraint.UniqueEmailValidator;
