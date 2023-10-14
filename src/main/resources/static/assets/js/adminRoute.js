@@ -8,14 +8,13 @@ app.config(function ($routeProvider) {
         //game management
         .when("/game", {
             templateUrl: "/pages/gameList.html",
-            controller: "gameController"
+            controller: "GameController"
         })
         //order management
         .when("/order", {
             templateUrl: "/pages/orderList.html",
             controller: "oderController"
         })
-        //user management
         .when("/user", {
             templateUrl: "/pages/userList.html",
             controller: "profileController"
@@ -35,10 +34,6 @@ app.config(function ($routeProvider) {
             templateUrl: "/pages/voucherList.html",
             controller: "voucherController"
         })
-        // .when("/sign-in", {
-        //     templateUrl: "/sign-in.html",
-        //     controller: "signInController"
-        // })
         .otherwise({
             redirectTo: "/"
         });
