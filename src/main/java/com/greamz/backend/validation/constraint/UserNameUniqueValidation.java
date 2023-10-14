@@ -5,7 +5,7 @@ package com.greamz.backend.validation.constraint;
 
 
 import com.greamz.backend.repository.IAccountRepo;
-import com.greamz.backend.validation.annotations.UsernameUnique;
+import com.greamz.backend.annotations.UsernameUnique;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
