@@ -1,4 +1,5 @@
 app.controller("mainController", function ($scope, $routeParams) {
+
 });
 
 app.controller("gameController", function ($scope, $http, $document) {

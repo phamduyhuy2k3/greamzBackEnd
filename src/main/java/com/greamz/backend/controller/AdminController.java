@@ -21,10 +21,8 @@ public class AdminController {
         return "redirect:/dashboard";
     }
     @GetMapping({"/dashboard"})
-    public String dashboard(@CurrentUser AccountModel accountModel) {
-        if(accountModel == null){
-            return "redirect:/sign-in";
-        }
+    public String dashboard() {
+
         return "index";
     }
     @GetMapping("/sign-in")

@@ -49,11 +49,23 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
+            @RequestBody AuthenticationRequest request,HttpServletResponse response
     ) {
         AuthenticationResponse authenticationResponse = service.authenticate(request);
-
-        return ResponseEntity.ok().body(authenticationResponse);
+        response.addCookie(new Cookie("accessToken",authenticationResponse.getAccessToken()) );
+        response.addCookie(new Cookie("refreshToken",authenticationResponse.getRefreshToken()));
+        ResponseCookie accessToken = ResponseCookie.from("accessToken", authenticationResponse.getAccessToken())
+                .httpOnly(true)
+                .secure(true)
+                .build();
+        ResponseCookie refreshToken = ResponseCookie.from("refreshToken", authenticationResponse.getAccessToken())
+                .httpOnly(true)
+                .secure(true)
+                .build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, accessToken.toString());
+        headers.add(HttpHeaders.SET_COOKIE, refreshToken.toString());
+        return ResponseEntity.ok().headers(headers).body(authenticationResponse);
     }
 
     @PostMapping("/refresh-token")

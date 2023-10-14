@@ -35,7 +35,7 @@ public class GameController {
         return service.findByAppid(appid);
     }
 
-    @DeleteMapping("/delete/{{appid}}")
+    @DeleteMapping("/delete/{appid}")
     public void delete(@PathVariable("appid") Long appid){
         service.deleteGameByAppid(appid);
     }

@@ -49,31 +49,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        System.out.println("asdsadasdsadasdasd");
         Map<String,String> cookies=new HashMap<>();
 
         final String authHeader = request.getHeader("Authorization");
         String jwt;
-
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        } else if(request.getCookies()!=null){
             for (Cookie cookie : request.getCookies()) {
                 cookies.put(cookie.getName(),cookie.getValue());
                 System.out.println(cookie.getName()+" "+cookie.getValue());
             }
+        if (authHeader == null ||!authHeader.startsWith("Bearer ") && request.getCookies()==null) {
+            filterChain.doFilter(request, response);
+            return;
         }
-        if(cookies.get("access_token")!=null){
-            jwt=cookies.get("access_token");
+        if(cookies.get("accessToken")!=null){
+            jwt=cookies.get("accessToken");
+            System.out.println(jwt);
         }else{
             jwt = authHeader.substring(7);
         }
         boolean check= isValid(jwt,request);
         if(!check){
-            if(cookies.get("refresh_token")!=null){
+            if(cookies.get("refreshToken")!=null){
                 HttpHeaders headers = new HttpHeaders();
 
-                headers.add("Authorization", "Bearer "+cookies.get("refresh_token"));
+                headers.add("Authorization", "Bearer "+cookies.get("refreshToken"));
 
                 HttpEntity<String> entity = new HttpEntity<>( headers);
                 ResponseEntity<AuthenticationResponse> authenticationResponse= restTemplate
@@ -82,8 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 , AuthenticationResponse.class);
                 if(authenticationResponse.getBody()!=null){
                     jwt=authenticationResponse.getBody().getAccessToken();
-                    response.addCookie(new Cookie("access_token",jwt));
-                    response.addCookie(new Cookie("refresh_token",authenticationResponse.getBody().getRefreshToken()));
+                    response.addCookie(new Cookie("accessToken",jwt));
+                    response.addCookie(new Cookie("refreshToken",authenticationResponse.getBody().getRefreshToken()));
                     isValid(jwt,request);
                 }
             }
@@ -115,7 +115,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
 
             }
-            return false;
+            return true;
         }catch (ExpiredJwtException e){
             return false;
         }
