@@ -5,6 +5,7 @@ import com.greamz.backend.annotations.CurrentUser;
 import com.greamz.backend.dto.UserProfileDTO;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.service.UserService;
+import com.greamz.backend.util.CookieUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,20 +53,9 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request,HttpServletResponse response
     ) {
         AuthenticationResponse authenticationResponse = service.authenticate(request);
-        response.addCookie(new Cookie("accessToken",authenticationResponse.getAccessToken()) );
-        response.addCookie(new Cookie("refreshToken",authenticationResponse.getRefreshToken()));
-        ResponseCookie accessToken = ResponseCookie.from("accessToken", authenticationResponse.getAccessToken())
-                .httpOnly(true)
-                .secure(true)
-                .build();
-        ResponseCookie refreshToken = ResponseCookie.from("refreshToken", authenticationResponse.getAccessToken())
-                .httpOnly(true)
-                .secure(true)
-                .build();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.SET_COOKIE, accessToken.toString());
-        headers.add(HttpHeaders.SET_COOKIE, refreshToken.toString());
-        return ResponseEntity.ok().headers(headers).body(authenticationResponse);
+        CookieUtils.addCookie(response,"accessToken",authenticationResponse.getAccessToken());
+        CookieUtils.addCookie(response,"refreshToken",authenticationResponse.getRefreshToken());
+        return ResponseEntity.ok().body(authenticationResponse);
     }
 
     @PostMapping("/refresh-token")

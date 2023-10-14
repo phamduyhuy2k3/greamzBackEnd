@@ -5,6 +5,7 @@ package com.greamz.backend.config;
 import com.greamz.backend.repository.ITokenRepo;
 import com.greamz.backend.security.auth.AuthenticationResponse;
 import com.greamz.backend.security.auth.AuthenticationService;
+import com.greamz.backend.util.CookieUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,11 +25,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @Component
 @RequiredArgsConstructor
@@ -45,53 +43,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/api/v1/auth") || !request.getServletPath().contains("/api") ) {
+        if (request.getServletPath().contains("/api/v1/auth") || request.getServletPath().contains("/sign-in")) {
             filterChain.doFilter(request, response);
             return;
         }
-        System.out.println("asdsadasdsadasdasd");
-        Map<String,String> cookies=new HashMap<>();
-
         final String authHeader = request.getHeader("Authorization");
         String jwt;
-            for (Cookie cookie : request.getCookies()) {
-                cookies.put(cookie.getName(),cookie.getValue());
-                System.out.println(cookie.getName()+" "+cookie.getValue());
+
+
+        if(request.getServletPath().contains("/dashboard")){
+            if(CookieUtils.getCookie(request,"accessToken")!=null){
+                System.out.println("accessToken");
+                jwt=CookieUtils.getCookie(request,"accessToken").getValue();
+                isValid(jwt,request,response,filterChain);
+            }else{
+                return;
             }
-        if (authHeader == null ||!authHeader.startsWith("Bearer ") && request.getCookies()==null) {
-            filterChain.doFilter(request, response);
-            return;
+
         }
-        if(cookies.get("accessToken")!=null){
-            jwt=cookies.get("accessToken");
-            System.out.println(jwt);
+        if (authHeader == null ||!authHeader.startsWith("Bearer ") ) {
+            filterChain.doFilter(request, response);
         }else{
             jwt = authHeader.substring(7);
+            isValid(jwt,request,response,filterChain);
         }
-        boolean check= isValid(jwt,request);
-        if(!check){
-            if(cookies.get("refreshToken")!=null){
-                HttpHeaders headers = new HttpHeaders();
 
-                headers.add("Authorization", "Bearer "+cookies.get("refreshToken"));
 
-                HttpEntity<String> entity = new HttpEntity<>( headers);
-                ResponseEntity<AuthenticationResponse> authenticationResponse= restTemplate
-                        .postForEntity(
-                                "http://localhost:8080/api/v1/auth/refresh-token",entity
-                                , AuthenticationResponse.class);
-                if(authenticationResponse.getBody()!=null){
-                    jwt=authenticationResponse.getBody().getAccessToken();
-                    response.addCookie(new Cookie("accessToken",jwt));
-                    response.addCookie(new Cookie("refreshToken",authenticationResponse.getBody().getRefreshToken()));
-                    isValid(jwt,request);
-                }
-            }
-        }
-        filterChain.doFilter(request, response);
 
     }
-    private boolean isValid(String jwt,HttpServletRequest request){
+
+    private void isValid(String jwt,HttpServletRequest request,HttpServletResponse response,FilterChain filterChain){
         final String userEmail;
 
         try{
@@ -111,13 +92,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    return true;
+
+                }else {
+                    if(CookieUtils.getCookie(request,"refreshToken")!=null){
+                        HttpHeaders headers = new HttpHeaders();
+
+                        headers.add("Authorization", "Bearer "+CookieUtils.getCookie(request,"refreshToken"));
+
+                        HttpEntity<String> entity = new HttpEntity<>( headers);
+                        ResponseEntity<AuthenticationResponse> authenticationResponse= restTemplate
+                                .postForEntity(
+                                        "http://localhost:8080/api/v1/auth/refresh-token",entity
+                                        , AuthenticationResponse.class);
+                        if(authenticationResponse.getBody()!=null){
+                            jwt=authenticationResponse.getBody().getAccessToken();
+                            response.addCookie(new Cookie("accessToken",jwt));
+                            response.addCookie(new Cookie("refreshToken",authenticationResponse.getBody().getRefreshToken()));
+
+                        }
+                    }
                 }
 
             }
-            return true;
+            filterChain.doFilter(request, response);
+
         }catch (ExpiredJwtException e){
-            return false;
+
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
