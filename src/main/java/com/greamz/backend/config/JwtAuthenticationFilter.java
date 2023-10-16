@@ -56,7 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 System.out.println("accessToken");
                 jwt=CookieUtils.getCookie(request,"accessToken").getValue();
                 isValid(jwt,request,response,filterChain);
-            }else{
                 return;
             }
 
