@@ -10,7 +10,6 @@ public class CookieUtils {
     public static Cookie getCookie(HttpServletRequest httpServletRequest, String cookieKey) {
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies == null) {
-            System.out.println("Cookie is null");
             return null;
         }
 
@@ -25,17 +24,24 @@ public class CookieUtils {
         return null;
     }
 
-    /**
-     * Add a cookie with a key and value to the response
-     *
-     * @param httpServletResponse Response
-     * @param cookieKey Cookie key
-     * @param cookieValue Cookie value
-     */
     public static void addCookie(HttpServletResponse httpServletResponse,
                                  String cookieKey,
                                  String cookieValue) {
         Cookie cookie = new Cookie(cookieKey, cookieValue);
         httpServletResponse.addCookie(cookie);
+    }
+    public static void removeCookies(HttpServletRequest request,
+                                     HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        for (int i = 0; i < cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            removeCookie(response, cookie.getName());
+        }
+    }
+    public static void removeCookie(HttpServletResponse response,
+                                    String name) {
+        Cookie cookie = new Cookie(name, "");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }

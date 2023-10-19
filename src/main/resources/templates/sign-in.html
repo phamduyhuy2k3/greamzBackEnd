@@ -190,8 +190,6 @@
                   password: $scope.password
                 }
         ).then(function (response) {
-            $cookies.put('accessToken', response.data.accessToken);
-            $cookies.put('refreshToken', response.data.refreshToken);
             window.location.href = "/";
         }, function (error) {
           console.log(error);
