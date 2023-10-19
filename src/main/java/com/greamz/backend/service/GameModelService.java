@@ -137,4 +137,25 @@ public class GameModelService {
         gameModelRepository.deleteById(appid);
 
     }
+    @Transactional
+    public void saveProduct(GameModel game){
+        gameModelRepository.save(game);
+    }
+//    @Transactional
+//    public void deleteGameByAppid(Long appid){
+//        try{
+//            GameModel game = gameModelRepository.findById(appid).orElseThrow(()->new NoSuchElementException("Game not found with id: "+appid));
+//            gameModelRepository.deleteById(appid);
+//            filesService.delete(product.getImage());
+//            product.getImages().stream().forEach(image-> {
+//                try {
+//                    filesService.delete(image);
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            });
+//        }catch (IOException e){
+//            e.printStackTrace();
+//        }
+//    }
 }

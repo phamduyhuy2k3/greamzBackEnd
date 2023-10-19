@@ -1,10 +1,19 @@
 package com.greamz.backend.model;
 
+import com.greamz.backend.enumeration.CategoryTypes;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class GameCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,6 +21,9 @@ public class GameCategory {
     private String name;
     private String description;
     private String image;
-
+    @Enumerated(EnumType.STRING)
+    private CategoryTypes categoryTypes;
+    @OneToMany(mappedBy = "gameCategory")
+    private List<GameModel> gameModels;
 
 }

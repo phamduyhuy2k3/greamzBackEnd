@@ -25,7 +25,7 @@ public class GameModel {
     private Long appid;
     @JsonProperty("name")
     private String name;
-    private String type;
+
     @Column(length = 100000)
     private String detailed_description;
     @Column(length = 100000)
@@ -43,5 +43,7 @@ public class GameModel {
     private List<Movie> movies;
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "gameModel")
     private List<Screenshot> screenshots;
+    @ManyToOne
+    private GameCategory gameCategory;
 
 }
