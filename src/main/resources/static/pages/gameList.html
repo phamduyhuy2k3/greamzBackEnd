@@ -6,8 +6,17 @@
                     <h6 class="text-white text-capitalize ps-3">Game List</h6>
                 </div>
             </div>
+
             <div class="card-body px-0 pb-2">
                 <div class="table-responsive p-0">
+                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
+                            style="margin-left: 20px"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                        <span class="btn-inner--icon"><i
+                                class="material-icons material-symbols-outlined">library_add</i></span>
+                        <span class="btn-inner--text">Create</span>
+                    </button>
                     <table class="table align-items-center mb-0">
                         <thead>
                         <tr>
@@ -24,7 +33,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="game in games">
+                        <tr ng-repeat="game in items">
                             <td>
                                 <div class="d-flex px-2 py-1">
                                     <div>
@@ -40,7 +49,7 @@
                                 <p class="text-xs font-weight-bold mb-0">{{game.type}}}</p>
                             </td>
                             <td class="align-middle text-center text-sm">
-<!--                                <span class="badge badge-sm bg-gradient-success">{{game.website}}</span>-->
+                                <!--                                <span class="badge badge-sm bg-gradient-success">{{game.website}}</span>-->
                                 <p class="text-xs font-weight-bold mb-0">{{game.website}}</p>
                             </td>
                             <td class="align-middle">
@@ -50,12 +59,8 @@
                                     Edit
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
-                                   data-toggle="tooltip" data-original-title="Edit user"
-                                   data-bs-target="#orderModal"
-                                   data-toggle="tooltip"
-                                   data-original-title="Edit user"
-                                   data-bs-toggle="modal"
-                                href="javascript:;">
+                                   href="javascript:;"
+                                   ng-click="delete(game)">
                                     Delete
                                 </a>
                             </td>
@@ -67,6 +72,154 @@
         </div>
     </div>
 </div>
+
+
+<!--modal-->
+<div class="modal fade modal-crud" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-3">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Name</label>
+                            <input type="text" class="form-control"
+                                   ng-model="form.name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Genre</label>
+                            <select name="countries" id="countries" multiple
+                                    ng-model="form.gameCategory.id">
+<!--                                <option ng-repeat="c in categories"-->
+<!--                                        ng-value="c.id">{{c.name}}-->
+<!--                                </option>-->
+                                <option>USA</option>
+                                <option>Japan</option>
+                            </select>
+                            <!--                            <div class="select-btn">-->
+                            <!--                                <span class="btn-text">Genres</span>-->
+                            <!--                                <span class="arrow-dwn">-->
+                            <!--                                <i class="fa-solid fa-chevron-down"></i>-->
+                            <!--                                </span>-->
+                            <!--                            </div>-->
+                            <!--                            <ul class="list-items">-->
+                            <!--                                <li class="item">-->
+                            <!--                    <span class="checkbox">-->
+                            <!--                        <i class="fa-solid fa-check check-icon"></i>-->
+                            <!--                    </span>-->
+                            <!--                                    <span class="item-text">HTML & CSS</span>-->
+                            <!--                                </li>-->
+                            <!--                                <li class="item">-->
+                            <!--                    <span class="checkbox">-->
+                            <!--                        <i class="fa-solid fa-check check-icon"></i>-->
+                            <!--                    </span>-->
+                            <!--                                    <span class="item-text">Bootstrap</span>-->
+                            <!--                                </li>-->
+                            <!--                                <li class="item">-->
+                            <!--                    <span class="checkbox">-->
+                            <!--                        <i class="fa-solid fa-check check-icon"></i>-->
+                            <!--                    </span>-->
+                            <!--                                    <span class="item-text">JavaScript</span>-->
+                            <!--                                </li>-->
+                            <!--                                <li class="item">-->
+                            <!--                    <span class="checkbox">-->
+                            <!--                        <i class="fa-solid fa-check check-icon"></i>-->
+                            <!--                    </span>-->
+                            <!--                                    <span class="item-text">Node.Js</span>-->
+                            <!--                                </li>-->
+                            <!--                                <li class="item">-->
+                            <!--                    <span class="checkbox">-->
+                            <!--                        <i class="fa-solid fa-check check-icon"></i>-->
+                            <!--                    </span>-->
+                            <!--                                    <span class="item-text">React JS</span>-->
+                            <!--                                </li>-->
+                            <!--                                <li class="item">-->
+                            <!--                    <span class="checkbox">-->
+                            <!--                        <i class="fa-solid fa-check check-icon"></i>-->
+                            <!--                    </span>-->
+                            <!--                                    <span class="item-text">Mango DB</span>-->
+                            <!--                                </li>-->
+                            <!--                            </ul>-->
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-dynamic">
+                            <textarea id="floatingTextarea2" class="form-control" rows="5"
+                                      placeholder="Detailed Description"
+                                      spellcheck="true"
+                                      ng-model="form.detailed_description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="input-group input-group-dynamic">
+                        <textarea class="form-control" placeholder="About" rows="5"
+                                  id="textarea-about"
+                                  ng-model="form.about_the_game"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-dynamic">
+                        <textarea class="form-control" placeholder="Short Description"
+                                  id="floatingTextarea3"
+                                  rows="5"
+                                  ng-model="form.short_description"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Support Language</label>
+                            <input type="text" class="form-control"
+                                   ng-model="form.supported_languages">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Website</label>
+                            <input type="text" class="form-control"
+                                   ng-model="form.website">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Header Image</label>
+                        <div id="drag-drop-area1"></div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Capsule Image</label>
+                        <div id="drag-drop-area2"></div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Images</label>
+                        <div id="drag-drop-area3"></div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Movie</label>
+                        <div id="drag-drop-area4"></div>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Screenshots</label>
+                        <div id="drag-drop-area5"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <!--                                <button type="button" class="btn btn-primary"  ng-click="update()" ng-if="action==='update'">Save changes</button>-->
+                <button type="button" class="btn btn-primary" ng-click="create()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--js -->
 <script src="../assets/js/core/popper.min.js"></script>
 <script src="../assets/js/core/bootstrap.min.js"></script>
 <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>

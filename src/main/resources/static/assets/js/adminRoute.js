@@ -1,4 +1,4 @@
-var app = angular.module("myApp", ["ngRoute"]);
+var app = angular.module("myApp", ["ngRoute", "ngCookies"]);
 app.config(function ($routeProvider) {
     $routeProvider
         .when("/", {
@@ -8,7 +8,7 @@ app.config(function ($routeProvider) {
         //game management
         .when("/game", {
             templateUrl: "/pages/gameList.html",
-            controller: "GameController"
+            controller: "gameController"
         })
         //order management
         .when("/order", {
