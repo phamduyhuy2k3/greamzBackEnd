@@ -10,7 +10,6 @@ public class CookieUtils {
     public static Cookie getCookie(HttpServletRequest httpServletRequest, String cookieKey) {
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies == null) {
-            System.out.println("Cookie is null");
             return null;
         }
 
@@ -25,13 +24,6 @@ public class CookieUtils {
         return null;
     }
 
-    /**
-     * Add a cookie with a key and value to the response
-     *
-     * @param httpServletResponse Response
-     * @param cookieKey Cookie key
-     * @param cookieValue Cookie value
-     */
     public static void addCookie(HttpServletResponse httpServletResponse,
                                  String cookieKey,
                                  String cookieValue) {

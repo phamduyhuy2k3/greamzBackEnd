@@ -51,15 +51,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt;
 
 
-        if(request.getServletPath().contains("/dashboard")){
-            if(CookieUtils.getCookie(request,"accessToken")!=null){
-                System.out.println("accessToken");
-                jwt=CookieUtils.getCookie(request,"accessToken").getValue();
-                isValid(jwt,request,response,filterChain);
-            }else{
-                return;
-            }
-
+        if(CookieUtils.getCookie(request,"accessToken")!=null){
+            System.out.println("accessToken");
+            jwt=CookieUtils.getCookie(request,"accessToken").getValue();
+            isValid(jwt,request,response,filterChain);
+            return;
         }
         if (authHeader == null ||!authHeader.startsWith("Bearer ") ) {
             filterChain.doFilter(request, response);
