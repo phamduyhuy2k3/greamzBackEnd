@@ -307,9 +307,3 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
     $scope.action = 'create';
     $scope.initialize();
 })
-
-app.controller("userController", function ($scope, $http, $document, $cookies) {
-    $scope.accounts = [];
-})
-
-
