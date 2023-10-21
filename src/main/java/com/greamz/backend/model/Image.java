@@ -1,6 +1,5 @@
 package com.greamz.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.greamz.backend.common.TimeStampEntity;
 import com.greamz.backend.enumeration.FileStatus;
 import jakarta.persistence.*;
@@ -9,13 +8,13 @@ import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Movie extends TimeStampEntity {
+@ToString
+@RequiredArgsConstructor
+@Entity
+@Table(name = "images")
+public class Image extends TimeStampEntity {
     @Id
     private String id;
     private String title;

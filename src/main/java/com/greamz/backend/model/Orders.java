@@ -2,6 +2,7 @@ package com.greamz.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Builder
 @Data
 @NoArgsConstructor
-public class Orders {
+public class Orders extends TimeStampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -26,8 +27,6 @@ public class Orders {
     @JsonBackReference(value = "userOrders")
     private AccountModel account;
     private Double totalPrice;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date orderedAt;
     @OneToMany(mappedBy = "orders",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.EAGER)
     @JsonIgnore
     private List<OrdersDetail> ordersDetails;

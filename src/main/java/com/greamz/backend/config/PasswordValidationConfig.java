@@ -16,23 +16,7 @@ import java.util.Properties;
 @Configuration
 public class PasswordValidationConfig {
 
-    @Bean
-    public RestTemplate restTemplate(){
 
-
-
-        return new RestTemplate(getClientHttpRequestFactory());
-    }
-    private ClientHttpRequestFactory getClientHttpRequestFactory() {
-        int timeout = 5000; // Set your desired timeout
-
-        // Use the HttpComponentsClientHttpRequestFactory for automatic redirects
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectTimeout(timeout);
-        factory.setReadTimeout(timeout);
-
-        return factory;
-    }
     @Bean
     public PasswordValidator passwordValidator(){
         Properties props = new Properties();

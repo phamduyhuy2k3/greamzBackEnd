@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/game")
+@RequestMapping("/api/v1/game")
 @RequiredArgsConstructor
 public class GameRestController {
     private final GameModelService service;
@@ -30,7 +30,7 @@ public class GameRestController {
     }
     @PostMapping("/create")
     public GameModel create(@RequestBody GameModel game){
-        service.saveProduct(game);
+        service.saveGameModel(game);
         return game;
     }
     @GetMapping("{appid}")
