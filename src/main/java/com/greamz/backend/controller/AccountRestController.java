@@ -1,11 +1,14 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.enumeration.CategoryTypes;
+import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.service.AccountModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -20,7 +23,10 @@ public class AccountRestController {
         List<AccountModel> accountModels = service.findAll();
         return ResponseEntity.ok(accountModels);
     }
-
+    @GetMapping("/authorities")
+    public ResponseEntity<?> authorities(){
+        return ResponseEntity.ok(Arrays.stream(Role.values()).map(Role::name).toList());
+    }
     @GetMapping("/findById/{id}")
     public ResponseEntity<AccountModel> findById(@PathVariable("id") Integer id) {
         try {

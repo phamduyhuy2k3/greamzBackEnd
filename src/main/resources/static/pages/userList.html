@@ -39,7 +39,7 @@
                                 </div>
                             </td>
                             <td>
-                                <p class="text-xs font-weight-bold mb-0">User</p>
+                                <input type="checkbox"  ng-value="authority" ng-checked="account.authorities.indexOf(authority) > -1" class="text-xs font-weight-bold mb-0" ng-repeat="authority in authorities" >
                                 <p class="text-xs text-secondary mb-0">{{account.username}}</p>
                             </td>
                             <td class="align-middle text-center text-sm">
@@ -84,32 +84,32 @@
                     <div class="col-md-8">
                         <div class="input-group input-group-outline">
                             <label class="form-label">Username</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" ng-model="form.usernamme">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="input-group input-group-outline mb-4">
                             <label class="form-label">Password</label>
-                            <input type="password" class="form-control">
+                            <input type="password" class="form-control" ng-model="form.password">
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="input-group input-group-outline mb-4">
                             <label class="form-label">Fullname</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" ng-model="form.fullname">
                         </div>
                     </div>
 
                     <div class="col-12">
                         <div class="input-group input-group-outline mb-4">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control">
+                            <input type="email" class="form-control" ng-model="form.email">
                         </div>
                     </div>
                     <div class="col-md-12">
                         <label class="form-label">Image</label>
                         <div class="input-group input-group-outline mb-4">
-                            <input type="file" class="form-control">
+                            <input type="file" class="form-control" ng-model="form.photo">
                         </div>
                     </div>
 
@@ -117,7 +117,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-primary" ng-click="create()">Save changes</button>
             </div>
         </div>
     </div>
