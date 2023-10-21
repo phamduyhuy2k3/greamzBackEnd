@@ -28,6 +28,7 @@ public class CookieUtils {
                                  String cookieKey,
                                  String cookieValue) {
         Cookie cookie = new Cookie(cookieKey, cookieValue);
+        cookie.setPath("/");
         httpServletResponse.addCookie(cookie);
     }
     public static void removeCookies(HttpServletRequest request,
@@ -35,6 +36,7 @@ public class CookieUtils {
         Cookie[] cookies = request.getCookies();
         for (int i = 0; i < cookies.length; i++) {
             Cookie cookie = cookies[i];
+
             removeCookie(response, cookie.getName());
         }
     }
