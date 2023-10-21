@@ -29,6 +29,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
     // });
 
 
+
     $scope.create = function () {
         console.log("$scope.actionadwewewewewewewewewewe")
         if ($scope.uppy1.getFiles().length > 0 && $scope.uppy.getFiles().length > 0) {
@@ -131,11 +132,12 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         new MultiSelectTag('countries');
 
         // category
-        $http.get("/api/category/findALl", {
-            headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
-            }
-        }).then(resp => {
+        $http.get("/api/category/findALl",
+            {
+                headers: {
+                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                }
+            }).then(resp => {
             $scope.categories = resp.data;
             console.log($scope.categories);
         })
@@ -143,11 +145,12 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 console.log("Error", error);
             });
 
-        $http.get("/api/game/findALl", {
-            headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
-            }
-        }).then(resp => {
+        $http.get("/api/game/findALl",
+            {
+                headers: {
+                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                }
+            }).then(resp => {
             $scope.items = resp.data;
             $scope.items.forEach(item => {
                 item.createDate = new Date(item.createDate)
@@ -182,20 +185,27 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
     }
 
     function areSomeFileNotUploaded() {
-        return Promise.all([$scope.uppy1.getFiles().some(file => !file.progress.uploadComplete || !file.progress.uploadStarted), $scope.uppy.getFiles().some(file => !file.progress.uploadComplete || !file.progress.uploadStarted)])
+        return Promise.all(
+            [
+                $scope.uppy1.getFiles().some(file => !file.progress.uploadComplete || !file.progress.uploadStarted),
+                $scope.uppy.getFiles().some(file => !file.progress.uploadComplete || !file.progress.uploadStarted)
+            ])
             .then(([result1, result2]) => {
                 if (result1 && result2) {
                     return {
-                        uppy: [$scope.uppy1, $scope.uppy], result: result1
+                        uppy: [$scope.uppy1, $scope.uppy],
+                        result: result1
                     };
                 }
                 if (result1) {
                     return {
-                        uppy: $scope.uppy1, result: result1
+                        uppy: $scope.uppy1,
+                        result: result1
                     };
                 } else if (result2) {
                     return {
-                        uppy: $scope.uppy, result: result2
+                        uppy: $scope.uppy,
+                        result: result2
                     }
                 } else {
                     return {
@@ -210,29 +220,38 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
     const targetElement3 = angular.element(document.querySelector('#drag-drop-area3'))[0];
     const targetElement4 = angular.element(document.querySelector('#drag-drop-area4'))[0];
     $scope.uppy1 = Uppy.Core({
-        autoProceed: false, restrictions: {
-            minNumberOfFiles: 1, maxNumberOfFiles: 1, maxFileSize: 100000000, allowedFileTypes: ['image/*']
+        autoProceed: false,
+        restrictions: {
+            minNumberOfFiles: 1,
+            maxNumberOfFiles: 1,
+            maxFileSize: 100000000,
+            allowedFileTypes: ['image/*']
         }
     })
-        .use(Uppy.Dashboard, {
-            showLinkToFileUploadResult: false,
-            inline: true,
-            target: targetElement1,
+        .use(Uppy.Dashboard,
+            {
+                showLinkToFileUploadResult: false,
+                inline: true,
+                target: targetElement1,
 
-            proudlyDisplayPoweredByUppy: false,
-            showProgressDetails: true,
-            showRemoveButtonAfterComplete: true,
-            height: 200,
-            plugins: ['Webcam'],
-            maxNumberOfFiles: 1
-        })
+                proudlyDisplayPoweredByUppy: false,
+                showProgressDetails: true,
+                showRemoveButtonAfterComplete: true,
+                height: 200,
+                plugins: ['Webcam'],
+                maxNumberOfFiles: 1
+            })
         .use(Uppy.XHRUpload, {
-            endpoint: 'http://localhost:8080/api/files/upload', formData: true, fieldName: 'file'
+            endpoint: 'http://localhost:8080/api/files/upload',
+            formData: true,
+            fieldName: 'file'
         })
 
     $scope.uppy = Uppy.Core({
-        autoProceed: false, restrictions: {
-            maxFileSize: 100000000, allowedFileTypes: ['image/*']
+        autoProceed: false,
+        restrictions: {
+            maxFileSize: 100000000,
+            allowedFileTypes: ['image/*']
         }
     }).use(Uppy.Dashboard, {
         showLinkToFileUploadResult: false,
@@ -244,7 +263,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         plugins: ['Webcam'],
         proudlyDisplayPoweredByUppy: false
     }).use(Uppy.XHRUpload, {
-        endpoint: 'http://localhost:8080/api/files/upload', formData: true, fieldName: 'file'
+        endpoint: 'http://localhost:8080/api/files/upload',
+        formData: true,
+        fieldName: 'file'
     });
 
     $scope.uppy1.on('file-removed', (file) => {
@@ -285,49 +306,10 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
     });
     $scope.action = 'create';
     $scope.initialize();
-});
+})
 
 app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.accounts = [];
-    $scope.action = 'create'
-
-    $scope.initialize = function () {
-        $http.get("/api/user/findAll", {
-            headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
-            }
-        }).then(resp => {
-            $scope.accounts = resp.data;
-            console.log($scope.accounts);
-        })
-            .catch(error => {
-                console.log("Error", error);
-            });
-    }
-
-
-    $scope.create = function () {
-
-    }
-
-    $scope.delete = function (item) {
-        if (confirm("Do you want to delete this account?")) {
-            $http.delete(`/api/user/delete/${item.id}`, {
-                headers: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
-                }
-            }).then(resp => {
-                var index = $scope.items.findIndex(p => p.id === item.id);
-                $scope.items.splice(index, 1);
-                $scope.initialize();
-                // $scope.reset();
-                alert("The account was deleted successfully!");
-            }).catch(error => {
-                alert("Error deleting account!");
-                console.log("Error", error);
-            })
-        }
-    }
-
-    $scope.initialize();
 })
+
+
