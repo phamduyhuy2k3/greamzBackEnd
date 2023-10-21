@@ -1,6 +1,6 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.model.GameModel;
+import com.greamz.backend.annotations.WithStatusAndTimestamp;
 import com.greamz.backend.model.Voucher;
 import com.greamz.backend.service.VoucherModelService;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +33,17 @@ public class VoucherRestController {
     }
 
     @PostMapping("/create")
-    public Voucher create(@RequestBody Voucher voucher){
-        service.saveVoucherModel(voucher);
-        return voucher;
+    @WithStatusAndTimestamp
+    public ResponseEntity<?> create(@RequestBody Voucher voucher){
+
+        return ResponseEntity.ok().body(service.saveVoucherModel(voucher));
     }
 
+    @PutMapping("/update")
+    public Voucher update(@RequestBody Voucher voucher){
+        service.updateVoucherModel(voucher);
+        return voucher;
+    }
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable("id") Long id){
         service.deleteVoucherByAppid(id);

@@ -17,11 +17,16 @@ import java.util.NoSuchElementException;
 public class VoucherModelService {
     private final IVoucherRepo voucherRepository;
 
-    @Transactional
-    public void saveVoucherModel(Voucher voucherModel) {
-        voucherRepository.save(voucherModel);
+
+    public Voucher saveVoucherModel(Voucher voucherModel) {
+        return voucherRepository.saveAndFlush(voucherModel);
     }
 
+    @Transactional
+    public void updateVoucherModel(Voucher voucherModel) {
+        Voucher voucher=voucherRepository.findById(voucherModel.getId()).orElseThrow();
+        voucherRepository.save(voucherModel);
+    }
     @Transactional
     public List<Voucher> findAll() {
         return voucherRepository.findAll();

@@ -2,19 +2,20 @@ package com.greamz.backend.config;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class AppConfig {
+@AllArgsConstructor
+public class AppConfig implements WebMvcConfigurer {
+
     @Bean
     public RestTemplate restTemplate(){
-
-
-
         return new RestTemplate(getClientHttpRequestFactory());
     }
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
@@ -36,5 +37,7 @@ public class AppConfig {
                 "api_secret", "li_dlSoQUP5foS8Wbg3FRdh5e9I",
                 "secure", true));
     }
+
+
 
 }
