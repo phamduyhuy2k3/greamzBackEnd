@@ -2,6 +2,7 @@ package com.greamz.backend.model;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,7 +19,7 @@ import java.util.List;
 @Table(name = "Account")
 @AllArgsConstructor
 
-public class AccountModel  implements UserDetails {
+public class AccountModel extends TimeStampEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

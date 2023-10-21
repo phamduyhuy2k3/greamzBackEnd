@@ -23,7 +23,7 @@ public class GameCategory {
     private String image;
     @Enumerated(EnumType.STRING)
     private CategoryTypes categoryTypes;
-    @OneToMany(mappedBy = "gameCategory")
+    @ManyToMany(mappedBy = "gameCategory",cascade = CascadeType.PERSIST)
     private List<GameModel> gameModels;
 
 }
