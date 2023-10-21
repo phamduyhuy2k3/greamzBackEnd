@@ -17,9 +17,9 @@ import java.util.NoSuchElementException;
 public class VoucherModelService {
     private final IVoucherRepo voucherRepository;
 
-    @Transactional
-    public void saveVoucherModel(Voucher voucherModel) {
-        voucherRepository.save(voucherModel);
+
+    public Voucher saveVoucherModel(Voucher voucherModel) {
+        return voucherRepository.saveAndFlush(voucherModel);
     }
 
     @Transactional

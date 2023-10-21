@@ -50,21 +50,21 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="voucher in vouchers">
+                        <tr ng-repeat="v in vouchers">
                             <td>
-                                <span class="text-secondary text-xs font-weight-bold">{{voucher.id}}</span>
+                                <span class="text-secondary text-xs font-weight-bold">{{v.id}}</span>
                             </td>
                             <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">{{voucher.name}}</span>
+                                <span class="text-secondary text-xs font-weight-bold">{{v.name}}</span>
                             </td>
                             <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">{{voucher.description}}</span>
+                                <span class="text-secondary text-xs font-weight-bold">{{v.description}}</span>
                             </td>
                             <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">{{voucher.dateExpired}}</span>
+                                <span class="text-secondary text-xs font-weight-bold">{{v.dateExpired}}</span>
                             </td>
                             <td class="align-middle">
-                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
+                                <a href="" class="text-secondary font-weight-bold text-xs"
                                    data-toggle="tooltip" data-original-title="Edit user">
                                     Edit
                                 </a>
@@ -113,7 +113,7 @@
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
                             <label>DATEEXPIRED</label>
-                            <input type="date" class="form-control"
+                            <input type="number" class="form-control"
                                    ng-model="voucher.dateExpired">
                         </div>
                     </div>
