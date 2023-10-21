@@ -38,6 +38,11 @@ public class VoucherRestController {
         return voucher;
     }
 
+    @PutMapping("/update")
+    public Voucher update(@RequestBody Voucher voucher){
+        service.updateVoucherModel(voucher);
+        return voucher;
+    }
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable("id") Long id){
         service.deleteVoucherByAppid(id);
