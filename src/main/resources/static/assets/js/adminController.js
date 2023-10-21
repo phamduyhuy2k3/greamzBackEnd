@@ -29,7 +29,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
     // });
 
 
-
     $scope.create = function () {
         console.log("$scope.actionadwewewewewewewewewewe")
         if ($scope.uppy1.getFiles().length > 0 && $scope.uppy.getFiles().length > 0) {
