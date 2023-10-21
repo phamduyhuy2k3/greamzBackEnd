@@ -17,7 +17,7 @@ app.config(function ($routeProvider) {
         })
         .when("/user", {
             templateUrl: "/pages/userList.html",
-            controller: "profileController"
+            controller: "userController"
         })
         //review management
         .when("/review", {

@@ -27,7 +27,6 @@ public class VoucherModelService {
         Voucher voucher=voucherRepository.findById(voucherModel.getId()).orElseThrow();
         voucherRepository.save(voucherModel);
     }
-
     @Transactional
     public List<Voucher> findAll() {
         return voucherRepository.findAll();
