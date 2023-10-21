@@ -19,6 +19,7 @@ public class Movie extends TimeStampEntity {
     @Id
     private String id;
     private String title;
+    @Column(length = 1000)
     private String link;
     private FileStatus status = FileStatus.Closed;
 

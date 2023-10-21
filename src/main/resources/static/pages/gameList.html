@@ -15,7 +15,7 @@
                             data-bs-target="#exampleModal">
                         <span class="btn-inner--icon"><i
                                 class="material-icons material-symbols-outlined">library_add</i></span>
-                        <span class="btn-inner--text" >Create</span>
+                        <span class="btn-inner--text">Create</span>
                     </button>
                     <table class="table align-items-center mb-0">
                         <thead>
@@ -98,10 +98,11 @@
                     <div class="col-md-6">
                         <div class="input-group input-group-static">
                             <label>Categories</label>
-                            <select class="form-select" ng-model="form.type" ng-change="loadCategory()" style="width: 100%" >
-                                <option ng-value="type" ng-repeat="type in types" >{{type}}</option>
+                            <select class="form-select" ng-model="form.type" ng-change="loadCategory()"
+                                    style="width: 100%">
+                                <option ng-value="type" ng-repeat="type in types">{{type}}</option>
                             </select>
-                            <select  multiple id="categoriesSelect" class="form-select" style="width: 100%" >
+                            <select multiple id="categoriesSelect" class="form-select" style="width: 100%">
 
                             </select>
 
@@ -147,7 +148,7 @@
                     </div>
                     <div class="col-md-12">
                         <label class="form-label">Header Image</label>
-                        <button  id="headerImage" class="cloudinary-button">Choose file</button>
+                        <button id="headerImage" class="cloudinary-button">Choose file</button>
                     </div>
                     <div class="col-md-12">
                         <label class="form-label">Capsule Image</label>
@@ -161,16 +162,16 @@
                         <label class="form-label">Movie</label>
                         <button id="movies"></button>
                     </div>
-<!--                    <div class="col-md-12">-->
-<!--                        <label class="form-label">Screenshots</label>-->
-<!--                        <div id="drag-drop-area5"></div>-->
-<!--                    </div>-->
+                    <!--                    <div class="col-md-12">-->
+                    <!--                        <label class="form-label">Screenshots</label>-->
+                    <!--                        <div id="drag-drop-area5"></div>-->
+                    <!--                    </div>-->
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <!--                                <button type="button" class="btn btn-primary"  ng-click="update()" ng-if="action==='update'">Save changes</button>-->
-                <button type="button" class="btn btn-primary" ng-click="create()">Save</button>
+                <button type="button" class="btn btn-primary" ng-click="update()" ng-if="action==='update'">Save changes</button>
+                <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='create'">Save</button>
             </div>
         </div>
     </div>

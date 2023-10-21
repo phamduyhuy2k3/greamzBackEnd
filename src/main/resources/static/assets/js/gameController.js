@@ -111,23 +111,23 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             }
         }).on('complete', (result) => {
             const fileURLs = result.successful.map((file) => file.response.body.url);
-            if (!$scope.form.images) {
-                $scope.form.images = [];
+            if (!$scope.form.images.link) {
+                $scope.form.images.link = [];
             }
             fileURLs.forEach((url) => {
-                $scope.form.images.push(url);
+                $scope.form.images.link.push(url);
             });
         }).on('file-removed', (file) => {
-            const removedIndex = $scope.form.images.findIndex(image => image === file.name);
+            const removedIndex = $scope.form.images.findIndex(image => image.link === file.name);
             if (removedIndex !== -1) {
-                $scope.form.images.splice(removedIndex, 1);
+                $scope.form.images.link.splice(removedIndex, 1);
             }
         })
         $scope.uppyMovies = Uppy.Core({
             autoProceed: false,
             restrictions: {
                 maxFileSize: 100000000,
-                allowedFileTypes: ['video/**']
+                allowedFileTypes: ['video/*']
             }
         }).use(Uppy.Dashboard, {
             showLinkToFileUploadResult: false,
@@ -146,19 +146,19 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 authorization: 'Bearer ' + $cookies.get("accessToken")
             }
         }).on('file-removed', (file) => {
-            const removedIndex = scope.findIndex(image => image === file.name);
+            const removedIndex = $scope.form.movies.findIndex(image => image.link === file.name);
             if (removedIndex !== -1) {
-                $scope.form.movies.splice(removedIndex, 1);
+                $scope.form.movies.link.splice(removedIndex, 1);
             }
         }).on('complete', (result) => {
             const fileURLs = result.successful.map((file) => file.response.body.url);
-            if (!$scope.form.movies) {
-                $scope.form.movies = [];
+            if (!$scope.form.movies.link) {
+                $scope.form.movies.link = [];
             }
             fileURLs.forEach((url) => {
-                $scope.form.movies.push(url);
+                $scope.form.movies.link.push(url);
             });
-            console.log($scope.form.movies);
+            console.log($scope.form.movies.link);
         })
         $scope.loadCategory = async function () {
             await $http.get("/api/v1/category/type/" + $scope.form.type,
@@ -289,15 +289,16 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             $scope.initialize();
         }
         $scope.create = function () {
-            $http.post("/api/v1/game/create",
+            $http.post("/api/v1/game/create",  $scope.form,
                 {
                     headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    },
-                    data: $scope.form
+                        "Authorization": "Bearer " + $cookies.get("accessToken"),
+                        "Content-Type": "application/json"
+                    }
                 }).then(resp => {
-
-
+                $scope.initialize();
+                // $scope.resetUppyState();
+                alert('Thêm mới sản phẩm thành công!')
             })
                 .catch(error => {
                     console.log("Error", error);

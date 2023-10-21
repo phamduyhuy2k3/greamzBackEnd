@@ -17,8 +17,7 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GameModel extends TimeStampEntity{
 
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @JsonProperty("appid")
     private Long appid;
@@ -33,8 +32,11 @@ public class GameModel extends TimeStampEntity{
     private String short_description;
     @Column(length = 100000)
     private String supported_languages;
+    @Column(length = 1000)
     private String header_image;
+    @Column(length = 1000)
     private String website;
+    @Column(length = 1000)
     private String capsule_image;
     @OneToMany(mappedBy = "gameModel", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
