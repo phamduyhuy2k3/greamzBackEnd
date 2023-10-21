@@ -1,9 +1,10 @@
 package com.greamz.backend.model;
 
+import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
 
 @Entity
-public class Disscusion {
+public class Disscusion extends TimeStampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
