@@ -50,14 +50,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         String jwt;
 
-        if(request.getServletPath().contains("/dashboard")){
-            if(CookieUtils.getCookie(request,"accessToken")!=null){
+        if(CookieUtils.getCookie(request,"accessToken")!=null){
                 System.out.println("accessToken");
                 jwt=CookieUtils.getCookie(request,"accessToken").getValue();
                 isValid(jwt,request,response,filterChain);
                 return;
-            }
         }
+
         if (authHeader == null ||!authHeader.startsWith("Bearer ") ) {
             filterChain.doFilter(request, response);
         }else{
@@ -89,7 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-
+                    filterChain.doFilter(request, response);
                 }else {
                     if(CookieUtils.getCookie(request,"refreshToken")!=null){
                         HttpHeaders headers = new HttpHeaders();
@@ -105,13 +104,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             jwt=authenticationResponse.getBody().getAccessToken();
                             response.addCookie(new Cookie("accessToken",jwt));
                             response.addCookie(new Cookie("refreshToken",authenticationResponse.getBody().getRefreshToken()));
-
+                            filterChain.doFilter(request, response);
+                        }else {
+                            response.sendError(401,"Unauthorized");
                         }
                     }
                 }
 
             }
-            filterChain.doFilter(request, response);
+
 
         }catch (ExpiredJwtException e){
 
