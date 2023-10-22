@@ -22,10 +22,12 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             movies: [],
             gameCategory: [],
         }
-    $scope.uppyImages= cloudinary.createMediaLibrary(
+    $scope.cloudImages= cloudinary.createMediaLibrary(
             {
                 cloud_name: "dtreuuola",
                 api_key: "118212349948963",
+                //su dung khi nhieu file
+                // max_files: "1",
                 remove_header: false,
                 insert_caption: "Insert",
                 inline_container: "#widget_images",
@@ -36,7 +38,8 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             {
                 insertHandler: function (data) {
                     data.assets.forEach((asset) => {
-
+                        //only file
+                        // $scope.form.images.push= asset.url;
                         $scope.form.images.push(asset.url);
                     });
                 }
