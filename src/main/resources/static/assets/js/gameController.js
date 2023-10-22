@@ -22,7 +22,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             movies: [],
             gameCategory: [],
         }
-    $scope.cloudImages= cloudinary.createMediaLibrary(
+        $scope.cloudImages = cloudinary.createMediaLibrary(
             {
                 cloud_name: "dtreuuola",
                 api_key: "118212349948963",
@@ -47,40 +47,38 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             document.getElementById("images")
         );
 
-        $scope.loadCategory = async function () {
-            await $http.get("/api/v1/category/type/" + $scope.form.type,
+        $scope.initialize = function () {
+            $http.get("/api/v1/category/types", {
+                headers: {
+                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                }
+            }).then(
+                resp => {
+                    $scope.types = resp.data;
+                },
+                error => {
+                }
+            )
+            $http.get("/api/v1/game/findALl",
                 {
                     headers: {
                         "Authorization": "Bearer " + $cookies.get("accessToken")
                     }
                 }).then(resp => {
-                    $scope.categories = resp.data;
+                $scope.games = resp.data;
 
-                },
-                error => {
+            })
+                .catch(error => {
                     console.log("Error", error);
-                })
-                .then(r1 => {
-                    if ($scope.select != null) {
-                        $scope.select.empty();
-                        $scope.select.select2({
-                            // Use the modified 'data' object
-                            data: $scope.categories,
-                            placeholder: "Select Categories",
-                            templateResult: function (data) {
-                                if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                                let $result = $('<span>' + data.name + '</span>');
-                                return $result;
-                            },
-                            templateSelection: function (data) {
-                                if (!data.id) return data.name; // Option is not an object (e.g., the "Select a country" option)
-                                let $selection = $('<span>' + data.name + '</span>');
-                                return $selection;
-                            }
-                        })
-                        return;
-                    }
+                });
+            $http.get("/api/v1/category/all", {
+                headers: {"Authorization": "Bearer " + $cookies.get("accessToken")}
 
+            }).then(
+                resp => {
+                    $scope.categories = resp.data;
+                }).then(
+                () => {
                     $scope.select = $('#categoriesSelect').select2({
                         // Use the modified 'data' object
                         data: $scope.categories,
@@ -107,32 +105,8 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         $scope.form.gameCategory.slice(removedIndex, 1)
 
                     });
-                });
-        }
-        $scope.initialize = function () {
-            $http.get("/api/v1/category/types", {
-                headers: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
-                }
-            }).then(
-                resp => {
-                    $scope.types = resp.data;
-                },
-                error => {
                 }
             )
-            $http.get("/api/v1/game/findALl",
-                {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(resp => {
-                $scope.games = resp.data;
-
-            })
-                .catch(error => {
-                    console.log("Error", error);
-                });
 
         }
         $scope.initialize();
