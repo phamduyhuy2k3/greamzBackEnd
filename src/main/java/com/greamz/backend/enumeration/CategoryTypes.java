@@ -1,7 +1,7 @@
 package com.greamz.backend.enumeration;
 
 public enum CategoryTypes {
-    GENNERS,
+    GENRES,
     SPECIAL_SECTIONS,
     THEMES,
     PLAYER_SUPPORT

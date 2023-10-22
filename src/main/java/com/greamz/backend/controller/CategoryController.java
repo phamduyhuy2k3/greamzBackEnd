@@ -19,7 +19,7 @@ public class CategoryController {
     @GetMapping("/all")
     public ResponseEntity<List<GameCategory>> finAdll(){
 
-        return ResponseEntity.ok(categoryService.getAllCategory());
+        return ResponseEntity.ok(categoryService.getAll());
     }
     @GetMapping("/type/{type}")
     public ResponseEntity<Set<GameCategory>> finAdllByType(@PathVariable CategoryTypes type){

@@ -1,5 +1,6 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.common.BaseEntityService;
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.model.GameCategory;
 import com.greamz.backend.repository.ICategoryRepo;
@@ -7,29 +8,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
-public class CategoryService {
-    private final ICategoryRepo categoryRepository;
-    public void addCategory(GameCategory name){
-        GameCategory gameCategory= categoryRepository.saveAndFlush(name);
-    }
-    public void deleteCategory(Long id){
-        categoryRepository.deleteById(id);
-    }
-    public void updateCategory(GameCategory name){
-        GameCategory gameCategory= categoryRepository.saveAndFlush(name);
-    }
-    public GameCategory getCategory(Long id){
-        return categoryRepository.findById(id).get();
-    }
-    public List<GameCategory> getAllCategory(){
-        return categoryRepository.findAll();
-    }
-    public Set<GameCategory> getCategoryByType(CategoryTypes type){
-        return categoryRepository.findAllByCategoryTypes(type);
+
+public class CategoryService extends BaseEntityService<GameCategory,Long,ICategoryRepo> {
+    public CategoryService(ICategoryRepo repository) {
+        super(repository);
     }
 
+    @Override
+    public List<GameCategory> getAll() {
+        return super.getAll();
+    }
+
+    public GameCategory findById(Long id){
+        return super.getById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+    }
+    public Set<GameCategory> getCategoryByType(CategoryTypes type){
+        return repository.findAllByCategoryTypes(type);
+    }
 }
