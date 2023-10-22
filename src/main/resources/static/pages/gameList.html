@@ -80,11 +80,12 @@
 <!--modal-->
 <div class="modal fade modal-crud" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Game Modal</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        style="background-color: rebeccapurple"></button>
             </div>
             <div class="modal-body">
                 <form class="row g-3">
@@ -132,8 +133,8 @@
                     <div class="col-md-6">
                         <div class="input-group input-group-static">
                             <label>Support Language</label>
-                            <input type="text" class="form-control"
-                                   ng-model="form.supported_languages">
+                            <select multiple id="languagesSelect" class="form-select" style="width: 100%">
+                            </select>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -152,9 +153,18 @@
                         <button id="capsule">Choose file</button>
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label">Images</label>
-                        <button id="images">Choose file</button>
-                        <div id="widget_images" style="height: 200px;"></div>
+                        <label class="form-label"
+                               style="margin-bottom: -20px">Images</label>
+                        <div>
+                            <button
+                                    class="btn btn-primary"
+                                    data-bs-target="#imageModal"
+                                    data-bs-toggle="modal"
+                            ><a id="images">Choose file</a>
+                            </button>
+                        </div>
+
+
                     </div>
                     <div class="col-md-12">
                         <label class="form-label">Movie</label>
@@ -168,8 +178,31 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" ng-click="update()" ng-if="action==='update'">Save changes</button>
-                <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='create'">Save</button>
+                <button type="button" class="btn btn-primary" ng-click="update()" ng-if="action==='update'">Save
+                    changes
+                </button>
+                <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='create'">Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--image modal-->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div id="widget_images" style="height: 500px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn bg-gradient-info"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">
+                    Close
+                </button>
             </div>
         </div>
     </div>
