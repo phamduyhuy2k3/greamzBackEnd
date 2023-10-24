@@ -6,7 +6,10 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         id: null,
         name: '',
         description: '',
-        dateExpired: ''
+        dateExpired: '',
+        discount: '',
+        orderCondition: '',
+        maxPrice: ''
     }
 
     $scope.create = function () {
@@ -24,20 +27,26 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
             }
         )
     }
-    $scope.delete = function () {
-        $http.delete("/api/voucher/delete/" + $scope.voucher.id, {
-            headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
-            },
 
-        }).then(
-            resp => {
-                $scope.initialize()
-            },
-            error => {
+    $scope.delete = function (item) {
+                if (confirm("Bạn muốn xóa sản phẩm này?")) {
+                    $http.delete(`/api/voucher/delete/${item.id}`, {
+                        headers: {
+                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                        }
+                    }).then(resp => {
+                        $scope.initialize();
+                        // $scope.reset();
+                        alert("Xóa sản phẩm thành công!");
+                    }).catch(error => {
+                        alert("Lỗi xóa sản phẩm!");
+
+                        console.log("Error", error);
+                    })
+                }
             }
-        )
-    }
+
+
     $scope.update = function () {
         $http.p("/api/voucher/update", {
             headers: {
@@ -53,8 +62,11 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         )
     }
 
+
+
+
     $scope.edit = function (id) {
-        $scope.voucher = $scope.vouchers.find(value => value.id === id)
+        $scope.voucher = id
     }
     $scope.initialize = function () {
         $http.get("/api/voucher/findALl", {

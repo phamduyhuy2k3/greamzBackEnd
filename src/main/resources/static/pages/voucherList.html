@@ -46,6 +46,15 @@
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 DATEEXPIRED
                             </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                discount
+                            </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                orderCondition
+                            </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                maxPrice
+                            </th>
                             <th class="text-secondary opacity-7"></th>
                         </tr>
                         </thead>
@@ -64,10 +73,25 @@
                                 <span class="text-secondary text-xs font-weight-bold">{{v.dateExpired}}</span>
                             </td>
                             <td class="align-middle">
-                                <a href="" class="text-secondary font-weight-bold text-xs"
-                                   data-toggle="tooltip" data-original-title="Edit user">
+                                <span class="text-secondary text-xs font-weight-bold">{{v.discount}}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">{{v.orderCondition}}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">{{v.maxPrice}}</span>
+                            </td>
+                            <td class="align-middle">
+                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
+
+                                   data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="edit(v)">
                                     Edit
+                                </a>|
+                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
+                                   ng-click="delete(v)">
+                                    Delete
                                 </a>
+
                             </td>
                         </tr>
                         </tbody>
@@ -115,6 +139,27 @@
                             <label>DATEEXPIRED</label>
                             <input type="number" class="form-control"
                                    ng-model="voucher.dateExpired">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>DISCOUNT</label>
+                            <input type="number" class="form-control"
+                                   ng-model="voucher.discount">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>ORDERCONDITION</label>
+                            <input type="number" class="form-control"
+                                   ng-model="voucher.orderCondition">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>MAXPRICE</label>
+                            <input type="number" class="form-control"
+                                   ng-model="voucher.maxPrice">
                         </div>
                     </div>
 
