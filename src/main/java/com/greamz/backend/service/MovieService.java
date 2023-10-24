@@ -5,29 +5,19 @@ import com.cloudinary.utils.ObjectUtils;
 import com.greamz.backend.common.BaseEntityService;
 import com.greamz.backend.dto.FileUpload;
 import com.greamz.backend.model.GameModel;
-import com.greamz.backend.model.Image;
-import com.greamz.backend.model.Movie;
-import com.greamz.backend.repository.IImageRepository;
-import com.greamz.backend.repository.IMovieRepo;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
 
-public class MovieService extends BaseEntityService<Movie, String, IMovieRepo> {
+public class MovieService {
     @Autowired
     private Cloudinary cloudinary;
 
-    public MovieService(IMovieRepo repository) {
-        super(repository);
-    }
     public Optional<Map> uploadMovie(FileUpload fileUpload) {
         if (fileUpload.getFile() == null || fileUpload.getFile().isEmpty())
             return Optional.empty();
@@ -54,14 +44,5 @@ public class MovieService extends BaseEntityService<Movie, String, IMovieRepo> {
         return Optional.of(uploadResult);
     }
 
-    public Optional<Movie> saveUploadedMovie(FileUpload fileUpload, Map uploadResult, GameModel product) {
-        Movie image = new Movie();
-        image.setId(fileUpload.getPublicId());
-        image.setLink((String) uploadResult.get("url"));
-        image.setTitle(fileUpload.getTitle());
-        image.setGameModel(product);
-        super.repository.save(image);
 
-        return Optional.of(image);
-    }
 }

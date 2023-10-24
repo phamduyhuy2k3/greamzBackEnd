@@ -32,15 +32,16 @@ public class GameModel extends TimeStampEntity{
     private String short_description;
     @Column(length = 100000)
     private String supported_languages;
+    @Column(length = 1000)
     private String header_image;
+    @Column(length = 1000)
     private String website;
+    @Column(length = 1000)
     private String capsule_image;
-    @OneToMany(mappedBy = "gameModel", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-
-    private Set<Image> images;
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "gameModel",fetch = FetchType.LAZY)
-    private List<Movie> movies;
+    @ElementCollection(fetch = FetchType.LAZY)
+    private Set<String> images;
+    @ElementCollection(fetch = FetchType.LAZY)
+    private Set<String> movies;
     @OneToMany(cascade = {CascadeType.ALL},mappedBy = "gameModel")
     private List<Screenshot> screenshots;
     @ManyToMany(cascade = {CascadeType.PERSIST})
