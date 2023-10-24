@@ -21,6 +21,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
                 $scope.initialize()
             },
             error => {
+
             }
         )
     }
@@ -46,7 +47,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
             data: $scope.voucher
         }).then(
             resp => {
-                $scope.initialize()
+                $scope.initialize();
             },
             error => {
             }
@@ -60,6 +61,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         $http.get("/api/voucher/findALl", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
+
             }
         }).then(
             resp => {

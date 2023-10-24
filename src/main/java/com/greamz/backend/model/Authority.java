@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
 
@@ -18,7 +19,7 @@ import java.io.Serializable;
 @Table( uniqueConstraints = {
         @UniqueConstraint(columnNames = {"account_id", "role"})
 })
-public class Authority implements Serializable {
+public class Authority implements Serializable, GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,5 +29,8 @@ public class Authority implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
+    @Override
+    public String getAuthority() {
+        return role.name();
+    }
 }
