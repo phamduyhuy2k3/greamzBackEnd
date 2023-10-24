@@ -3,7 +3,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.authorities = [];
     $scope.action = 'create'
     $scope.action = 'edit'
-    // $scope.uppyImages;
     $scope.form = {
         id: '',
         username: '',
@@ -18,40 +17,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         discusios: [],
         authorities: [],
     }
-    // $scope.uppyImages =
-    //     Uppy.Core({
-    //         autoProceed: false,
-    //         restrictions: {
-    //             minNumberOfFiles: 1,
-    //             maxNumberOfFiles: 1,
-    //             maxFileSize: 100000000,
-    //             allowedFileTypes: ['image/*']
-    //         }
-    //     }).use(Uppy.Dashboard,
-    //         {
-    //             showLinkToFileUploadResult: false,
-    //             inline: true,
-    //             target: angular.element(document.querySelector('#headerImage'))[0],
-    //             proudlyDisplayPoweredByUppy: false,
-    //             showProgressDetails: true,
-    //             showRemoveButtonAfterComplete: true,
-    //             height: 200,
-    //             plugins: ['Webcam'],
-    //             maxNumberOfFiles: 1
-    //         }).use(Uppy.XHRUpload, {
-    //         endpoint: 'http://localhost:8080/api/v1/file/image',
-    //         formData: true,
-    //         fieldName: 'file',
-    //         headers: {
-    //             authorization: 'Bearer ' + $cookies.get("accessToken")
-    //         }
-    //     }).on('file-removed', (file) => {
-    //         $scope.form.photo = null;
-    //     }).on('complete', (result) => {
-    //         $scope.form.photo = result.successful[0].response.body.url;
-    //         console.log($scope.form.photo);
-    //     })
-
     $scope.initialize = function () {
         $http.get("/api/user/findAll", {
             headers: {
@@ -74,7 +39,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         }).then(
             resp => {
                 $scope.authorities = resp.data;
-                console.log($scope.authorities)
+
             },
             error => {
                 console.log("Error", error);
@@ -103,18 +68,8 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         }
     }
 
-    $scope.toggleSelection = function toggleSelection(authority) {
-        var idx = $scope.authorities.indexOf(authority);
-
-        // Is currently selected
-        if (idx > -1) {
-            $scope.authorities.splice(idx, 1);
-        }
-
-        // Is newly selected
-        else {
-            $scope.authorities.push(authority);
-        }
+    $scope.toggleSelection = function(authority) {
+        console.log(authority)
     };
     $scope.reset = function () {
         $scope.form = {
@@ -152,8 +107,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             }
         )
     }
-
-
     $scope.edit = function (id) {
         $http.get(`/api/user/findById/${id}`,
             {
@@ -170,6 +123,38 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                 console.log(error)
             }
         )
+    }
+    $scope.setAuthority= function (account,value,authority){
+        if(value===true){
+            $http.post(`/api/v1/authority/save`, {
+                userId : account.id,
+                role: authority
+            },{
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken'),
+                    "Content-Type": "application/json"
+
+                }
+            }).then( resp => {
+                $scope.initialize();
+            })
+
+        }else{
+            $http.delete(`/api/v1/authority/delete`,{
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken'),
+
+                },
+                params:{
+                    userId : account.id,
+                    role: authority
+                }
+            }).then( resp => {
+                $scope.initialize();
+            })
+        }
+
+
     }
 
 })

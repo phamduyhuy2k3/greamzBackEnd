@@ -15,7 +15,6 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class AccountModelService {
     private final IAccountRepo repo;
-
     @Transactional
     public List<AccountModel> findAll(){
         return repo.findAll();

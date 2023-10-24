@@ -43,25 +43,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        if (request.getServletPath().contains("/api/v1/auth") || request.getServletPath().contains("/sign-in")) {
+        if (request.getServletPath().contains("/api/v1/auth/") || request.getServletPath().contains("/sign-in")) {
             filterChain.doFilter(request, response);
             return;
         }
         final String authHeader = request.getHeader("Authorization");
         String jwt;
 
-        if(CookieUtils.getCookie(request,"accessToken")!=null){
+        if(request.getServletPath().contains("/api") || request.getRequestURI().contains("dashboard")){
+
+            if(CookieUtils.getCookie(request,"accessToken")!=null){
                 System.out.println("accessToken");
                 jwt=CookieUtils.getCookie(request,"accessToken").getValue();
                 isValid(jwt,request,response,filterChain);
                 return;
-        }
+            }
 
-        if (authHeader == null ||!authHeader.startsWith("Bearer ") ) {
+            if (authHeader == null ||!authHeader.startsWith("Bearer ") ) {
+                filterChain.doFilter(request, response);
+            }else{
+                jwt = authHeader.substring(7);
+                isValid(jwt,request,response,filterChain);
+            }
+        }else {
             filterChain.doFilter(request, response);
-        }else{
-            jwt = authHeader.substring(7);
-            isValid(jwt,request,response,filterChain);
         }
 
 

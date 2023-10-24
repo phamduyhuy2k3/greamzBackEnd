@@ -18,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "Account")
 @AllArgsConstructor
-
 public class AccountModel extends TimeStampEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +37,7 @@ public class AccountModel extends TimeStampEntity implements UserDetails {
     @OneToMany(mappedBy = "account")
     private List<Disscusion> disscusions;
     @JsonManagedReference
-    @OneToMany(mappedBy = "account",cascade = {CascadeType.PERSIST,CascadeType.REMOVE},fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "account",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
     private List<Authority> authorities;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
