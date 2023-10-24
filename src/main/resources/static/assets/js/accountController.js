@@ -2,6 +2,8 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.accounts = [];
     $scope.authorities = [];
     $scope.action = 'create'
+    $scope.action = 'edit'
+    // $scope.uppyImages;
     $scope.form = {
         id: '',
         username: '',
@@ -16,6 +18,40 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         discusios: [],
         authorities: [],
     }
+    // $scope.uppyImages =
+    //     Uppy.Core({
+    //         autoProceed: false,
+    //         restrictions: {
+    //             minNumberOfFiles: 1,
+    //             maxNumberOfFiles: 1,
+    //             maxFileSize: 100000000,
+    //             allowedFileTypes: ['image/*']
+    //         }
+    //     }).use(Uppy.Dashboard,
+    //         {
+    //             showLinkToFileUploadResult: false,
+    //             inline: true,
+    //             target: angular.element(document.querySelector('#headerImage'))[0],
+    //             proudlyDisplayPoweredByUppy: false,
+    //             showProgressDetails: true,
+    //             showRemoveButtonAfterComplete: true,
+    //             height: 200,
+    //             plugins: ['Webcam'],
+    //             maxNumberOfFiles: 1
+    //         }).use(Uppy.XHRUpload, {
+    //         endpoint: 'http://localhost:8080/api/v1/file/image',
+    //         formData: true,
+    //         fieldName: 'file',
+    //         headers: {
+    //             authorization: 'Bearer ' + $cookies.get("accessToken")
+    //         }
+    //     }).on('file-removed', (file) => {
+    //         $scope.form.photo = null;
+    //     }).on('complete', (result) => {
+    //         $scope.form.photo = result.successful[0].response.body.url;
+    //         console.log($scope.form.photo);
+    //     })
+
     $scope.initialize = function () {
         $http.get("/api/user/findAll", {
             headers: {
@@ -47,20 +83,23 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     }
     $scope.initialize();
 
-    $scope.delete = function (item) {
+    $scope.delete = function (id) {
         if (confirm("Do you want to delete this account?")) {
-            $http.delete(`/api/user/delete/${item.id}`, {
-                headers: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
-                }
-            }).then(resp => {
-                var index = $scope.items.findIndex(p => p.id === item.id);
-                $scope.items.splice(index, 1);
-                alert("The account was deleted successfully!");
-            }).catch(error => {
+            if (id) {
+                $http.delete(`/api/user/delete/${id}`, {
+                    headers: {
+                        "Authorization": "Bearer " + $cookies.get("accessToken")
+                    }
+                }).then(resp => {
+                    alert("Deleted successfully!");
+                    $scope.initialize();
+                }).catch(error => {
+                    alert("Error deleting account!");
+                    console.log("Error", error);
+                });
+            } else {
                 alert("Error deleting account!");
-                console.log("Error", error);
-            })
+            }
         }
     }
 
@@ -97,17 +136,37 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     }
 
     $scope.create = function () {
-        $http.post("/api/user/create", {
+        $http.post("/api/user/save", $scope.form,{
+            headers: {
+                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Content-Type": "application/json"
+            },
+        }).then(
+            resp => {
+                alert("Saved successfully!")
+                $scope.initialize();
+                $scope.reset();
+            },
+            error => {
+                console.log(error)
+            }
+        )
+    }
+
+
+    $scope.edit = function (id) {
+        $http.get(`/api/user/findById/${id}`,
+            {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
             },
-            data: $scope.form
         }).then(
             resp => {
-                alert("")
-                $scope.initialize();
+                $scope.form = resp.data;
+                $scope.action = 'edit';
+                console.log($scope.form)
             },
-            error =>{
+            error => {
                 console.log(error)
             }
         )

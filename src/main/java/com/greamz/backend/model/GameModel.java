@@ -17,8 +17,7 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GameModel extends TimeStampEntity{
 
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @JsonProperty("appid")
     private Long appid;
