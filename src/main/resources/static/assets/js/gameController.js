@@ -22,144 +22,29 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             movies: [],
             gameCategory: [],
         }
-        $scope.uppyHeaderImage =
-            Uppy.Core({
-                autoProceed: false,
-                restrictions: {
-                    minNumberOfFiles: 1,
-                    maxNumberOfFiles: 1,
-                    maxFileSize: 100000000,
-                    allowedFileTypes: ['image/*']
+    $scope.uppyImages= cloudinary.createMediaLibrary(
+            {
+                cloud_name: "dtreuuola",
+                api_key: "118212349948963",
+                use_saml: false,
+                remove_header: false,
+                insert_caption: "Insert",
+                inline_container: "#widget_images",
+                default_transformations: [[]],
+                button_class: "myBtn",
+                button_caption: "Select Image or Video"
+            },
+            {
+                insertHandler: function (data) {
+                    data.assets.forEach((asset) => {
+
+                        $scope.form.images.push(asset.url);
+                    });
                 }
-            }).use(Uppy.Dashboard,
-                {
-                    showLinkToFileUploadResult: false,
-                    inline: true,
-                    target: angular.element(document.querySelector('#headerImage'))[0],
-                    proudlyDisplayPoweredByUppy: false,
-                    showProgressDetails: true,
-                    showRemoveButtonAfterComplete: true,
-                    height: 200,
-                    plugins: ['Webcam'],
-                    maxNumberOfFiles: 1
-                }).use(Uppy.XHRUpload, {
-                endpoint: 'http://localhost:8080/api/v1/file/image',
-                formData: true,
-                fieldName: 'file',
-                headers: {
-                    authorization: 'Bearer ' + $cookies.get("accessToken")
-                }
-            }).on('file-removed', (file) => {
-                $scope.form.header_image = null;
-            }).on('complete', (result) => {
-                $scope.form.header_image = result.successful[0].response.body.url;
-                console.log($scope.form.header_image);
-            })
-        $scope.uppyCapsuleImage =
-            Uppy.Core({
-                autoProceed: false,
-                restrictions: {
-                    minNumberOfFiles: 1,
-                    maxNumberOfFiles: 1,
-                    maxFileSize: 100000000,
-                    allowedFileTypes: ['image/*']
-                }
-            }).use(Uppy.Dashboard,
-                {
-                    showLinkToFileUploadResult: false,
-                    inline: true,
-                    target: angular.element(document.querySelector('#capsule'))[0],
-                    proudlyDisplayPoweredByUppy: false,
-                    showProgressDetails: true,
-                    showRemoveButtonAfterComplete: true,
-                    height: 200,
-                    plugins: ['Webcam'],
-                    maxNumberOfFiles: 1
-                }).use(Uppy.XHRUpload, {
-                endpoint: 'http://localhost:8080/api/v1/file/image',
-                formData: true,
-                fieldName: 'file',
-                headers: {
-                    authorization: 'Bearer ' + $cookies.get("accessToken")
-                }
-            }).on('file-removed', (file) => {
-                $scope.form.capsule_image = null;
-            }).on('complete', (result) => {
-                $scope.form.capsule_image = result.successful[0].response.body.url;
-            })
-        $scope.uppyImages = Uppy.Core({
-            autoProceed: false,
-            restrictions: {
-                maxFileSize: 100000000,
-                allowedFileTypes: ['image/*']
-            }
-        }).use(Uppy.Dashboard, {
-            showLinkToFileUploadResult: false,
-            target: angular.element(document.querySelector('#images'))[0],
-            inline: true,
-            height: 200,
-            showProgressDetails: true,
-            showRemoveButtonAfterComplete: true,
-            plugins: ['Webcam'],
-            proudlyDisplayPoweredByUppy: false
-        }).use(Uppy.XHRUpload, {
-            endpoint: 'http://localhost:8080/api/v1/file/image',
-            formData: true,
-            fieldName: 'file',
-            headers: {
-                authorization: 'Bearer ' + $cookies.get("accessToken")
-            }
-        }).on('complete', (result) => {
-            const fileURLs = result.successful.map((file) => file.response.body.url);
-            if (!$scope.form.images) {
-                $scope.form.images = [];
-            }
-            fileURLs.forEach((url) => {
-                $scope.form.images.push(url);
-            });
-        }).on('file-removed', (file) => {
-            const removedIndex = $scope.form.images.findIndex(image => image === file.name);
-            if (removedIndex !== -1) {
-                $scope.form.images.splice(removedIndex, 1);
-            }
-        })
-        $scope.uppyMovies = Uppy.Core({
-            autoProceed: false,
-            restrictions: {
-                maxFileSize: 100000000,
-                allowedFileTypes: ['video/**']
-            }
-        }).use(Uppy.Dashboard, {
-            showLinkToFileUploadResult: false,
-            target: angular.element(document.querySelector('#movies'))[0],
-            inline: true,
-            height: 200,
-            showProgressDetails: true,
-            showRemoveButtonAfterComplete: true,
-            plugins: ['Webcam'],
-            proudlyDisplayPoweredByUppy: false
-        }).use(Uppy.XHRUpload, {
-            endpoint: 'http://localhost:8080/api/v1/file/video',
-            formData: true,
-            fieldName: 'file',
-            headers: {
-                authorization: 'Bearer ' + $cookies.get("accessToken")
-            }
-        }).on('file-removed', (file) => {
-            const removedIndex = scope.findIndex(image => image === file.name);
-            if (removedIndex !== -1) {
-                $scope.form.movies.splice(removedIndex, 1);
-            }
-        }).on('complete', (result) => {
-            const fileURLs = result.successful.map((file) => file.response.body.url);
-            if (!$scope.form.movies) {
-                $scope.form.movies = [];
-            }
-            fileURLs.forEach((url) => {
-                $scope.form.movies.push(url);
-            });
-            console.log($scope.form.movies);
-        })
+            },
+            document.getElementById("images")
+        );
+
         $scope.loadCategory = async function () {
             await $http.get("/api/v1/category/type/" + $scope.form.type,
                 {
@@ -210,14 +95,14 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         }
                     });
                     $scope.select.on('select2:select', function (e) {
-                        $scope.form.gameCategory.push(e.params.data) ;
+                        $scope.form.gameCategory.push(e.params.data);
                         console.log($scope.form.gameCategory)
 
                     });
                     $scope.select.on('select2:unselect', function (e) {
-                        const id=e.params.data.id;
+                        const id = e.params.data.id;
                         const removedIndex = $scope.form.gameCategory.findIndex(data => data.id === id);
-                        $scope.form.gameCategory.slice(removedIndex,1)
+                        $scope.form.gameCategory.slice(removedIndex, 1)
 
                     });
                 });
@@ -289,15 +174,16 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             $scope.initialize();
         }
         $scope.create = function () {
-            $http.post("/api/v1/game/create",
+            $http.post("/api/v1/game/create", $scope.form,
                 {
                     headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    },
-                    data: $scope.form
+                        "Authorization": "Bearer " + $cookies.get("accessToken"),
+                        "Content-Type": "application/json"
+                    }
                 }).then(resp => {
-
-
+                $scope.initialize();
+                // $scope.resetUppyState();
+                alert('Thêm mới sản phẩm thành công!')
             })
                 .catch(error => {
                     console.log("Error", error);
