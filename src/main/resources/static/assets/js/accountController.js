@@ -109,21 +109,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         )
     }
     $scope.edit = function (id) {
-        // $http.get(`/api/user/findById/${id}`,
-        //     {
-        //     headers: {
-        //         "Authorization": "Bearer " + $cookies.get("accessToken")
-        //     },
-        // }).then(
-        //     resp => {
-        //         $scope.form = resp.data;
-        //         $scope.action = 'edit';
-        //         console.log($scope.form)
-        //     },
-        //     error => {
-        //         console.log(error)
-        //     }
-        // )
+
         $scope.form = $scope.accounts.find( value => value.id === id)
     }
     $scope.setAuthority= function (account,value,authority){
