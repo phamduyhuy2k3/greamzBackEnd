@@ -21,5 +21,9 @@ public class AuthorityController {
     public void saveAuthority(@RequestBody AuthorityRequest authorityRequest){
         authorityService.saveAuthority(authorityRequest.userId(),authorityRequest.role());
     }
+    @GetMapping("/findAll")
+    public void findAll(){
+        authorityService.findAll();
+    }
 
 }

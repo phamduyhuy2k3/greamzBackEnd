@@ -22,7 +22,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             movies: [],
             gameCategory: [],
         }
-    $scope.uppyImages= cloudinary.createMediaLibrary(
+        $scope.uppyImages = cloudinary.createMediaLibrary(
             {
                 cloud_name: "dtreuuola",
                 api_key: "118212349948963",
@@ -51,61 +51,63 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                     headers: {
                         "Authorization": "Bearer " + $cookies.get("accessToken")
                     }
-                }).then(resp => {
+                }).then(
+                resp => {
                     $scope.categories = resp.data;
 
                 },
                 error => {
                     console.log("Error", error);
                 })
-                .then(r1 => {
-                    if ($scope.select != null) {
-                        $scope.select.empty();
-                        $scope.select.select2({
+                .then(
+                    r1 => {
+                        if ($scope.select != null) {
+                            $scope.select.empty();
+                            $scope.select.select2({
+                                // Use the modified 'data' object
+                                data: $scope.categories,
+                                placeholder: "Select Categories",
+                                templateResult: function (data) {
+                                    if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
+                                    let $result = $('<span>' + data.name + '</span>');
+                                    return $result;
+                                },
+                                templateSelection: function (data) {
+                                    if (!data.id) return data.name; // Option is not an object (e.g., the "Select a country" option)
+                                    let $selection = $('<span>' + data.name + '</span>');
+                                    return $selection;
+                                }
+                            })
+                            return;
+                        }
+
+                        $scope.select = $('#categoriesSelect').select2({
                             // Use the modified 'data' object
                             data: $scope.categories,
                             placeholder: "Select Categories",
                             templateResult: function (data) {
                                 if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                                let $result = $('<span>' + data.name + '</span>');
+                                let $result = $('<span>' + data.text + '</span>');
                                 return $result;
                             },
                             templateSelection: function (data) {
-                                if (!data.id) return data.name; // Option is not an object (e.g., the "Select a country" option)
-                                let $selection = $('<span>' + data.name + '</span>');
+                                if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
+                                let $selection = $('<span>' + data.text + '</span>');
                                 return $selection;
                             }
-                        })
-                        return;
-                    }
+                        });
+                        $scope.select.on('select2:select', function (e) {
+                            $scope.form.gameCategory.push(e.params.data);
+                            console.log($scope.form.gameCategory)
 
-                    $scope.select = $('#categoriesSelect').select2({
-                        // Use the modified 'data' object
-                        data: $scope.categories,
-                        placeholder: "Select Categories",
-                        templateResult: function (data) {
-                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                            let $result = $('<span>' + data.text + '</span>');
-                            return $result;
-                        },
-                        templateSelection: function (data) {
-                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                            let $selection = $('<span>' + data.text + '</span>');
-                            return $selection;
-                        }
-                    });
-                    $scope.select.on('select2:select', function (e) {
-                        $scope.form.gameCategory.push(e.params.data);
-                        console.log($scope.form.gameCategory)
+                        });
+                        $scope.select.on('select2:unselect', function (e) {
+                            const id = e.params.data.id;
+                            const removedIndex = $scope.form.gameCategory.findIndex(data => data.id === id);
+                            $scope.form.gameCategory.slice(removedIndex, 1)
 
+                        });
                     });
-                    $scope.select.on('select2:unselect', function (e) {
-                        const id = e.params.data.id;
-                        const removedIndex = $scope.form.gameCategory.findIndex(data => data.id === id);
-                        $scope.form.gameCategory.slice(removedIndex, 1)
-
-                    });
-                });
         }
         $scope.initialize = function () {
             $http.get("/api/v1/category/types", {
