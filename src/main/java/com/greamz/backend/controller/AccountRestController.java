@@ -1,6 +1,5 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.service.AccountModelService;
@@ -23,7 +22,7 @@ public class AccountRestController {
         List<AccountModel> accountModels = service.findAll();
         return ResponseEntity.ok(accountModels);
     }
-    @GetMapping("/authorities")
+    @GetMapping("/roles")
     public ResponseEntity<?> authorities(){
         return ResponseEntity.ok(Arrays.stream(Role.values()).map(Role::name).toList());
     }

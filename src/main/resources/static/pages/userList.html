@@ -8,7 +8,7 @@
             </div>
             <div class="card-body px-0 pb-2">
                 <div class="table-responsive p-0">
-                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
+                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button" ng-click="action = 'create'"
                             style="margin-left: 20px"
                             data-bs-toggle="modal"
                             data-bs-target="#userModal">
@@ -47,10 +47,10 @@
                             </td>
                             <td>
 
-                                <div class="form-check form-check-inline px-0 mx-1" ng-repeat="authority in authorities">
-                                    <input class="form-check-input" type="checkbox" ng-init="authorityCheck[$index] = checkAuthority(account,authority)" ng-checked="authorityCheck[$index]" ng-model="authorityCheck[$index]" ng-change="setAuthority(account,authorityCheck[$index],authority)">
+                                <div class="form-check form-check-inline px-0 mx-1" ng-repeat="role in roles">
+                                    <input class="form-check-input" type="checkbox" ng-init="authorityCheck[$index] = checkAuthority(account,role)" ng-checked="authorityCheck[$index]" ng-model="authorityCheck[$index]" ng-change="setAuthority(account,authorityCheck[$index],role)">
                                     <label class="form-check-label" >
-                                        {{authority}}
+                                        {{role}}
                                     </label>
                                 </div>
 
@@ -120,16 +120,31 @@
                             <input type="email" class="form-control" ng-model="form.email">
                         </div>
                     </div>
-                    <div class="">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                            <label class="form-check-label" for="inlineCheckbox1">1</label>
-                        </div>
 
+                    <div class="input-group input-group-static" ng-if="action==='update'">
+                        <label>Authorities</label>
+                        <div class="form-check form-check-inline px-0 mx-1" ng-repeat="role in roles">
+                            <input class="form-check-input" type="checkbox"   ng-checked="checkAuthority(form,role)" ng-model="authorityFormCheck[$index]"   ng-click="authority_changed(form, role)" >
+                            <label class="form-check-label" >
+                                {{authority}}
+                            </label>
+                        </div>
                     </div>
+                    <div class="input-group input-group-static" ng-if="action==='create'">
+                        <label>Authorities</label>
+                        <div class="form-check form-check-inline px-0 mx-1" ng-repeat="role in roles">
+                            <input class="form-check-input" type="checkbox" value="{{role}}"
+                                   ng-checked="form.authorities.indexOf(role) > -1"
+                                   ng-click="toggleSelection(role)" >
+                            <label class="form-check-label" >
+                                {{authority}}
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="col-md-12">
                         <label class="form-label">Image</label>
-                        <div class="input-group input-group-outline mb-4">
+                        <div class="input-group input-group-outline mb-4" multiple>
                             <input type="file" class="form-control" ng-model="form.photo">
                         </div>
                     </div>

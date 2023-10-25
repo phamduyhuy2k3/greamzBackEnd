@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class AuthorityService {
@@ -25,5 +27,8 @@ public class AuthorityService {
     }
     public Authority findByAccount_IdAndRole(Integer userId, String role){
         return authorityRepo.findByAccount_IdAndRole(userId, role);
+    }
+    public List<Authority> findAll(){
+        return authorityRepo.findAll();
     }
 }
