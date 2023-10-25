@@ -6,7 +6,10 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         id: null,
         name: '',
         description: '',
-        dateExpired: ''
+        dateExpired: '',
+        discount: '',
+        orderCondition: '',
+        maxPrice: ''
     }
 
     $scope.create = function () {
