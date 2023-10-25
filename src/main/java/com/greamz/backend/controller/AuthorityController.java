@@ -3,6 +3,7 @@ package com.greamz.backend.controller;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.service.AuthorityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,8 +23,8 @@ public class AuthorityController {
         authorityService.saveAuthority(authorityRequest.userId(),authorityRequest.role());
     }
     @GetMapping("/findAll")
-    public void findAll(){
-        authorityService.findAll();
+    public ResponseEntity<?> findAll(){
+        return ResponseEntity.ok(authorityService.findAll());
     }
 
 }
