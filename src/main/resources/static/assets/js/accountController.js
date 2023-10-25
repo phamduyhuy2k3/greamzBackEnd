@@ -2,7 +2,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.accounts = [];
     $scope.roles = [];
     $scope.action = 'create'
-    $scope.action = 'update'
+
     $scope.form = {
         id: '',
         username: '',
