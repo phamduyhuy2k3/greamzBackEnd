@@ -10,13 +10,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
+@AllArgsConstructor
+@Slf4j
 public class GameCategoryService {
-    @Autowired
-    private IGameCategory gameCategoryRepository;
+    private final IGameCategory repo;
     @Transactional
     public List<GameCategory> findAll() {
-        return gameCategoryRepository.findAll();
+        return repo.findAll();
+    }
+
+    @Transactional
+    public GameCategory findById(Long id) throws NoSuchElementException {
+        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+    }
+
+    @Transactional
+    public GameCategory saveGameCategory(GameCategory gameCategory) {
+        return repo.save(gameCategory);
+    }
+
+    @Transactional
+    public void deleteGameCategoryById(Long id) {
+        GameCategory gameCategory = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        repo.deleteById(id);
     }
 }

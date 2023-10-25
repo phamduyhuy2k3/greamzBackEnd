@@ -1,0 +1,118 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0  mt-n4 mx-3 ">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">Category List</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive p-0">
+                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
+                            style="margin-left: 20px"
+                            data-bs-toggle="modal"
+                            data-bs-target="#categoryModal">
+                        <span class="btn-inner--icon"><i
+                                class="material-icons material-symbols-outlined">library_add</i></span>
+                        <span class="btn-inner--text">Create</span>
+                    </button>
+                    <table class="table align-items-center mb-0">
+                        <thead>
+                        <tr>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                Information
+                            </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                Type
+                            </th>
+                            <th class="text-secondary opacity-7"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="category in categories">
+                            <td>
+                                <div class="d-flex px-2 py-1">
+                                    <div>
+                                        <img ng-src="{{category.image ? '../assets/img/' + category.image : '../assets/img/user-image.png'}}"
+                                             class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-center">
+                                        <h6 class="mb-0 text-sm">{{category.name}}</h6>
+                                        <p class="text-xs text-secondary mb-0">{{category.description}}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="text-xs text-secondary mb-0">{{category.categoryTypes}}</p>
+                            </td>
+                            <td class="align-middle">
+                                <a class="text-secondary font-weight-bold text-xs"
+                                   data-toggle="tooltip"
+                                   data-original-title="Edit category"
+                                   data-bs-target="#categoryModal"
+                                   data-bs-toggle="modal"
+                                   href="#" ng-click="edit(category.id)">
+                                    Edit
+                                </a>|
+                                <a class="text-secondary font-weight-bold text-xs"
+                                   href="javascript:;"
+                                   ng-click="delete(category.id)">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade " id="categoryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-3">
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" ng-model="form.name">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea  class="form-control" ng-model="form.description"></textarea>
+                        </div>
+                    </div>
+                    <select class="form-select" aria-label="Category Types" ng-model="selectedCategoryType" ng-options="categoryType for categoryType in categoryTypes">
+                        <option value="" selected>Choose a category type</option>
+                    </select>
+                    <div class="col-md-12">
+                        <label class="form-label">Image</label>
+                        <div class="input-group input-group-outline mb-4">
+                            <input type="file" class="form-control" ng-model="form.image">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close
+                </button>
+                <button type="button" class="btn btn-primary" ng-click="create()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+</script>

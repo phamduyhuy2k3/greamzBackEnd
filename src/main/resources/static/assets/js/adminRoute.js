@@ -10,6 +10,11 @@ app.config(function ($routeProvider) {
             templateUrl: "/pages/gameList.html",
             controller: "gameController"
         })
+        //category management
+        .when("/category", {
+            templateUrl: "/pages/categoryList.html",
+            controller: "categoryController"
+        })
         //order management
         .when("/order", {
             templateUrl: "/pages/orderList.html",
