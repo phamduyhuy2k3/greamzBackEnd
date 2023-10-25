@@ -125,7 +125,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         )
     }
     $scope.edit = function (id) {
-
         $scope.form = $scope.accounts.find(value => value.id === id)
         $scope.form.password = '';
         $scope.action = 'update';
