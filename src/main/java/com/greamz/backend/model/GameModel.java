@@ -23,15 +23,12 @@ public class GameModel extends TimeStampEntity{
     private Long appid;
     @JsonProperty("name")
     private String name;
-
     @Column(length = 100000)
     private String detailed_description;
     @Column(length = 100000)
     private String about_the_game;
     @Column(length = 100000)
     private String short_description;
-    @Column(length = 100000)
-    private String supported_languages;
     @Column(length = 1000)
     private String header_image;
     @Column(length = 1000)
@@ -46,5 +43,6 @@ public class GameModel extends TimeStampEntity{
     private List<Screenshot> screenshots;
     @ManyToMany(cascade = {CascadeType.PERSIST})
     private List<GameCategory> gameCategory;
-
+    @ManyToMany(cascade = {CascadeType.PERSIST})
+    private List<Countries> supported_languages;
 }
