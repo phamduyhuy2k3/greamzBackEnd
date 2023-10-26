@@ -3,13 +3,13 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
     $scope.categoryTypes = [];
     $scope.selectedCategoryType = '';
     $scope.action = 'create';
-    $scope.action = 'edit';
+
     $scope.form = {
         id: '',
         name: '',
         description: '',
         image: '',
-        type: '',
+        categoryTypes: '',
     }
     $scope.initialize = function () {
         $http.get("/api/category/findAll", {
@@ -69,7 +69,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             name: '',
             description: '',
             image: '',
-            type: '',
+            categoryTypes: '',
         };
         $scope.action = 'create';
         $scope.initialize();
@@ -77,7 +77,6 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
 
     $scope.create = function () {
         // Gán giá trị type từ selectedCategoryType vào form
-        $scope.form.type = $scope.selectedCategoryType;
         $http.post("/api/category/save", $scope.form, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),

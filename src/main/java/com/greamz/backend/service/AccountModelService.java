@@ -38,7 +38,17 @@ public class AccountModelService {
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         return repo.save(account);
     }
+    @Transactional
+    public AccountModel updateAccount(AccountModel account){
+        AccountModel accountModel = repo.findById(account.getId()).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + account.getId()));
+        if(account.getPassword() == null || account.getPassword().isEmpty()){
+            account.setPassword(accountModel.getPassword());
+        }else {
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+        }
 
+        return repo.save(account);
+    }
     @Transactional
     public void deleteAccountById(Integer id) {
         AccountModel accountModel = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + id));
