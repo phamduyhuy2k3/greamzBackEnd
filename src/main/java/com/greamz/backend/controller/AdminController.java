@@ -5,6 +5,7 @@ import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.security.auth.AuthenticationRequest;
 import com.greamz.backend.security.auth.AuthenticationResponse;
 import com.greamz.backend.security.auth.AuthenticationService;
+import com.greamz.backend.security.auth.RegisterRequest;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 public class AdminController {
-
+    private final AuthenticationService authenticationService;
     @GetMapping({"/", "/index", "/home"})
     public String index() {
         return "redirect:/dashboard";
@@ -29,6 +30,7 @@ public class AdminController {
     }
     @GetMapping("/sign-in")
     public String login(){
+        RegisterRequest registerRequest = new RegisterRequest();
 
         return "sign-in";
     }
