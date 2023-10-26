@@ -39,19 +39,23 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 cloud_name: "dtreuuola",
                 api_key: "118212349948963",
                 use_saml: false,
-                remove_header: false,
+                remove_header: true,
                 insert_caption: "Insert",
                 inline_container: "#widget_images",
                 default_transformations: [[]],
                 button_class: "myBtn2 btn btn-primary",
                 button_caption: "Select Image or Video",
+                multiple: true,
+                max_files: 15
             },
             {
                 insertHandler: function (data) {
                     data.assets.forEach((asset) => {
-                        console.log("Images: " + asset.url)
-                        $scope.form.images.push(asset.url);
-                        console.log("Images: " + $scope.form.images);
+                        let url=asset.url
+                        $scope.form.images.findIndex(data => data === url)
+                        === -1 ?
+                            $scope.form.images.push(url) : console.log("duplicate");
+
 
                     });
                 }
@@ -64,18 +68,20 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 cloud_name: "dtreuuola",
                 api_key: "118212349948963",
                 use_saml: false,
-                remove_header: false,
+                remove_header: true,
                 insert_caption: "Insert",
                 inline_container: "#headerImageCloudinary",
                 default_transformations: [[]],
                 button_class: "myBtn2 btn btn-primary",
                 button_caption: "Select Image or Video",
+                multiple: false
+
             },
             {
                 insertHandler: function (data) {
                     data.assets.forEach((asset) => {
                         console.log("Header: " + asset.url)
-                        $scope.form.header_image.push(asset.url);
+                        $scope.form.header_image= asset.url;
                         console.log("Header: " + $scope.form.header_image);
 
                     });
@@ -89,18 +95,19 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 cloud_name: "dtreuuola",
                 api_key: "118212349948963",
                 use_saml: false,
-                remove_header: false,
+                remove_header: true,
                 insert_caption: "Insert",
                 inline_container: "#capsuleImageCloudinary",
                 default_transformations: [[]],
                 button_class: "myBtn2 btn btn-primary",
                 button_caption: "Select Image or Video",
+                multiple: false
             },
             {
                 insertHandler: function (data) {
                     data.assets.forEach((asset) => {
                         console.log("Capsule: " + asset.url)
-                        $scope.form.capsule_image.push(asset.url);
+                        $scope.form.capsule_image=asset.url;
                         console.log("Capsule: " + $scope.form.capsule_image);
 
                     });
@@ -183,8 +190,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 }
             );
 
-
-            $http.get("/api/v1/game/findALl")
 
             $http.get("/api/v1/category/types", {
                 headers: {
@@ -309,7 +314,11 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         //     $scope.test = $scope.quillAbout.getContents();
         //     console.log($scope.test)
         // });
+        $scope.deleteImg = function (scope,value) {
+            const index = scope.findIndex(data => data === value);
+            scope.splice(index, 1);
 
+        }
         $scope.delete = function (item) {
             if (confirm("Bạn muốn xóa sản phẩm này?")) {
                 $http.delete(`/api/game/delete/${item.appid}`, {

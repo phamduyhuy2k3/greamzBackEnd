@@ -168,27 +168,31 @@
                                 data-bs-toggle="modal">
                             <a id="header">Choose file</a>
                         </button>
-<!--                        <table class="table">-->
-<!--                            <tbody>-->
-<!--                            <tr ng-repeat="headerUrls in form.header_image">-->
-<!--                                <td><img style="width: 25%" src="{{ headerUrls }}"></td>-->
-<!--                            </tr>-->
-<!--                            </tbody>-->
-<!--                        </table>-->
+                        <!--                        <table class="table">-->
+                        <!--                            <tbody>-->
+                        <!--                            <tr ng-repeat="headerUrls in form.header_image">-->
+                        <!--                                <td><img style="width: 25%" src="{{ headerUrls }}"></td>-->
+                        <!--                            </tr>-->
+                        <!--                            </tbody>-->
+                        <!--                        </table>-->
                         <div class="card-group">
                             <div class="card" data-animation="true" ng-repeat="headerUrls in form.header_image">
                                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                                     <a class="d-block blur-shadow-image">
-                                        <img src="{{ headerUrls }}"  alt="img-blur-shadow" class="img-fluid shadow border-radius-lg">
+                                        <img src="{{ headerUrls }}" alt="img-blur-shadow"
+                                             class="img-fluid shadow border-radius-lg">
                                     </a>
-                                    <div class="colored-shadow" style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);"></div>
+                                    <div class="colored-shadow"
+                                         style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);"></div>
                                 </div>
                                 <div class="card-body text-center">
                                     <div class="d-flex mt-n6 mx-auto">
-                                        <a class="btn btn-link text-primary ms-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Refresh">
+                                        <a class="btn btn-link text-primary ms-auto border-0" data-bs-toggle="tooltip"
+                                           data-bs-placement="bottom" title="Refresh">
                                             <i class="material-icons text-lg">refresh</i>
                                         </a>
-                                        <button class="btn btn-link text-info me-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit">
+                                        <button class="btn btn-link text-info me-auto border-0" data-bs-toggle="tooltip"
+                                                data-bs-placement="bottom" title="Edit">
                                             <i class="material-icons text-lg">edit</i>
                                         </button>
                                     </div>
@@ -225,13 +229,15 @@
                                 data-bs-toggle="modal">
                             <a id="images">Choose file</a>
                         </button>
-                        <table class="table">
-                            <tbody>
-                            <tr ng-repeat="imageUrl in form.images">
-                                <td><img style="width: 25%" src="{{ imageUrl }}"></td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <div class="flex overflow-y-auto" style="max-height: 250px;" ng-if="form.images.length >0">
+                            <div class="row row-cols-3 p-4">
+                                <div class="col position-relative mb-3 card" ng-repeat="img in form.images track by $index" >
+                                    <img class="w-100" style="height: 180px; object-fit: fill"  src="{{img}}">
+                                    <button type="button" ng-click="deleteImg(form.images,img)" style="width: 15px; height: 15px;" class="btn-close position-absolute top-0 end-0 translate-middle-x rounded-circle bg-danger bg-danger text-white">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                     <div class="col-md-12">
