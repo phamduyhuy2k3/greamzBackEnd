@@ -1,14 +1,23 @@
 app.controller("gameController", function ($scope, $http, $document, $cookies) {
-
+        $scope.imageUrls = [];
+        $scope.headerImageUrls = [];
+        $scope.capsuleImageUrls = [];
+        $scope.currentImageType = '';
         $scope.games = [];
-        $scope.action = 'create'
+        $scope.action = 'create';
         $scope.categories = [];
         $scope.types = []
         $scope.countries = [];
         $scope.uppyHeaderImage;
         $scope.uppyCapsuleImage;
         $scope.uppyImages;
+        $scope.headerImage;
+        $scope.capsule_image;
+        $scope.quillDetailedDescription;
+        $scope.quillAbout;
+        $scope.quillShortDescription;
         $scope.uppyMovies;
+        $scope.test = '';
         $scope.form = {
             appid: '',
             name: '',
@@ -16,15 +25,16 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             about_the_game: '',
             short_description: '',
             supported_languages: [],
-            header_image: '',
+            header_image: [],
             website: '',
-            capsule_image: '',
+            capsule_image: [],
             images: [],
             movies: [],
             gameCategory: [],
         }
 
-        $scope.uppyImages = cloudinary.createMediaLibrary (
+
+        $scope.uppyImages = cloudinary.createMediaLibrary(
             {
                 cloud_name: "dtreuuola",
                 api_key: "118212349948963",
@@ -33,25 +43,147 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 insert_caption: "Insert",
                 inline_container: "#widget_images",
                 default_transformations: [[]],
-                button_class: "myBtn",
+                button_class: "myBtn2 btn btn-primary",
                 button_caption: "Select Image or Video",
             },
             {
                 insertHandler: function (data) {
                     data.assets.forEach((asset) => {
-
+                        console.log("Images: " + asset.url)
                         $scope.form.images.push(asset.url);
+                        console.log("Images: " + $scope.form.images);
+
                     });
                 }
             },
             document.getElementById("images")
         );
-        // window.ml = cloudinary.createMediaLibrary(config, {insertHandler: insertHandler}, "#images")
+        //headerImage
+        $scope.uppyHeaderImage = cloudinary.createMediaLibrary(
+            {
+                cloud_name: "dtreuuola",
+                api_key: "118212349948963",
+                use_saml: false,
+                remove_header: false,
+                insert_caption: "Insert",
+                inline_container: "#headerImageCloudinary",
+                default_transformations: [[]],
+                button_class: "myBtn2 btn btn-primary",
+                button_caption: "Select Image or Video",
+            },
+            {
+                insertHandler: function (data) {
+                    data.assets.forEach((asset) => {
+                        console.log("Header: " + asset.url)
+                        $scope.form.header_image.push(asset.url);
+                        console.log("Header: " + $scope.form.header_image);
+
+                    });
+                }
+            },
+            document.getElementById("header")
+        );
+        //capsuleImage
+        $scope.uppyCapsuleImage = cloudinary.createMediaLibrary(
+            {
+                cloud_name: "dtreuuola",
+                api_key: "118212349948963",
+                use_saml: false,
+                remove_header: false,
+                insert_caption: "Insert",
+                inline_container: "#capsuleImageCloudinary",
+                default_transformations: [[]],
+                button_class: "myBtn2 btn btn-primary",
+                button_caption: "Select Image or Video",
+            },
+            {
+                insertHandler: function (data) {
+                    data.assets.forEach((asset) => {
+                        console.log("Capsule: " + asset.url)
+                        $scope.form.capsule_image.push(asset.url);
+                        console.log("Capsule: " + $scope.form.capsule_image);
+
+                    });
+                }
+            },
+            document.getElementById("capsule")
+        );
+
+        //xử lý sự kiện khi nhấn nút "Thêm ảnh" từ modal cloudinary vào trong modal create
+        $(document).ready(function () {
+            // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
+            $("#btnCloseModal").click(function () {
+                // Thêm URL ảnh mới vào mảng imageUrls
+                $scope.imageUrls.push($scope.form.images); // Điền URL của ảnh mới ở đây
+                $scope.$apply(); // Cập nhật scope của AngularJS
+                $("#imageModal").modal("hide"); // Ẩn modal cloudinary
+                $("#exampleModal").modal("show"); // Hiện modal create
+            }),
+                //nút x modal
+                $("#btnCloseModal2").click(function () {
+                    // Thêm URL ảnh mới vào mảng imageUrls
+                    $scope.imageUrls.push($scope.form.images); // Điền URL của ảnh mới ở đây
+                    $scope.$apply(); // Cập nhật scope của AngularJS
+                    $("#imageModal").modal("hide"); // Ẩn modal cloudinary
+                    $("#exampleModal").modal("show"); // Hiện modal create
+                })
+        });
+
+        //headerImage
+        $(document).ready(function () {
+            // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
+            $("#btnCloseModalHeader").click(function () {
+                // Thêm URL ảnh mới vào mảng imageUrls
+                $scope.imageUrls.push($scope.form.header_image); // Điền URL của ảnh mới ở đây
+                $scope.$apply(); // Cập nhật scope của AngularJS
+                $("#headerModal").modal("hide"); // Ẩn modal cloudinary
+                $("#exampleModal").modal("show"); // Hiện modal create
+            }),
+                //nút x modal
+                $("#btnModalHeader").click(function () {
+                    // Thêm URL ảnh mới vào mảng imageUrls
+                    $scope.imageUrls.push($scope.form.header_image); // Điền URL của ảnh mới ở đây
+                    $scope.$apply(); // Cập nhật scope của AngularJS
+                    $("#headerModal").modal("hide"); // Ẩn modal cloudinary
+                    $("#exampleModal").modal("show"); // Hiện modal create
+                })
+        });
+        //capsuleImage
+        $(document).ready(function () {
+            // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
+            $("#btnCloseModalCapsule").click(function () {
+                // Thêm URL ảnh mới vào mảng imageUrls
+                $scope.imageUrls.push($scope.form.capsule_image); // Điền URL của ảnh mới ở đây
+                $scope.$apply(); // Cập nhật scope của AngularJS
+                $("#capsuleModal").modal("hide"); // Ẩn modal cloudinary
+                $("#exampleModal").modal("show"); // Hiện modal create
+            }),
+                //nút X modal 2
+                $("#btnModalCapsule").click(function () {
+                    // Thêm URL ảnh mới vào mảng imageUrls
+                    $scope.imageUrls.push($scope.form.capsule_image); // Điền URL của ảnh mới ở đây
+                    $scope.$apply(); // Cập nhật scope của AngularJS
+                    $("#capsuleModal").modal("hide"); // Ẩn modal cloudinary
+                    $("#exampleModal").modal("show"); // Hiện modal create
+                })
+        });
 
         $scope.initialize = function () {
-            document.getElementById("images").addEventListener("click", function () {
-                $scope.uppyImages.open();
-            }, false);
+            <!-- Initialize Quill editor -->
+            $scope.quillDetailedDescription = new Quill('#detail_description', {
+                    theme: 'snow'
+                }
+            );
+            $scope.quillAbout = new Quill('#about', {
+                    theme: 'snow'
+                }
+            );
+            $scope.quillShortDescription = new Quill('#short_description', {
+                    theme: 'snow'
+                }
+            );
+
+
             $http.get("/api/v1/game/findALl")
 
             $http.get("/api/v1/category/types", {
@@ -173,7 +305,10 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
 
         }
         $scope.initialize();
-
+        // $('#textQuill').click(function () {
+        //     $scope.test = $scope.quillAbout.getContents();
+        //     console.log($scope.test)
+        // });
 
         $scope.delete = function (item) {
             if (confirm("Bạn muốn xóa sản phẩm này?")) {
@@ -202,9 +337,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 about_the_game: '',
                 short_description: '',
                 supported_languages: '',
-                header_image: '',
+                header_image: [],
                 website: '',
-                capsule_image: '',
+                capsule_image: [],
                 images: [],
                 movies: [],
                 screenshots: [],
