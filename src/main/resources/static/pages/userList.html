@@ -1,14 +1,21 @@
-
 <div class="row">
     <div class="col-12">
         <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="card-header p-0  mt-n4 mx-3 ">
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">User List</h6>
                 </div>
             </div>
             <div class="card-body px-0 pb-2">
                 <div class="table-responsive p-0">
+                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button" ng-click="action = 'create'"
+                            style="margin-left: 20px"
+                            data-bs-toggle="modal"
+                            data-bs-target="#userModal">
+                        <span class="btn-inner--icon"><i
+                                class="material-icons material-symbols-outlined">library_add</i></span>
+                        <span class="btn-inner--text">Create</span>
+                    </button>
                     <table class="table align-items-center mb-0">
                         <thead>
                         <tr>
@@ -29,17 +36,25 @@
                             <td>
                                 <div class="d-flex px-2 py-1">
                                     <div>
-                                        <img src="../assets/img/{{account.photo}}"
+                                        <img ng-src="{{account.photo ? '../assets/img/' + account.photo : '../assets/img/user-image.png'}}"
                                              class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
                                         <h6 class="mb-0 text-sm">{{account.fullname}}</h6>
                                         <p class="text-xs text-secondary mb-0">{{account.email}}</p>
                                     </div>
+
                                 </div>
                             </td>
                             <td>
-                                <input type="checkbox"  ng-value="authority" ng-checked="account.authorities.indexOf(authority) > -1" class="text-xs font-weight-bold mb-0" ng-repeat="authority in authorities" >
+
+                                <div class="form-check form-check-inline px-0 mx-1" ng-repeat="role in roles">
+                                    <input class="form-check-input" type="checkbox" ng-init="authorityCheck[$index] = checkAuthority(account,role)" ng-checked="authorityCheck[$index]" ng-model="authorityCheck[$index]" ng-change="setAuthority(account,authorityCheck[$index],role)">
+                                    <label class="form-check-label" >
+                                        {{role}}
+                                    </label>
+                                </div>
+
                                 <p class="text-xs text-secondary mb-0">{{account.username}}</p>
                             </td>
                             <td class="align-middle text-center text-sm">
@@ -51,12 +66,12 @@
                                    data-original-title="Edit user"
                                    data-bs-target="#userModal"
                                    data-bs-toggle="modal"
-                                href="#">
+                                   href="#" ng-click="edit(account.id)">
                                     Edit
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
                                    href="javascript:;"
-                                   ng-click="delete(account)">
+                                   ng-click="delete(account.id)">
                                     Delete
                                 </a>
                             </td>
@@ -71,7 +86,7 @@
 
 
 <!-- Modal -->
-<div class="modal fade modal-crud" id="userModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div class="modal fade " id="userModal" tabindex="-1" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
@@ -81,34 +96,56 @@
             </div>
             <div class="modal-body">
                 <form class="row g-3">
-                    <div class="col-md-8">
-                        <div class="input-group input-group-outline">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
                             <label class="form-label">Username</label>
-                            <input type="text" class="form-control" ng-model="form.usernamme">
+                            <input type="text" class="form-control" ng-model="form.username">
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="input-group input-group-outline mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static mb-4">
                             <label class="form-label">Password</label>
-                            <input type="password" class="form-control" ng-model="form.password">
+                            <input type="password" class="form-control" ng-model="form.password" autocomplete="current-password">
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="input-group input-group-outline mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
                             <label class="form-label">Fullname</label>
                             <input type="text" class="form-control" ng-model="form.fullname">
                         </div>
                     </div>
 
-                    <div class="col-12">
-                        <div class="input-group input-group-outline mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static ">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-control" ng-model="form.email">
+                            <input type="text" class="form-control" ng-model="form.email">
                         </div>
                     </div>
+
+                    <div class="input-group input-group-static" ng-if="action==='update'">
+                        <label>Authorities</label>
+                        <div class="form-check form-check-inline px-0 mx-1" ng-repeat="role in roles">
+                            <input class="form-check-input" type="checkbox"   ng-checked="checkAuthority(form,role)" ng-model="authorityFormCheck[$index]"   ng-click="authority_changed(form, role)" >
+                            <label class="form-check-label" >
+                                {{authority}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-group input-group-static" ng-if="action==='create'">
+                        <label>Authorities</label>
+                        <div class="form-check form-check-inline px-0 mx-1" ng-repeat="role in roles">
+                            <input class="form-check-input" type="checkbox" value="{{role}}"
+                                   ng-checked="form.authorities.indexOf(role) > -1"
+                                   ng-click="toggleSelection(role)" >
+                            <label class="form-check-label" >
+                                {{authority}}
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="col-md-12">
                         <label class="form-label">Image</label>
-                        <div class="input-group input-group-outline mb-4">
+                        <div class="input-group input-group-outline mb-4" multiple>
                             <input type="file" class="form-control" ng-model="form.photo">
                         </div>
                     </div>
@@ -116,32 +153,13 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close
+                </button>
                 <button type="button" class="btn btn-primary" ng-click="create()">Save changes</button>
             </div>
         </div>
     </div>
 </div>
-
-
-
-
-
-<!--js-->
-<script src="../assets/js/core/popper.min.js"></script>
-<script src="../assets/js/core/bootstrap.min.js"></script>
-<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-        var options = {
-            damping: '0.5'
-        }
-        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
+
 </script>
-<!-- Github buttons -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-<script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>

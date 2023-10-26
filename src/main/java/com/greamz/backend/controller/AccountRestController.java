@@ -1,11 +1,12 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.enumeration.CategoryTypes;
+import com.greamz.backend.dto.SaveAccountDTO;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.service.AccountModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -23,7 +24,7 @@ public class AccountRestController {
         List<AccountModel> accountModels = service.findAll();
         return ResponseEntity.ok(accountModels);
     }
-    @GetMapping("/authorities")
+    @GetMapping("/roles")
     public ResponseEntity<?> authorities(){
         return ResponseEntity.ok(Arrays.stream(Role.values()).map(Role::name).toList());
     }
@@ -43,9 +44,9 @@ public class AccountRestController {
     }
 
     @PostMapping("/save")
-    public AccountModel save(@RequestBody AccountModel account) {
-        service.saveAccount(account);
-        return account;
+    public ResponseEntity<?> save(@RequestBody @Validated AccountModel account) {
+
+        return  ResponseEntity.ok(service.saveAccount(account));
     }
 
     @DeleteMapping("/delete/{id}")

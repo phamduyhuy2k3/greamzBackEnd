@@ -35,7 +35,6 @@ public class VoucherRestController {
     @PostMapping("/create")
     @WithStatusAndTimestamp
     public ResponseEntity<?> create(@RequestBody Voucher voucher){
-
         return ResponseEntity.ok().body(service.saveVoucherModel(voucher));
     }
 
