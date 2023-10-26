@@ -17,6 +17,13 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         discusios: [],
         authorities: [],
     }
+    $scope.errors={
+        fullname: null,
+        username: null,
+        password: null,
+        email: null,
+
+    }
     $scope.initialize = function () {
         $http.get("/api/user/findAll", {
             headers: {
@@ -105,12 +112,12 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.create = function () {
         $scope.form.authorities = $scope.form.authorities.map(value => {
             return {
-                role: value,
-                authority: value
+                role: value.role,
+                authority: value.authority
             }
         })
         console.log($scope.form.authorities)
-        $http.post("/api/user/save", $scope.form, {
+        $http.post("/api/user/save", JSON.stringify($scope.form), {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),
                 "Content-Type": "application/json"
@@ -120,7 +127,15 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                 $scope.reset();
             },
             error => {
-                console.log(error)
+                console.log("Error", error);
+                for (var key in error.data) {
+                    if (error.data.hasOwnProperty(key)) {
+                        $scope.errors[key] = {
+                            message: error.data[key].split(', ')
+                        };
+                    }
+                }
+                console.log("Error", $scope.errors);
             }
         )
     }
