@@ -36,7 +36,7 @@ public class AccountModelService {
     @Transactional
     public AccountModel saveAccount(AccountModel account){
         account.setPassword(passwordEncoder.encode(account.getPassword()));
-        return repo.save(account);
+        return repo.saveAndFlush(account);
     }
     @Transactional
     public AccountModel updateAccount(AccountModel account){
@@ -47,7 +47,7 @@ public class AccountModelService {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
         }
 
-        return repo.save(account);
+        return repo.saveAndFlush(account);
     }
     @Transactional
     public void deleteAccountById(Integer id) {

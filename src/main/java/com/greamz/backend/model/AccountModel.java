@@ -1,10 +1,9 @@
 package com.greamz.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,7 +36,7 @@ public class AccountModel extends TimeStampEntity implements UserDetails {
     private List<Review> reviews;
     @OneToMany(mappedBy = "account")
     private List<Disscusion> disscusions;
-
+    @JsonManagedReference
     @OneToMany(mappedBy = "account",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
     private List<Authority> authorities;
     @Override

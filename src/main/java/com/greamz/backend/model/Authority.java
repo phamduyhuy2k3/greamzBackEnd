@@ -1,7 +1,6 @@
 package com.greamz.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.greamz.backend.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,8 +23,8 @@ public class Authority implements Serializable, GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne(optional = false,targetEntity = AccountModel.class)
-@JsonIgnore
+    @ManyToOne()
+    @JsonBackReference
     private AccountModel account;
     @Enumerated(EnumType.STRING)
     private Role role;
