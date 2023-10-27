@@ -22,9 +22,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         $scope.form = {
             appid: '',
             name: '',
-            detailed_description: [],
-            about_the_game: [],
-            short_description: [],
+            detailed_description: '',
+            about_the_game: '',
+            short_description: '',
             supported_languages: [],
             header_image: '',
             website: '',
@@ -221,17 +221,45 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                     $("#exampleModal").modal("show"); // Hiện modal create
                 })
         });
+        let toolbarOptions = [
+            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            ['blockquote', 'code-block'],
+
+            [{'header': 1}, {'header': 2}],               // custom button values
+            [{'list': 'ordered'}, {'list': 'bullet'}],
+            [{'script': 'sub'}, {'script': 'super'}],      // superscript/subscript
+            [{'indent': '-1'}, {'indent': '+1'}],          // outdent/indent
+            [{'direction': 'rtl'}],                         // text direction
+
+            [{'size': ['small', false, 'large', 'huge']}],  // custom dropdown
+            [{'header': [1, 2, 3, 4, 5, 6, false]}],
+
+            [{'color': []}, {'background': []}],          // dropdown with defaults from theme
+            [{'font': []}],
+            [{'align': []}],
+
+            ['clean']                                         // remove formatting button
+        ];
 
         <!-- Initialize Quill editor -->
         $scope.quillDetailedDescription = new Quill('#detail_description', {
+            modules: {
+                toolbar: toolbarOptions
+            },
                 theme: 'snow'
             }
         );
         $scope.quillAbout = new Quill('#about', {
+            modules: {
+                toolbar: toolbarOptions
+            },
                 theme: 'snow'
             }
         );
         $scope.quillShortDescription = new Quill('#short_description', {
+            modules: {
+                toolbar: toolbarOptions
+            },
                 theme: 'snow'
             }
         );
@@ -415,13 +443,14 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             $scope.initialize();
         }
         $scope.create = function () {
-            $scope.form.about_the_game = $scope.quillAbout.getText();
+            $scope.form.about_the_game = JSON.stringify($scope.quillAbout.getContents());
             console.log($scope.form.about_the_game)
-            $scope.form.short_description = $scope.quillShortDescription.getText();
+            $scope.form.short_description = JSON.stringify($scope.quillShortDescription.getContents());
             console.log($scope.form.short_description)
-            $scope.form.detailed_description = $scope.quillDetailedDescription.getText();
+            $scope.form.detailed_description = JSON.stringify($scope.quillDetailedDescription.getContents());
             console.log($scope.form.detailed_description)
             console.log($scope.form.supported_languages)
+            console.log($scope.form)
             $http.post("/api/v1/game/create", $scope.form,
                 {
                     headers: {
@@ -442,9 +471,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         }
         $scope.edit = function (appid) {
             $scope.form = $scope.games.find(value => value.appid === appid)
-            $scope.form.about_the_game = $scope.quillAbout.setText($scope.form.about_the_game);
-            $scope.form.short_description = $scope.quillShortDescription.setText($scope.form.short_description);
-            $scope.form.detailed_description = $scope.quillDetailedDescription.setText($scope.form.detailed_description);
+            $scope.form.about_the_game = $scope.quillAbout.setContents(JSON.parse($scope.form.about_the_game));
+            $scope.form.short_description = $scope.quillShortDescription.setContents(JSON.parse($scope.form.short_description));
+            $scope.form.detailed_description = $scope.quillDetailedDescription.setContents(JSON.parse($scope.form.detailed_description));
 
             $scope.selectCountry.val(null);
             $scope.selectCountry.trigger('change');
