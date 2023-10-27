@@ -24,7 +24,7 @@ public class Authority implements Serializable, GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne()
+    @ManyToOne(optional = false,targetEntity = AccountModel.class)
 @JsonIgnore
     private AccountModel account;
     @Enumerated(EnumType.STRING)
