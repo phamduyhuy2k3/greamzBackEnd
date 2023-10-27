@@ -37,4 +37,8 @@ public class GameCategoryService {
         GameCategory gameCategory = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
         repo.deleteById(id);
     }
+    @Transactional
+    public List<GameCategory> findByGameModelsAppid(Long appId) {
+        return repo.findByGameModelsAppid(appId);
+    }
 }

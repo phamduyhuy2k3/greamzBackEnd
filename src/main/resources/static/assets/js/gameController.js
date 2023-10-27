@@ -243,23 +243,23 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
 
         <!-- Initialize Quill editor -->
         $scope.quillDetailedDescription = new Quill('#detail_description', {
-            modules: {
-                toolbar: toolbarOptions
-            },
+                modules: {
+                    toolbar: toolbarOptions
+                },
                 theme: 'snow'
             }
         );
         $scope.quillAbout = new Quill('#about', {
-            modules: {
-                toolbar: toolbarOptions
-            },
+                modules: {
+                    toolbar: toolbarOptions
+                },
                 theme: 'snow'
             }
         );
         $scope.quillShortDescription = new Quill('#short_description', {
-            modules: {
-                toolbar: toolbarOptions
-            },
+                modules: {
+                    toolbar: toolbarOptions
+                },
                 theme: 'snow'
             }
         );
@@ -313,9 +313,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
 
                 });
             });
-            ;
-
-
             $http.get("/api/v1/category/types", {
                 headers: {
                     "Authorization": "Bearer " + $cookies.get("accessToken")
@@ -328,8 +325,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
 
                 }
             )
-
-
             $http.get("/api/v1/game/findALl",
                 {
                     headers: {
@@ -388,10 +383,8 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 }
             )
 
-
         }
         $scope.initialize()
-        ;
         $scope.deleteImg = function (scope, value) {
             const index = scope.findIndex(data => data === value);
             scope.splice(index, 1);
@@ -411,9 +404,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         "Authorization": "Bearer " + $cookies.get("accessToken")
                     }
                 }).then(resp => {
-                    var index = $scope.games.findIndex(p => p.appid === item.appid);
-                    $scope.games.splice(index, 1);
-                    $scope.initialize();
+                    $scope.reset();
                     // $scope.reset();
                     alert("Xóa sản phẩm thành công!");
                 }).catch(error => {
@@ -437,20 +428,25 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 capsule_image: '',
                 images: [],
                 movies: [],
-                screenshots: [],
+                gameCategory: [],
             }
             $scope.action = 'create';
             $scope.initialize();
+
         }
         $scope.create = function () {
             $scope.form.about_the_game = JSON.stringify($scope.quillAbout.getContents());
-            console.log($scope.form.about_the_game)
             $scope.form.short_description = JSON.stringify($scope.quillShortDescription.getContents());
-            console.log($scope.form.short_description)
             $scope.form.detailed_description = JSON.stringify($scope.quillDetailedDescription.getContents());
-            console.log($scope.form.detailed_description)
-            console.log($scope.form.supported_languages)
-            console.log($scope.form)
+            $scope.form.gameCategory = $scope.form.gameCategory.map(data => {
+                return {
+                    id: data.id,
+                    name: data.name,
+                    categoryTypes: data.categoryTypes,
+                    image: data.image,
+                    description: data.description,
+                }
+            });
             $http.post("/api/v1/game/create", $scope.form,
                 {
                     headers: {
@@ -458,7 +454,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         "Content-Type": "application/json"
                     }
                 }).then(resp => {
-                $scope.initialize();
+                $scope.reset();
                 if ($scope.action === 'create') {
                     alert("Thêm sản phẩm thành công!");
                 } else {
@@ -469,37 +465,48 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                     console.log("Error", error);
                 });
         }
-        $scope.edit = function (appid) {
-            $scope.form = $scope.games.find(value => value.appid === appid)
-            $scope.form.about_the_game = $scope.quillAbout.setContents(JSON.parse($scope.form.about_the_game));
-            $scope.form.short_description = $scope.quillShortDescription.setContents(JSON.parse($scope.form.short_description));
-            $scope.form.detailed_description = $scope.quillDetailedDescription.setContents(JSON.parse($scope.form.detailed_description));
+        $scope.edit = async function (appid) {
+            await $http.get(`/api/v1/game/findById/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                    return resp.data;
+                }, error => {
+                    return error;
+                }
+            ).then(r => {
+                $scope.form = r;
+                if ($scope.form.about_the_game != null || $scope.form.about_the_game !== '' || $scope.form.about_the_game !== undefined) {
+                    $scope.quillAbout.setContents(JSON.parse($scope.form.about_the_game));
+                }
+                if ($scope.form.short_description != null || $scope.form.short_description !== '' || $scope.form.short_description !== undefined) {
+                    $scope.quillShortDescription.setContents(JSON.parse($scope.form.short_description));
+                }
+                if ($scope.form.detailed_description != null || $scope.form.detailed_description !== '' || $scope.form.detailed_description !== undefined) {
+                    $scope.quillDetailedDescription.setContents(JSON.parse($scope.form.detailed_description));
+                }
 
-            $scope.selectCountry.val(null);
-            $scope.selectCountry.trigger('change');
-            console.log($scope.form.supported_languages)
-            // $scope.countries.forEach(value => {
-            //     value.selected = $scope.form.supported_languages.includes(value.name);
-            // });
-            // console.log($scope.countries)
-            $scope.selectCountry.select2('destroy');
-            // $scope.selectCountry = $('#country').select2({
-            //     // Use the modified 'data' object
-            //     data: $scope.countries,
-            //     placeholder: "Select a country",
-            //     templateResult: function (data) {
-            //         if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-            //         let $result = $('<span><img src="' + data.flag + '" class="img-flag" style="width: 25px; height: 25px; border: #0a0c0d solid thin " /> ' + data.text + '</span>');
-            //         return $result;
-            //     },
-            //     templateSelection: function (data) {
-            //         if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-            //         let $selection = $('<span><img src="' + data.flag + '" class="img-flag" style="width: 25px; height: 25px; border: #0a0c0d solid thin" /> ' + data.text + '</span>');
-            //         return $selection;
-            //     }
-            // });
+                $scope.selectCountry.val($scope.form.supported_languages);
+                $scope.selectCountry.trigger('change');
+
+            }, error => {
+                console.log(error);
+            })
+            await $http.get(`/api/category/game/${appid}`, {}).then(resp => {
+                return resp.data;
+            }, error => {
+                console.log(error);
+            }).then(r => {
+                $scope.form.gameCategory = r;
+                let arr = $scope.form.gameCategory.map(data => {
+                    return data.id
+                });
+                console.log(arr)
+                $scope.select.val(arr);
+                $scope.select.trigger('change');
+            })
             $scope.action = 'update';
         }
-        $scope.action = 'create';
     }
 )
