@@ -47,6 +47,12 @@ public class AccountRestController {
         return account;
     }
 
+    @PutMapping("/update")
+    public AccountModel update(@RequestBody AccountModel account) {
+        service.updateAccount(account);
+        return account;
+    }
+
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable("id") Integer id) {
         service.deleteAccountById(id);
