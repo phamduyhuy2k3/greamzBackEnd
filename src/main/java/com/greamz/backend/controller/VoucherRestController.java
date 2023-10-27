@@ -1,6 +1,6 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.annotations.WithStatusAndTimestamp;
+
 import com.greamz.backend.model.Voucher;
 import com.greamz.backend.service.VoucherModelService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,6 @@ public class VoucherRestController {
     }
 
     @PostMapping("/create")
-    @WithStatusAndTimestamp
     public ResponseEntity<?> create(@RequestBody Voucher voucher){
         return ResponseEntity.ok().body(service.saveVoucherModel(voucher));
     }

@@ -2,7 +2,7 @@ package com.greamz.backend.validation.constraint;
 
 
 import com.greamz.backend.repository.IAccountRepo;
-import com.greamz.backend.annotations.UniqueEmail;
+import com.greamz.backend.validation.annotations.UniqueEmail;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
