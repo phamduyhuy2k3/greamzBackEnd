@@ -32,7 +32,7 @@ public class AccountRestController {
         List<AccountModel> accountModels = service.findAll();
         return ResponseEntity.ok(accountModels);
     }
-    @GetMapping("/authorities")
+    @GetMapping("/roles")
     public ResponseEntity<?> authorities(){
         return ResponseEntity.ok(Arrays.stream(Role.values()).map(Role::name).toList());
     }

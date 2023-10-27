@@ -41,7 +41,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             }
         )
 
-        $http.get("/api/user/authorities", {
+        $http.get("/api/user/roles", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
             }
@@ -112,8 +112,8 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.create = function () {
         $scope.form.authorities = $scope.form.authorities.map(value => {
             return {
-                role: value.role,
-                authority: value.authority
+                role: value,
+                authority: value
             }
         })
         console.log($scope.form.authorities)
