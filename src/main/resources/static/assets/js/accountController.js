@@ -41,7 +41,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             }
         )
 
-        $http.get("/api/user/roles", {
+        $http.get("/api/user/authorities", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
             }

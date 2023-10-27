@@ -1,13 +1,9 @@
 package com.greamz.backend.dto;
 
 
-import com.greamz.backend.annotations.UniqueEmail;
-import com.greamz.backend.annotations.UsernameUnique;
 import com.greamz.backend.model.Authority;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +26,6 @@ public class SaveAccountDTO {
     private String fullname;
     @NotBlank(message = "Email đang để trống")
     @Email(message = "Email không đúng định dạng")
-    @UniqueEmail
     private String email;
     private String photo;
     private boolean isEnabled;

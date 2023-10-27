@@ -1,9 +1,6 @@
 package com.greamz.backend.model;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.greamz.backend.annotations.UniqueEmail;
-import com.greamz.backend.annotations.UsernameUnique;
 import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -27,7 +24,6 @@ public class AccountModel extends TimeStampEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotBlank(message = "Username đang để trống")
-    @UsernameUnique
     private String username;
     @NotBlank(message = "Password đang để trống")
     private String password;
@@ -35,7 +31,6 @@ public class AccountModel extends TimeStampEntity implements UserDetails {
     private String fullname;
     @NotBlank(message = "Email đang để trống")
     @Email(message = "Email không đúng định dạng")
-    @UniqueEmail
     private String email;
     private String photo;
     private boolean isEnabled;
