@@ -1,6 +1,8 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
@@ -15,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GameModel extends TimeStampEntity{
+public class GameModel extends TimeStampEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -39,10 +41,11 @@ public class GameModel extends TimeStampEntity{
     private Set<String> images;
     @ElementCollection(fetch = FetchType.LAZY)
     private Set<String> movies;
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "gameModel")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "gameModel")
     private List<Screenshot> screenshots;
     @ManyToMany(cascade = {CascadeType.PERSIST})
+    @JsonIgnore
     private List<GameCategory> gameCategory;
-    @ManyToMany(cascade = {CascadeType.PERSIST})
-    private List<Countries> supported_languages;
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<String> supported_languages;
 }

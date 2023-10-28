@@ -32,4 +32,5 @@ public class CategoryController {
         return ResponseEntity.ok(Arrays.stream(CategoryTypes.values()).map(CategoryTypes::name).toList());
     }
 
+
 }
