@@ -139,12 +139,37 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             }
         )
     }
+
+    $scope.update = function () {
+        $scope.form.authorities = $scope.form.authorities.map(value => {
+            return {
+                role: value.role,
+                authority: value.authority
+            }
+        })
+        console.log($scope.form.authorities)
+        $http.put("/api/user/update", $scope.form, {
+            headers: {
+                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Content-Type": "application/json"
+            },
+        }).then(
+            resp => {
+                $scope.reset();
+            },
+            error => {
+                console.log(error)
+            }
+        )
+    }
+
     $scope.edit = function (id) {
         $scope.form = $scope.accounts.find(value => value.id === id)
         $scope.form.password = '';
         $scope.action = 'update';
 
     }
+
     $scope.setAuthority = function (account, value, authority) {
         if (value === true) {
             $http.post(`/api/v1/authority/save`, {
@@ -194,30 +219,30 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.authority_of = function (acc, role) {
 
         if (acc.authorities) {
-            return acc.authorities.find(ur =>  ur.role == role);
+            return acc.authorities.find(ur => ur.role == role);
         }
     }
 
-    $scope.authority_changed = function (acc, role,value = null) {
-        if(value === null){
+    $scope.authority_changed = function (acc, role, value = null) {
+        if (value === null) {
             let authority = $scope.checkAuthority(acc, role);
             if (authority) {
-                $scope.revoke_authority(role,acc);
+                $scope.revoke_authority(role, acc);
             } else { // chưa được cấp quyền => cấp quyền (thêm mới)
-                $scope.grant_authority(role,acc);
+                $scope.grant_authority(role, acc);
             }
-        }else {
+        } else {
             if (value === true) {
-                $scope.revoke_authority(role,acc);
+                $scope.revoke_authority(role, acc);
             } else {
-                $scope.grant_authority(role,acc);
+                $scope.grant_authority(role, acc);
             }
         }
 
     }
     //
     // // Thêm mới authority
-    $scope.grant_authority = function (authority,account) {
+    $scope.grant_authority = function (authority, account) {
         $http.post(`/api/v1/authority/save`, {
             userId: account.id,
             role: authority
@@ -232,7 +257,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         })
     }
     // // Xóa authority
-    $scope.revoke_authority = function (authority,account) {
+    $scope.revoke_authority = function (authority, account) {
         console.log(authority)
         console.log(account)
         $http.delete(`/api/v1/authority/delete`, {

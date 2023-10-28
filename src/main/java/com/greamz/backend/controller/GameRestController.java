@@ -1,6 +1,5 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.model.Countries;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.service.GameModelService;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +42,10 @@ public class GameRestController {
     public void delete(@PathVariable("appid") Long appid){
         service.deleteGameByAppid(appid);
     }
-
+//    @GetMapping("/findByCategory/{categoryId}")
+//    public ResponseEntity<List<GameModel>> findByCategory(@PathVariable("categoryId") Long categoryId){
+//        List<GameModel> gameModels = service.findGameByCategory(categoryId);
+//        return ResponseEntity.ok(gameModels);
+//    }
 
 }

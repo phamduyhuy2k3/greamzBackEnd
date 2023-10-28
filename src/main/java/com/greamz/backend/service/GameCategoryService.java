@@ -1,40 +1,44 @@
 package com.greamz.backend.service;
 
-import com.greamz.backend.model.GameCategory;
-import com.greamz.backend.model.GameModel;
-import com.greamz.backend.repository.IGameCategory;
+import com.greamz.backend.enumeration.CategoryTypes;
+import com.greamz.backend.model.Category;
+import com.greamz.backend.repository.ICategory;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class GameCategoryService {
-    private final IGameCategory repo;
+    private final ICategory repo;
     @Transactional
-    public List<GameCategory> findAll() {
+    public List<Category> findAll() {
         return repo.findAll();
     }
 
     @Transactional
-    public GameCategory findById(Long id) throws NoSuchElementException {
+    public Category findById(Long id) throws NoSuchElementException {
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
     }
 
     @Transactional
-    public GameCategory saveGameCategory(GameCategory gameCategory) {
-        return repo.save(gameCategory);
+    public Category saveGameCategory(Category category) {
+        return repo.save(category);
     }
 
     @Transactional
     public void deleteGameCategoryById(Long id) {
-        GameCategory gameCategory = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        Category category = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
         repo.deleteById(id);
+    }
+
+    public Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes) {
+        return repo.findAllByCategoryTypes(categoryTypes);
     }
 }

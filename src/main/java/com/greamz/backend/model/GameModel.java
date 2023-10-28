@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GameModel extends TimeStampEntity{
+public class GameModel extends TimeStampEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -39,10 +39,17 @@ public class GameModel extends TimeStampEntity{
     private Set<String> images;
     @ElementCollection(fetch = FetchType.LAZY)
     private Set<String> movies;
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "gameModel")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "gameModel")
     private List<Screenshot> screenshots;
-    @ManyToMany(cascade = {CascadeType.PERSIST})
-    private List<GameCategory> gameCategory;
-    @ManyToMany(cascade = {CascadeType.PERSIST})
-    private List<Countries> supported_languages;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // Quan hệ n-n với đối tượng ở dưới (Person) (1 địa điểm có nhiều người ở)
+    @EqualsAndHashCode.Exclude // không sử dụng trường này trong equals và hashcode
+    @ToString.Exclude // Khoonhg sử dụng trong toString()
+    @JoinTable(name = "game_category",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories;
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<String> supported_languages;
 }

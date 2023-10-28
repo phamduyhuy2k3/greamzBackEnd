@@ -54,7 +54,6 @@ public class AuthenticationController {
     ) {
         AuthenticationResponse authenticationResponse = service.authenticate(request);
         CookieUtils.addCookie(response,"accessToken",authenticationResponse.getAccessToken());
-        CookieUtils.addCookie(response,"refreshToken",authenticationResponse.getRefreshToken());
         return ResponseEntity.ok().body(authenticationResponse);
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.repository.IGameRepo;
 import jakarta.transaction.Transactional;
@@ -138,5 +139,9 @@ public class GameModelService {
         gameModelRepository.deleteById(appid);
 
     }
+//    @Transactional
+//    public List<GameModel> findGameByCategory(Long categoryId) {
+//        return gameModelRepository.findByGameCategory_Id(categoryId);
+//    }
 
 }
