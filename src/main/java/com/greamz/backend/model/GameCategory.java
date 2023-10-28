@@ -1,5 +1,7 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.greamz.backend.enumeration.CategoryTypes;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +25,8 @@ public class GameCategory {
     private String image;
     @Enumerated(EnumType.STRING)
     private CategoryTypes categoryTypes;
-    @ManyToMany(mappedBy = "gameCategory",cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "gameCategory")
+    @JsonIgnore
     private List<GameModel> gameModels;
 
 }

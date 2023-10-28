@@ -47,4 +47,8 @@ public class GameCategoryRestController {
     public void delete(@PathVariable("id") Long id){
         service.deleteGameCategoryById(id);
     }
+    @GetMapping("/game/{id}")
+    public ResponseEntity<List<GameCategory>> findByGameId(@PathVariable("id") Long id){
+        return ResponseEntity.ok(service.findByGameModelsAppid(id));
+    }
 }

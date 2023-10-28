@@ -138,5 +138,9 @@ public class GameModelService {
         gameModelRepository.deleteById(appid);
 
     }
+    @Transactional
+    public List<GameModel> findGameByCategory(Long categoryId) {
+        return gameModelRepository.findByGameCategory_Id(categoryId);
+    }
 
 }
