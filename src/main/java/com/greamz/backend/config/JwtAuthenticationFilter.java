@@ -93,6 +93,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    filterChain.doFilter(request, response);
                 }
             }
 
@@ -124,6 +125,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (ServletException ex) {
                 throw new RuntimeException(ex);
             }
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
