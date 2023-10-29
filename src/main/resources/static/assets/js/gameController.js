@@ -31,7 +31,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             capsule_image: '',
             images: [],
             movies: [],
-            gameCategories: [],
+            categories: [],
         }
 
 
@@ -354,20 +354,16 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         }
                     });
                     $scope.select.on('select2:select', function (e) {
-                        $scope.form.gameCategories.push({
-                            category: {
-                                id: parseInt(e.params.data.id),
-                            }
-                        });
+                        $scope.form.categories.push({id: parseInt(e.params.data.id)});
 
                     });
                     $scope.select.on('select2:unselect', function (e) {
                         const id = e.params.data.id;
                         console.log(id)
-                        const removedIndex = $scope.form.gameCategories.findIndex(data => data.category.id ===parseInt(id));
+                        const removedIndex = $scope.form.categories.findIndex(data => data.id === parseInt(id));
                         console.log(removedIndex)
-                        $scope.$apply(()=>{
-                            $scope.form.gameCategories.splice(removedIndex, 1);
+                        $scope.$apply(() => {
+                            $scope.form.categories.splice(removedIndex, 1);
                         })
 
 
@@ -376,7 +372,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             )
 
         }
-        $scope.initialize()
+
         $scope.deleteImg = function (scope, value) {
             const index = scope.findIndex(data => data === value);
             scope.splice(index, 1);
@@ -420,7 +416,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 capsule_image: '',
                 images: [],
                 movies: [],
-                gameCategories: [],
+                categories: [],
             }
             $scope.quillAbout.setContents([{insert: '\n'}]);
             $scope.quillShortDescription.setContents([{insert: '\n'}]);
@@ -481,7 +477,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
 
                 $scope.selectCountry.val($scope.form.supported_languages);
                 $scope.selectCountry.trigger('change');
-                let arr = $scope.form.gameCategories.map(data => {
+                let arr = $scope.form.categories.map(data => {
                     return data.id
                 });
                 console.log(arr)
@@ -496,8 +492,8 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             // }, error => {
             //     console.log(error);
             // }).then(r => {
-            //     $scope.form.gameCategories = r;
-            //     let arr = $scope.form.gameCategories.map(data => {
+            //     $scope.form.categories = r;
+            //     let arr = $scope.form.categories.map(data => {
             //         return data.id
             //     });
             //     console.log(arr)
@@ -506,5 +502,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             // })
             $scope.action = 'update';
         }
+        $scope.initialize()
     }
 )

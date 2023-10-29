@@ -14,6 +14,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
     private final IAccountRepo repository;
     private final ITokenRepo tokenRepository;
@@ -34,7 +36,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        Authority authority =new Authority();
+        Authority authority = new Authority();
         authority.setRole(Role.USER);
 
         request.setAuthorities(List.of(authority));
@@ -55,14 +57,13 @@ public class AuthenticationService {
                 .collect(Collectors.toList());
 
         user.setAuthorities(authorities);
-            var savedUser = repository.save(user);
+        var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(savedUser, jwtToken);
+        saveUserToken(savedUser, refreshToken);
 
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
-                .refreshToken(refreshToken)
                 .build();
 
 
@@ -87,6 +88,7 @@ public class AuthenticationService {
                 .accessToken(jwtToken)
                 .build();
     }
+
     private void saveUserToken(AccountModel user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -97,6 +99,7 @@ public class AuthenticationService {
                 .build();
         tokenRepository.save(token);
     }
+
     private void revokeAllUserTokens(AccountModel user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
@@ -109,41 +112,30 @@ public class AuthenticationService {
 
     }
 
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+    public AuthenticationResponse refreshToken(
+            HttpServletRequest request
+    ) throws ExpiredJwtException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String token;
-        final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null;
         }
-        token = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(token);
-        if (userEmail != null) {
-            var user = this.repository.findByUserNameOrEmail(userEmail)
+        final String jwt = authHeader.substring(7);
+        final String username= jwtService.extractUsernameThatTokenExpired(jwt);
+        if (username != null) {
+            var user = this.repository.findByUserNameOrEmail(username)
                     .orElseThrow();
+            log.info("user:"+user.getId());
             var refreshToken = this.tokenRepository.findByUser_Id(user.getId())
                     .orElseThrow().getToken();
-            try{
-                if (jwtService.isTokenValid(refreshToken, user)) {
-                    var accessToken = jwtService.generateToken(user);
-                    revokeAllUserTokens(user);
-                    var authResponse = AuthenticationResponse.builder()
-                            .accessToken(accessToken)
 
-                            .build();
-                    new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-
-                    response.flushBuffer();
-                }
-            }catch (ExpiredJwtException e){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token is expired, please make a new signin request");
-                response.flushBuffer();
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                var accessToken = jwtService.generateToken(user);
+                log.info("Refresh token successfully");
+                return AuthenticationResponse.builder()
+                        .accessToken(accessToken)
+                        .build();
             }
         }
+        return null;
     }
-
-
 }

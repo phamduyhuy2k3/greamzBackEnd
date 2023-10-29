@@ -26,15 +26,27 @@ public class JwtService {
     @Value("${application.security.jwt.refresh-token.expiration}")
     private long refreshExpiration;
 
-    public String extractUsername(String token) {
+    public String extractUsername(String token) throws ExpiredJwtException{
         return extractClaim(token, Claims::getSubject);
     }
+    public String extractUsernameThatTokenExpired(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get("sub", String.class);
+        } catch (ExpiredJwtException ex) {
+            //Lấy thông tin user từ token
+            Claims claims = ex.getClaims();
+            return claims.get("sub", String.class);
 
+        }
+    }
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
