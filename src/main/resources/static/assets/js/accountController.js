@@ -141,13 +141,14 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     }
 
     $scope.update = function () {
-        $scope.form.authorities = $scope.form.authorities.map(value => {
-            return {
-                role: value.role,
-                authority: value.authority
-            }
-        })
-        console.log($scope.form.authorities)
+        // $scope.form.authorities = $scope.form.authorities.map(value => {
+        //     return {
+        //         role: value.role,
+        //         authority: value.authority
+        //     }
+        // })
+        // console.log($scope.form.authorities)
+        $scope.form.authorities = null
         $http.put("/api/user/update", $scope.form, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),
@@ -273,10 +274,10 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         })
     }
     $scope.toggleSelection = function (authority) {
-        var idx = $scope.form.authorities.indexOf(authority);
+        var idx = $scope.form.authorities.indexOf(value => value.role=authority);
 
         // Is currently selected
-        if (idx > -1) {
+        if (idx ) {
             $scope.form.authorities.splice(idx, 1);
         }
 

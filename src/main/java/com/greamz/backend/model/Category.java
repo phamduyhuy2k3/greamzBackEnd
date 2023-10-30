@@ -1,5 +1,6 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.greamz.backend.enumeration.CategoryTypes;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +24,7 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JsonIgnore
     private List<GameModel> gameModels;
 
 
