@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface IGameRepo extends JpaRepository<GameModel, Long> {
 
-    List<GameModel> findByGameCategory_Id(Long categoryId);
+//    List<GameModel> findBy(Long categoryId);
 }
