@@ -120,6 +120,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     isValid(newAccessToken, request, response, filterChain);
                 }
             }
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
