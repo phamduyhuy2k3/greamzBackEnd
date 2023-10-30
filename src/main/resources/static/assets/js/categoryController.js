@@ -12,7 +12,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
         categoryTypes: '',
     }
     $scope.initialize = function () {
-        $http.get("/api/category/findAll", {
+        $http.get("/api/v1/category/findAll", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
             }
@@ -45,7 +45,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
     $scope.delete = function (id) {
         if (confirm("Do you want to delete this category?")) {
             if (id) {
-                $http.delete(`/api/category/delete/${id}`, {
+                $http.delete(`/api/v1/category/delete/${id}`, {
                     headers: {
                         "Authorization": "Bearer " + $cookies.get("accessToken")
                     }
@@ -77,7 +77,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
 
     $scope.create = function () {
         // Gán giá trị type từ selectedCategoryType vào form
-        $http.post("/api/category/save", $scope.form, {
+        $http.post("/api/v1/category/save", $scope.form, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),
                 "Content-Type": "application/json"
