@@ -41,17 +41,19 @@
                                              class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0 text-sm">APPID: {{game.appid}}</h6>
-                                        <p class="text-xs text-secondary mb-0">{{game.name}}</p>
+                                        <h6 class="mb-0 text-sm">{{game.name}}</h6>
+                                        <p class="text-xs text-secondary mb-0">GAMEID: {{game.appid}}</p>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <p class="text-xs font-weight-bold mb-0" ng-repeat="category in game.categories">{{category.name}}</p>
+                                <p class="text-xs font-weight-bold mb-0" ng-repeat="category in game.categories">
+                                    {{category.name}}</p>
                             </td>
                             <td class="align-middle text-center text-sm">
-                                <!--                                <span class="badge badge-sm bg-gradient-success">{{game.website}}</span>-->
-                                <p class="text-xs font-weight-bold mb-0">{{game.website}}</p>
+                                <p class="text-xs font-weight-bold mb-0"><a href="{{game.website}}" target="_blank">{{game.website}}</a>
+                                </p>
+
                             </td>
                             <td class="align-middle">
                                 <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
@@ -87,6 +89,7 @@
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Game Modal</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        ng-click="reset()"
                         style="background-color: rebeccapurple"></button>
             </div>
             <div class="modal-body">
@@ -143,15 +146,22 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label">Header Image</label>
-                        <button style="margin: 5px 0px 0px 10px"
-                                class="btn btn-primary"
-                                ng-click="uppyHeaderImage.show({search: {expression: 'resource_type:image'}})"
-                                data-bs-target="#headerModal"
-                                data-bs-toggle="modal">
-                            Choose file
-                        </button>
-                        <input type="text" ng-model="form.header_image">
+                        <div class="input-group input-group-static">
+                            <label style="margin-top:10px">Header Image</label>
+                            <input type="text"
+                                   style="margin: 0px 10px 0px 10px"
+                                   class="form-control w-50"
+                                   placeholder="Nhập url ảnh vào đây"
+                                   ng-model="form.header_image">
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="uppyHeaderImage.show({search: {expression: 'resource_type:image'}})"
+                                    data-bs-target="#headerModal"
+                                    data-bs-toggle="modal">
+                                Choose file
+                            </button>
+                        </div>
+
                         <div class="flex overflow-y-auto" style="max-height: 250px;" ng-hide="!form.header_image">
                             <div class="row row-cols-3 p-4">
                                 <div class="col position-relative mb-3 card">
@@ -167,15 +177,21 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label">Capsule Image</label>
-                        <button style="margin: 5px 0px 0px 10px"
-                                class="btn btn-primary"
-                                ng-click="uppyCapsuleImage.show({search: {expression: 'resource_type:image'}})"
-                                data-bs-target="#capsuleModal"
-                                data-bs-toggle="modal">
-                            Choose file
-                        </button>
-                        <input type="text" ng-model="form.capsule_image">
+                        <div class="input-group input-group-static">
+                            <label style="margin-top:10px">Capsule Image</label>
+                            <input type="text"
+                                   style="margin: 0px 10px 0px 10px"
+                                   class="form-control w-50"
+                                   placeholder="Nhập url ảnh vào đây"
+                                   ng-model="form.capsule_image">
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="uppyCapsuleImage.show({search: {expression: 'resource_type:image'}})"
+                                    data-bs-target="#capsuleModal"
+                                    data-bs-toggle="modal">
+                                Choose file
+                            </button>
+                        </div>
                         <div class="flex overflow-y-auto" style="max-height: 250px;" ng-hide="!form.capsule_image">
                             <div class="row row-cols-3 p-4">
                                 <div class="col position-relative mb-3 card">
@@ -190,17 +206,27 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label">Images</label>
-                        <button style="margin: 5px 0px 0px 10px"
-                                class="btn btn-primary"
-                                ng-click="uppyImages.show({search: {expression: 'resource_type:image'}})"
-                                data-bs-target="#imageModal"
-                                data-bs-toggle="modal">
-                            Choose file
-                        </button>
-                        <input type="text" ng-model="imageUrls"> <button ng-click="setURL(imageUrls, form.images)">+</button>
-                        <div class="card-group flex overflow-y-auto overflow-x-auto">
-                            <div class="row row-cols-auto p-4">
+                        <div class="input-group input-group-static">
+                            <label style="margin-top:10px">Images</label>
+                            <input type="text"
+                                   style="margin: 0px 10px 0px 10px"
+                                   class="form-control w-50"
+                                   placeholder="Nhập url ảnh vào đây"
+                                   ng-model="imageUrls">
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="setURL(imageUrls, form.images)">+
+                            </button>
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="uppyImages.show({search: {expression: 'resource_type:image'}})"
+                                    data-bs-target="#imageModal"
+                                    data-bs-toggle="modal">
+                                Choose file
+                            </button>
+                        </div>
+                        <div class="card-group flex overflow-y-auto overflow-x-auto" ng-hide="!form.images">
+                            <div class="row row-cols-auto">
                                 <div class="col position-relative mb-3 card"
                                      data-animation="true"
                                      style="margin-top:70px"
@@ -232,29 +258,36 @@
                                                 Delete
                                             </button>
                                         </div>
-
                                     </div>
                                     <hr class="dark horizontal my-0">
                                     <div class="card-footer d-flex">
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label">Movie</label>
-                        <button style="margin: 5px 0px 0px 10px"
-                                class="btn btn-primary"
-                                ng-click="uppyMovies.show({search: {expression: 'resource_type:video'}})"
-                                data-bs-target="#movieModal"
-                                data-bs-toggle="modal">
-                            Choose file
-                        </button>
-                        <input type="text" ng-model="movies"> <button ng-click="setURL(movies, form.movies)">+</button>
+                        <div class="input-group input-group-static">
+                            <label style="margin-top:10px">Movie</label>
+                            <input type="text"
+                                   style="margin: 0px 10px 0px 10px"
+                                   class="form-control w-50"
+                                   placeholder="Nhập url ảnh vào đây"
+                                   ng-model="movies">
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="setURL(movies, form.movies)">+
+                            </button>
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="uppyMovies.show({search: {expression: 'resource_type:video'}})"
+                                    data-bs-target="#movieModal"
+                                    data-bs-toggle="modal">
+                                Choose file
+                            </button>
+                        </div>
                         <div class="card-group flex overflow-y-auto overflow-x-auto">
-                            <div class="row row-cols-auto p-4">
+                            <div class="row row-cols-auto">
                                 <div class="col position-relative mb-3 card"
                                      data-animation="true"
                                      style="margin-top:70px"
@@ -286,14 +319,9 @@
                                                 Delete
                                             </button>
                                         </div>
-
-                                    </div>
-                                    <hr class="dark horizontal my-0">
-                                    <div class="card-footer d-flex">
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     <!--                    <div class="col-md-12">-->
@@ -303,7 +331,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close
+                </button>
                 <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='update'">Save
                     changes
                 </button>

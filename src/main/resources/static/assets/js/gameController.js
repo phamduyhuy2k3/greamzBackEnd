@@ -150,7 +150,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
             $("#btnCloseModal").click(function () {
                 // Thêm URL ảnh mới vào mảng imageUrls
-                $scope.imageUrls.push($scope.form.images); // Điền URL của ảnh mới ở đây
                 $scope.$apply(); // Cập nhật scope của AngularJS
                 $("#imageModal").modal("hide"); // Ẩn modal cloudinary
                 $("#exampleModal").modal("show"); // Hiện modal create
@@ -158,7 +157,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 //nút x modal
                 $("#btnCloseModal2").click(function () {
                     // Thêm URL ảnh mới vào mảng imageUrls
-                    $scope.imageUrls.push($scope.form.images); // Điền URL của ảnh mới ở đây
                     $scope.$apply(); // Cập nhật scope của AngularJS
                     $("#imageModal").modal("hide"); // Ẩn modal cloudinary
                     $("#exampleModal").modal("show"); // Hiện modal create
@@ -474,7 +472,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 console.log(arr)
                 $scope.select.val(arr);
                 $scope.select.trigger('change');
-
             }, error => {
                 console.log(error);
             })
