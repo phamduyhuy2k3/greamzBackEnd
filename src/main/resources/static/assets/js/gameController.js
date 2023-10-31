@@ -28,8 +28,13 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             movies: [],
             categories: [],
         }
+        $scope.imageUrls = [];
+        $scope.movies = [];
 
-
+        $scope.setURL = function (url,scope) {
+            scope.push(url)
+            url = "";
+        }
         $scope.uppyImages = cloudinary.createMediaLibrary(
             {
                 cloud_name: "dtreuuola",
@@ -332,12 +337,12 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         data: $scope.categories,
                         placeholder: "Select Categories",
                         templateResult: function (data) {
-                            if (!data.id) return data.name; // Option is not an object (e.g., the "Select a country" option)
+                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
                             let $result = $('<span>' + data.name + '</span>');
                             return $result;
                         },
                         templateSelection: function (data) {
-                            if (!data.id) return data.name; // Option is not an object (e.g., the "Select a country" option)
+                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
                             let $selection = $('<span>' + data.name + '</span>');
                             return $selection;
                         }

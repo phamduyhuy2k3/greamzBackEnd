@@ -20,6 +20,9 @@
                         <thead>
                         <tr>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                ID
+                            </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 Information
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
@@ -29,13 +32,17 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="category in pager.items">
+                        <tr ng-repeat="category in categories">
                             <td>
+                                <h6 class="text-xs text-secondary mb-0">{{category.id}}</h6>
+                            </td>
+                            <td>
+
                                 <div class="d-flex px-2 py-1">
-                                    <div>
-                                        <img ng-src="{{category.image}}"
-                                             class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
-                                    </div>
+<!--                                    <div>-->
+<!--                                        <img ng-src="{{category.image}}"-->
+<!--                                             class="avatar avatar-sm me-3 border-radius-lg" alt="user1">-->
+<!--                                    </div>-->
                                     <div class="d-flex flex-column justify-content-center">
                                         <h6 class="mb-0 text-sm">{{category.name}}</h6>
                                         <p class="text-xs text-secondary mb-0">{{category.description}}</p>
@@ -63,34 +70,6 @@
                         </tr>
                         </tbody>
                     </table>
-                    <div aria-label="Page navigation example">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:;" tabindex="-1"
-                                   ng-click="pager.prev()">
-                                        <span class="material-icons">
-                                          keyboard_arrow_left
-                                        </span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                {{pager.page + 1}} of {{pager.count}}
-                            </li>
-<!--                            <li class="page-item"><a class="page-link" href="javascript:;">1</a></li>-->
-<!--                            <li class="page-item"><a class="page-link" href="javascript:;">2</a></li>-->
-<!--                            <li class="page-item"><a class="page-link" href="javascript:;">3</a></li>-->
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:;"
-                                   ng-click="pager.next()">
-                                        <span class="material-icons">
-                                          keyboard_arrow_right
-                                        </span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
@@ -126,37 +105,36 @@
                                    ng-model="form.description">
                         </div>
                     </div>
-                    <select class="form-select" aria-label="Category Types" ng-model="form.categoryTypes"
-                            ng-options="categoryType for categoryType in categoryTypes">
-                        <!--                        <option value="" selected>Choose a category type</option>-->
+                    <select class="form-select" aria-label="Category Types" ng-model="form.categoryTypes" ng-options="categoryType for categoryType in categoryTypes">
+<!--                        <option value="" selected>Choose a category type</option>-->
                     </select>
-                    <div class="col-md-12">
-                        <label class="form-label">Image</label>
-                        <button style="margin: 5px 0px 0px 10px"
-                                class="btn btn-primary"
-                                ng-click="imageCloudinary.show({search: {expression: 'resource_type:image'}})"
-                                data-bs-target="#imageCategoryModal"
-                                data-bs-toggle="modal">
-                            Choose file
-                        </button>
-                        <div class="flex overflow-y-auto" style="max-height: 250px;" ng-hide="!form.image">
-                            <div class="row row-cols-3 p-4">
-                                <div class="col position-relative mb-3 card">
-                                    <img class="w-100" style="height: 180px; object-fit: fill"
-                                         src="{{form.image}}">
-                                    <button type="button" ng-click="deleteCategoryImage()"
-                                            style="width: 15px; height: 15px;"
-                                            class="btn-close position-absolute top-0 end-0 translate-middle-x rounded-circle bg-danger bg-danger text-white">
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+<!--                    <div class="col-md-12">-->
+<!--                        <label class="form-label">Image</label>-->
+<!--                        <button style="margin: 5px 0px 0px 10px"-->
+<!--                                class="btn btn-primary"-->
+<!--                                ng-click="imageCloudinary.show({search: {expression: 'resource_type:image'}})"-->
+<!--                                data-bs-target="#imageCategoryModal"-->
+<!--                                data-bs-toggle="modal">-->
+<!--                            Choose file-->
+<!--                        </button>-->
+<!--                        <div class="flex overflow-y-auto" style="max-height: 250px;" ng-hide="!form.image">-->
+<!--                            <div class="row row-cols-3 p-4">-->
+<!--                                <div class="col position-relative mb-3 card">-->
+<!--                                    <img class="w-100" style="height: 180px; object-fit: fill"-->
+<!--                                         src="{{form.image}}">-->
+<!--                                    <button type="button" ng-click="deleteCategoryImage()"-->
+<!--                                            style="width: 15px; height: 15px;"-->
+<!--                                            class="btn-close position-absolute top-0 end-0 translate-middle-x rounded-circle bg-danger bg-danger text-white">-->
+<!--                                    </button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
 
-                        <!--                        <label class="form-label">Image</label>-->
-                        <!--                        <div class="input-group input-group-outline mb-4">-->
-                        <!--                            <input type="file" class="form-control" ng-model="form.image">-->
-                        <!--                        </div>-->
-                    </div>
+<!--&lt;!&ndash;                        <label class="form-label">Image</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <div class="input-group input-group-outline mb-4">&ndash;&gt;-->
+<!--&lt;!&ndash;                            <input type="file" class="form-control" ng-model="form.image">&ndash;&gt;-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--                    </div>-->
 
                 </form>
             </div>

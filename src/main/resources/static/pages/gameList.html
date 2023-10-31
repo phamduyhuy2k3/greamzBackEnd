@@ -21,13 +21,13 @@
                         <thead>
                         <tr>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Name
+                                INFORMATION
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                Category
+                                CATEGORIES
                             </th>
                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Website
+                                WEBSITE
                             </th>
                             <th class="text-secondary opacity-7"></th>
                         </tr>
@@ -41,13 +41,13 @@
                                              class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0 text-sm">{{game.name}}</h6>
+                                        <h6 class="mb-0 text-sm">APPID: {{game.appid}}</h6>
+                                        <p class="text-xs text-secondary mb-0">{{game.name}}</p>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <p class="text-xs font-weight-bold mb-0"
-                                >{{game.category.name}} | {{game.category.categoryTypes}}</p>
+                                <p class="text-xs font-weight-bold mb-0" ng-repeat="category in game.categories">{{category.name}}</p>
                             </td>
                             <td class="align-middle text-center text-sm">
                                 <!--                                <span class="badge badge-sm bg-gradient-success">{{game.website}}</span>-->
@@ -151,6 +151,7 @@
                                 data-bs-toggle="modal">
                             Choose file
                         </button>
+                        <input type="text" ng-model="form.header_image">
                         <div class="flex overflow-y-auto" style="max-height: 250px;" ng-hide="!form.header_image">
                             <div class="row row-cols-3 p-4">
                                 <div class="col position-relative mb-3 card">
@@ -160,6 +161,7 @@
                                             style="width: 15px; height: 15px;"
                                             class="btn-close position-absolute top-0 end-0 translate-middle-x rounded-circle bg-danger bg-danger text-white">
                                     </button>
+
                                 </div>
                             </div>
                         </div>
@@ -173,6 +175,7 @@
                                 data-bs-toggle="modal">
                             Choose file
                         </button>
+                        <input type="text" ng-model="form.capsule_image">
                         <div class="flex overflow-y-auto" style="max-height: 250px;" ng-hide="!form.capsule_image">
                             <div class="row row-cols-3 p-4">
                                 <div class="col position-relative mb-3 card">
@@ -195,6 +198,7 @@
                                 data-bs-toggle="modal">
                             Choose file
                         </button>
+                        <input type="text" ng-model="imageUrls"> <button ng-click="setURL(imageUrls, form.images)">+</button>
                         <div class="card-group flex overflow-y-auto overflow-x-auto">
                             <div class="row row-cols-auto p-4">
                                 <div class="col position-relative mb-3 card"
@@ -248,6 +252,7 @@
                                 data-bs-toggle="modal">
                             Choose file
                         </button>
+                        <input type="text" ng-model="movies"> <button ng-click="setURL(movies, form.movies)">+</button>
                         <div class="card-group flex overflow-y-auto overflow-x-auto">
                             <div class="row row-cols-auto p-4">
                                 <div class="col position-relative mb-3 card"
