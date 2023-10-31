@@ -33,7 +33,7 @@
                             <td>
                                 <div class="d-flex px-2 py-1">
                                     <div>
-                                        <img ng-src="{{category.image ? '../assets/img/' + category.image : '../assets/img/user-image.png'}}"
+                                        <img ng-src="{{category.image}}"
                                              class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
@@ -71,36 +71,62 @@
 
 
 <!-- Modal -->
-<div class="modal fade " id="categoryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div class="modal fade "
+     id="categoryModal"
+     tabindex="-1" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        style="background-color: rebeccapurple"></button>
             </div>
             <div class="modal-body">
                 <form class="row g-3">
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-control" ng-model="form.name">
+                            <label>Name</label>
+                            <input type="text" class="form-control"
+                                   ng-model="form.name">
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <div class="input-group input-group-static mb-4">
-                            <label class="form-label">Description</label>
-                            <textarea  class="form-control" ng-model="form.description"></textarea>
+                        <div class="input-group input-group-static">
+                            <label>Description</label>
+                            <input type="text" class="form-control"
+                                   ng-model="form.description">
                         </div>
                     </div>
                     <select class="form-select" aria-label="Category Types" ng-model="form.categoryTypes" ng-options="categoryType for categoryType in categoryTypes">
-                        <option value="" selected>Choose a category type</option>
+<!--                        <option value="" selected>Choose a category type</option>-->
                     </select>
                     <div class="col-md-12">
                         <label class="form-label">Image</label>
-                        <div class="input-group input-group-outline mb-4">
-                            <input type="file" class="form-control" ng-model="form.image">
+                        <button style="margin: 5px 0px 0px 10px"
+                                class="btn btn-primary"
+                                ng-click="imageCloudinary.show({search: {expression: 'resource_type:image'}})"
+                                data-bs-target="#imageCategoryModal"
+                                data-bs-toggle="modal">
+                            Choose file
+                        </button>
+                        <div class="flex overflow-y-auto" style="max-height: 250px;" ng-hide="!form.image">
+                            <div class="row row-cols-3 p-4">
+                                <div class="col position-relative mb-3 card">
+                                    <img class="w-100" style="height: 180px; object-fit: fill"
+                                         src="{{form.image}}">
+                                    <button type="button" ng-click="deleteCategoryImage()"
+                                            style="width: 15px; height: 15px;"
+                                            class="btn-close position-absolute top-0 end-0 translate-middle-x rounded-circle bg-danger bg-danger text-white">
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+
+<!--                        <label class="form-label">Image</label>-->
+<!--                        <div class="input-group input-group-outline mb-4">-->
+<!--                            <input type="file" class="form-control" ng-model="form.image">-->
+<!--                        </div>-->
                     </div>
 
                 </form>
@@ -109,6 +135,35 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close
                 </button>
                 <button type="button" class="btn btn-primary" ng-click="create()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--image modal-->
+<div class="modal fade" id="imageCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close"
+                        id="btnCloseCategoryModalHeader"
+                        data-bs-toggle="modal"
+                        data-bs-target="#categoryModal"
+                        style="background-color: rebeccapurple"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body " style="height: 1000px">
+                <div id="imageCloudinary" style="height: 600px"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        id="btnCloseCategoryModalHeader2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#categoryModal"
+                        class="btn bg-gradient-info">
+                    Close
+                </button>
             </div>
         </div>
     </div>
