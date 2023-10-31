@@ -45,5 +45,10 @@ public class GameCategoryService {
     public Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes) {
         return repo.findAllByCategoryTypes(categoryTypes);
     }
+    @Transactional
+    public Page<Category> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repo.findAll(pageable);
+    }
 
 }

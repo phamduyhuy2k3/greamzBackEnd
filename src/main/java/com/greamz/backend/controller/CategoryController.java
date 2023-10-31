@@ -64,9 +64,10 @@ public class CategoryController {
     public void delete(@PathVariable("id") Long id) {
         service.deleteGameCategoryById(id);
     }
-//    @GetMapping("/game/{id}")
-//    public ResponseEntity<List<Category>> findByGameId(@PathVariable("id") Long id){
-//        return ResponseEntity.ok(service.findByGameModelsAppid(id));
-//    }
+    @GetMapping("/findAllPagination")
+    public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(service.findAll(page, size));
+    }
 
 }

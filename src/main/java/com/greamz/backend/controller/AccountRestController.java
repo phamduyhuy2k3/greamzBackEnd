@@ -1,5 +1,6 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.UserProfileDTO;
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
@@ -21,11 +22,11 @@ import static com.greamz.backend.util.Mapper.mapObject;
 public class AccountRestController {
     private final AccountModelService service;
     @GetMapping("/currentUser")
-    public ResponseEntity<AccountModel> currentUser(@AuthenticationPrincipal AccountModel currentUser) {
+    public ResponseEntity<UserProfileDTO> currentUser(@AuthenticationPrincipal AccountModel currentUser) {
         if(currentUser == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(mapObject(currentUser, AccountModel.class));
+        return ResponseEntity.ok(mapObject(currentUser, UserProfileDTO.class));
     }
     @GetMapping("/findAll")
     public ResponseEntity<Iterable<AccountModel>> findAll() {

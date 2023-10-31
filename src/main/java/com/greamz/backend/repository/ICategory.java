@@ -14,4 +14,5 @@ public interface ICategory extends JpaRepository<Category, Long> {
 
     Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes);
 //    Page<Category> searchProduct(String search, Pageable pageable);
+
 }
