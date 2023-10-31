@@ -1,9 +1,4 @@
 app.controller("gameController", function ($scope, $http, $document, $cookies) {
-        $scope.imageUrls = [];
-        $scope.headerImageUrls = '';
-        $scope.capsuleImageUrls = '';
-        $scope.movieUrls = [];
-        $scope.currentImageType = '';
         $scope.games = [];
         $scope.action = 'create';
         $scope.categories = [];
@@ -169,7 +164,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
             $("#btnCloseModalHeader").click(function () {
                 // Thêm URL ảnh mới vào mảng imageUrls
-                $scope.imageUrls.push($scope.form.header_image); // Điền URL của ảnh mới ở đây
                 $scope.$apply(); // Cập nhật scope của AngularJS
                 $("#headerModal").modal("hide"); // Ẩn modal cloudinary
                 $("#exampleModal").modal("show"); // Hiện modal create
@@ -177,7 +171,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 //nút x modal
                 $("#btnModalHeader").click(function () {
                     // Thêm URL ảnh mới vào mảng imageUrls
-                    $scope.imageUrls.push($scope.form.header_image); // Điền URL của ảnh mới ở đây
                     $scope.$apply(); // Cập nhật scope của AngularJS
                     $("#headerModal").modal("hide"); // Ẩn modal cloudinary
                     $("#exampleModal").modal("show"); // Hiện modal create
@@ -188,7 +181,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
             $("#btnCloseModalCapsule").click(function () {
                 // Thêm URL ảnh mới vào mảng imageUrls
-                $scope.imageUrls.push($scope.form.capsule_image); // Điền URL của ảnh mới ở đây
                 $scope.$apply(); // Cập nhật scope của AngularJS
                 $("#capsuleModal").modal("hide"); // Ẩn modal cloudinary
                 $("#exampleModal").modal("show"); // Hiện modal create
@@ -196,7 +188,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 //nút X modal 2
                 $("#btnModalCapsule").click(function () {
                     // Thêm URL ảnh mới vào mảng imageUrls
-                    $scope.imageUrls.push($scope.form.capsule_image); // Điền URL của ảnh mới ở đây
                     $scope.$apply(); // Cập nhật scope của AngularJS
                     $("#capsuleModal").modal("hide"); // Ẩn modal cloudinary
                     $("#exampleModal").modal("show"); // Hiện modal create
@@ -207,7 +198,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
             $("#btnCloseMovie").click(function () {
                 // Thêm URL ảnh mới vào mảng imageUrls
-                $scope.imageUrls.push($scope.form.header_image); // Điền URL của ảnh mới ở đây
                 $scope.$apply(); // Cập nhật scope của AngularJS
                 $("#movieModal").modal("hide"); // Ẩn modal cloudinary
                 $("#exampleModal").modal("show"); // Hiện modal create
@@ -215,7 +205,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 //nút x modal
                 $("#btnMovie").click(function () {
                     // Thêm URL ảnh mới vào mảng imageUrls
-                    $scope.imageUrls.push($scope.form.header_image); // Điền URL của ảnh mới ở đây
                     $scope.$apply(); // Cập nhật scope của AngularJS
                     $("#movieModal").modal("hide"); // Ẩn modal cloudinary
                     $("#exampleModal").modal("show"); // Hiện modal create
@@ -343,12 +332,12 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         data: $scope.categories,
                         placeholder: "Select Categories",
                         templateResult: function (data) {
-                            if (!data.id) return data.name; // Option is not an object (e.g., the "Select a country" option)
+                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
                             let $result = $('<span>' + data.name + '</span>');
                             return $result;
                         },
                         templateSelection: function (data) {
-                            if (!data.id) return data.name; // Option is not an object (e.g., the "Select a country" option)
+                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
                             let $selection = $('<span>' + data.name + '</span>');
                             return $selection;
                         }
@@ -365,12 +354,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         $scope.$apply(() => {
                             $scope.form.categories.splice(removedIndex, 1);
                         })
-
-
                     });
                 }
             )
-
         }
 
         $scope.deleteImg = function (scope, value) {
