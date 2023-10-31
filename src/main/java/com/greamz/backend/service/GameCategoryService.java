@@ -6,6 +6,10 @@ import com.greamz.backend.repository.ICategory;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,4 +45,5 @@ public class GameCategoryService {
     public Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes) {
         return repo.findAllByCategoryTypes(categoryTypes);
     }
+
 }
