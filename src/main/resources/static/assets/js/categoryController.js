@@ -17,63 +17,40 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
     $scope.pager = {
         toFirst() {
             this.number = 0;
-            $http.get(`/api/v1/category/findAllPagination?page=${this.number}&size=10`, {
-                headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
-                }
-            }).then(resp =>{
-                $scope.pager =  {
-                    ...$scope.pager,
-                    ...resp.data
-                };
-            })
+            this.fetchPage();
         },
         toLast() {
             this.number = this.totalPages - 1
-            $http.get(`/api/v1/category/findAllPagination?page=${this.number}&size=10`, {
-                headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
-                }
-            }).then(resp =>{
-                $scope.pager =  {
-                    ...$scope.pager,
-                    ...resp.data
-                };
-            })
+            this.fetchPage();
 
         },
         next() {
             this.number++;
-            if(this.number >= this.totalPages){
+            if (this.number >= this.totalPages) {
                 this.number = 0;
             }
-            $http.get(`/api/v1/category/findAllPagination?page=${this.number}&size=10`, {
-                headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
-                }
-            }).then(resp =>{
-                $scope.pager =  {
-                    ...$scope.pager,
-                    ...resp.data
-                };
-            })
+            this.fetchPage();
         },
         prev() {
             this.number--;
-            if(this.number < 0){
+            if (this.number < 0) {
                 this.number = this.totalPages - 1;
             }
+            this.fetchPage();
+        },
+        fetchPage() {
             $http.get(`/api/v1/category/findAllPagination?page=${this.number}&size=10`, {
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
-            }).then(resp =>{
-                $scope.pager =  {
+            }).then(resp => {
+                $scope.pager = {
                     ...$scope.pager,
                     ...resp.data
                 };
             })
         }
+
     }
     //Image
     $scope.imageCloudinary = cloudinary.createMediaLibrary(
@@ -125,7 +102,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             }
         }).then(
             resp => {
-                $scope.pager =  {
+                $scope.pager = {
                     ...$scope.pager,
                     ...resp.data
                 };
