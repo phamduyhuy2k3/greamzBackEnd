@@ -6,18 +6,27 @@ import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.service.AccountModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.greamz.backend.util.Mapper.mapObject;
+
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class AccountRestController {
     private final AccountModelService service;
-
+    @GetMapping("/currentUser")
+    public ResponseEntity<AccountModel> currentUser(@AuthenticationPrincipal AccountModel currentUser) {
+        if(currentUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(mapObject(currentUser, AccountModel.class));
+    }
     @GetMapping("/findAll")
     public ResponseEntity<Iterable<AccountModel>> findAll() {
         List<AccountModel> accountModels = service.findAll();
@@ -45,6 +54,12 @@ public class AccountRestController {
     @PostMapping("/save")
     public AccountModel save(@RequestBody AccountModel account) {
         service.saveAccount(account);
+        return account;
+    }
+
+    @PutMapping("/update")
+    public AccountModel update(@RequestBody AccountModel account) {
+        service.updateAccount(account);
         return account;
     }
 

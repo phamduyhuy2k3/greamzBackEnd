@@ -1,11 +1,9 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.greamz.backend.enumeration.CategoryTypes;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameCategory {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +21,11 @@ public class GameCategory {
     private String image;
     @Enumerated(EnumType.STRING)
     private CategoryTypes categoryTypes;
-    @ManyToMany(mappedBy = "gameCategory",cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "categories")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JsonIgnore
     private List<GameModel> gameModels;
+
 
 }

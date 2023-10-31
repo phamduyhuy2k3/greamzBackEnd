@@ -121,6 +121,11 @@ public class SecurityAdminConfig {
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 )
+                .rememberMe(rememberMe ->
+                        rememberMe
+                        .rememberMeCookieName("remember-me")
+                        .tokenValiditySeconds(86400)
+                )
 
         ;
 
