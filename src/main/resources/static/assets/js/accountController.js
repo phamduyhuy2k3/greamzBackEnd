@@ -2,7 +2,8 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.accounts = [];
     $scope.roles = [];
     $scope.action = 'create'
-
+    $scope.photoCloudinary;
+    $scope.photoUrls = '';
     $scope.form = {
         id: '',
         username: '',
@@ -17,13 +18,59 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         discusios: [],
         authorities: [],
     }
-    $scope.errors={
+    $scope.errors = {
         fullname: null,
         username: null,
         password: null,
         email: null,
 
     }
+    //photo
+    $scope.photoCloudinary = cloudinary.createMediaLibrary(
+        {
+            cloud_name: "dtreuuola",
+            api_key: "118212349948963",
+            use_saml: false,
+            remove_header: true,
+            insert_caption: "Insert",
+            inline_container: "#photoCloudinary",
+            default_transformations: [[]],
+            multiple: false
+
+        },
+        {
+            insertHandler: function (data) {
+                data.assets.forEach((asset) => {
+                    let url = asset.url
+                    $scope.form.photo = url;
+                    // $scope.photoUrls = url;
+                    console.log("photo: " + $scope.form.photo);
+                });
+            }
+        }
+    );
+    //photo
+    $(document).ready(function () {
+        // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
+        $("#btnCloseModalPhoto").click(function () {
+            // Thêm URL ảnh mới vào mảng imageUrls
+            $scope.$apply(); // Cập nhật scope của AngularJS
+            $("#photoModal").modal("hide"); // Ẩn modal cloudinary
+            $("#userModal").modal("show"); // Hiện modal create
+        }),
+            //nút x modal
+            $("#btnCloseModal2").click(function () {
+                // Thêm URL ảnh mới vào mảng imageUrls
+                $scope.$apply(); // Cập nhật scope của AngularJS
+                $("#photoModal").modal("hide"); // Ẩn modal cloudinary
+                $("#userModal").modal("show"); // Hiện modal create
+            })
+    });
+    $scope.deletePhoto = function () {
+        $scope.form.photo = $scope.form.photo.replace($scope.form.photo, '');
+        console.log($scope.form.photo)
+    }
+
     $scope.initialize = function () {
         $http.get("/api/user/findAll", {
             headers: {
@@ -32,7 +79,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         }).then(
             resp => {
                 $scope.accounts = resp.data;
-
                 console.log($scope.accounts)
 
             },
@@ -274,10 +320,10 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         })
     }
     $scope.toggleSelection = function (authority) {
-        var idx = $scope.form.authorities.indexOf(value => value.role=authority);
+        var idx = $scope.form.authorities.indexOf(value => value.role = authority);
 
         // Is currently selected
-        if (idx ) {
+        if (idx) {
             $scope.form.authorities.splice(idx, 1);
         }
 
