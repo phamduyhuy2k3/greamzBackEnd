@@ -38,6 +38,7 @@ public class CookieUtils {
                                  String cookieValue) {
         Cookie cookie = new Cookie(cookieKey, cookieValue);
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
         httpServletResponse.addCookie(cookie);
     }
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

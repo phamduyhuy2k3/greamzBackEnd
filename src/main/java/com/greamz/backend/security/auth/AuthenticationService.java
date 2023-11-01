@@ -47,9 +47,9 @@ public class AuthenticationService {
 
 
         var savedUser = repository.save(user);
-
-        var jwtToken = jwtService.generateToken(savedUser);
-        var refreshToken = jwtService.generateRefreshToken(savedUser);
+        UserPrincipal userPrincipal = UserPrincipal.create(savedUser);
+        var jwtToken = jwtService.generateToken(userPrincipal);
+        var refreshToken = jwtService.generateRefreshToken(userPrincipal);
         saveUserToken(savedUser, refreshToken);
 
         return AuthenticationResponse.builder()
@@ -66,12 +66,13 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByUserNameOrEmail(request.getUsername())
+        var savedUser = repository.findByUserNameOrEmail(request.getUsername())
                 .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, refreshToken);
+        UserPrincipal userPrincipal = UserPrincipal.create(savedUser);
+        var jwtToken = jwtService.generateToken(userPrincipal);
+        var refreshToken = jwtService.generateRefreshToken(userPrincipal);
+        revokeAllUserTokens(savedUser);
+        saveUserToken(savedUser, refreshToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .build();
@@ -117,7 +118,8 @@ public class AuthenticationService {
                     .orElseThrow().getToken();
 
             if (jwtService.isTokenValid(refreshToken, UserPrincipal.create(user))) {
-                var accessToken = jwtService.generateToken(user);
+                UserPrincipal userPrincipal = UserPrincipal.create(user);
+                var accessToken = jwtService.generateToken(userPrincipal);
                 log.info("Refresh token successfully");
                 return AuthenticationResponse.builder()
                         .accessToken(accessToken)

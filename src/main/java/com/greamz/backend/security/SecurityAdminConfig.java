@@ -86,10 +86,28 @@ public class SecurityAdminConfig {
             "login"
     };
 
+
+
     @Bean
-    @Order(-69)
-    SecurityFilterChain securityFilterChainOauth(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrfConfigurer -> {
+                    csrfConfigurer.disable();
+                })
+                .cors(Customizer.withDefaults())
+                .securityMatcher("/api/**")
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+                    authorizationManagerRequestMatcherRegistry
+                            .requestMatchers(WHITE_LIST_URL).permitAll()
+
+                            .anyRequest().authenticated();
+
+                })
+                .sessionManagement(sessionManagement -> {
+                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                })
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2Login ->
                         oauth2Login
                                 .authorizedClientRepository(clientRegistrationRepository)
@@ -112,32 +130,7 @@ public class SecurityAdminConfig {
                                 )
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                                 .failureHandler(oAuth2AuthenticationFailureHandler)
-                );
-
-        return http.build();
-    }
-
-    @Bean
-    @Order(1)
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrfConfigurer -> {
-                    csrfConfigurer.disable();
-                })
-                .cors(Customizer.withDefaults())
-                .securityMatcher("/api/**")
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry
-                            .requestMatchers(WHITE_LIST_URL).permitAll()
-
-                            .anyRequest().authenticated();
-
-                })
-                .sessionManagement(sessionManagement -> {
-                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                })
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                )
                 .logout(logout ->
                         logout.logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
