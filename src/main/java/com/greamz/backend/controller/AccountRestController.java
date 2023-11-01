@@ -7,6 +7,7 @@ import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.service.AccountModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ import static com.greamz.backend.util.Mapper.mapObject;
 public class AccountRestController {
     private final AccountModelService service;
     @GetMapping("/currentUser")
-    public ResponseEntity<UserProfileDTO> currentUser(@AuthenticationPrincipal AccountModel currentUser) {
+    public ResponseEntity<UserProfileDTO> currentUser(@AuthenticationPrincipal Authentication currentUser) {
         if(currentUser == null) {
             return ResponseEntity.notFound().build();
         }

@@ -26,14 +26,14 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
         },
         next() {
             this.number++;
-            if(this.number >= this.totalPages){
+            if (this.number >= this.totalPages) {
                 this.number = 0;
             }
             this.fetchPage();
         },
         prev() {
             this.number--;
-            if(this.number < 0){
+            if (this.number < 0) {
                 this.number = this.totalPages - 1;
             }
             this.fetchPage();
@@ -43,13 +43,14 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
-            }).then(resp =>{
-                $scope.pager =  {
+            }).then(resp => {
+                $scope.pager = {
                     ...$scope.pager,
                     ...resp.data
                 };
             })
         }
+
     }
     //Image
     $scope.imageCloudinary = cloudinary.createMediaLibrary(
@@ -101,7 +102,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             }
         }).then(
             resp => {
-                $scope.pager =  {
+                $scope.pager = {
                     ...$scope.pager,
                     ...resp.data
                 };
