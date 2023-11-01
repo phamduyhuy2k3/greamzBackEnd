@@ -15,14 +15,14 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 contact = @Contact(
                         name = "PDH CEO",
                         email = "contact@greamz.games",
-                        url = "https://aliboucoding.com/course"
+                        url = "https://greamz.games"
                 ),
                 description = "OpenApi documentation",
                 title = "OpenApi specification - Greamz Games",
                 version = "1.0",
                 license = @License(
                         name = "Licence name",
-                        url = "https://some-url.com"
+                        url = "https://greamz.games"
                 ),
                 termsOfService = "Terms of service"
         ),

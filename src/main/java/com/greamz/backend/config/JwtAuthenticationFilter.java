@@ -50,8 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         String jwt;
         if (request.getServletPath().contains("/api") || request.getRequestURI().contains("dashboard")) {
-            if (CookieUtils.getCookie(request, "accessToken") != null) {
-                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).getValue();
+            if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
+                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
                 isValid(jwt, request, response, filterChain);
                 return;
             }
@@ -102,7 +102,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
             } catch (HttpClientErrorException e1) {
                 // Xử lý khi không thể làm mới hoặc lỗi xác thực refresh token
-                CookieUtils.removeCookie(response, "accessToken");
+                CookieUtils.deleteCookie(request,response, "accessToken");
 
 //                filterChain.doFilter(request, response);
                 if(request.getRequestURI().contains("api") ){

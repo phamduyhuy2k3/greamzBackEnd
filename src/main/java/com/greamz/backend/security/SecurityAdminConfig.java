@@ -2,22 +2,32 @@ package com.greamz.backend.security;
 
 
 import com.greamz.backend.config.JwtAuthenticationFilter;
-import com.greamz.backend.enumeration.Role;
+import com.greamz.backend.security.oauth2.CustomOAuth2UserService;
+import com.greamz.backend.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.greamz.backend.security.oauth2.OAuth2AuthenticationFailureHandler;
+import com.greamz.backend.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.greamz.backend.service.CustomUserDetailsService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,6 +36,7 @@ import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +51,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 
 @EnableWebSecurity
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityAdminConfig {
 
 
@@ -48,7 +59,15 @@ public class SecurityAdminConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final LogoutHandler logoutHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final OAuth2AuthorizedClientRepository clientRegistrationRepository;
+    private final OAuth2AuthorizedClientService authorizedClientService;
+    private final ClientRegistrationRepository clientRegistrationRepository1;
     public static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
+            "/oauth2/**",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",
@@ -63,41 +82,44 @@ public class SecurityAdminConfig {
             "/component/**",
             "/pages/**",
             "/static/**",
-            "/sign-in"
+            "/sign-in",
+            "login"
     };
-//    @Bean
-//    @Order(-6969)
-//    SecurityFilterChain securityFilterChainAdmin(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrfConfigurer -> {
-//                        }
-//                )
-//                .cors(httpSecurityCorsConfigurer ->{
-//                    httpSecurityCorsConfigurer.disable();
-//                })
-//                .securityMatcher("/dashboard/**")
-//                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-//                    authorizationManagerRequestMatcherRegistry
-//                            .requestMatchers(WHITE_LIST_URL).permitAll()
-//                            .anyRequest().authenticated();
-//
-//                })
-//                .formLogin(httpSecurityFormLoginConfigurer -> {
-//                    httpSecurityFormLoginConfigurer.loginPage("/sign-in").permitAll();
-//
-//                })
-//                .logout(logout ->
-//                        logout.logoutUrl("/api/v1/auth/logout")
-//                                .addLogoutHandler(logoutHandler)
-//                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-//                )
-//
-//        ;
-//
-//        return http.build();
-//    }
+
     @Bean
-    SecurityFilterChain securityFilterChainUser(HttpSecurity http) throws Exception {
+    @Order(-69)
+    SecurityFilterChain securityFilterChainOauth(HttpSecurity http) throws Exception {
+        http
+                .oauth2Login(oauth2Login ->
+                        oauth2Login
+                                .authorizedClientRepository(clientRegistrationRepository)
+                                .authorizedClientService(authorizedClientService)
+                                .clientRegistrationRepository(clientRegistrationRepository1)
+                                .authorizationEndpoint(authorizationEndpoint ->
+                                        authorizationEndpoint
+                                                .baseUri("/oauth2/authorize")
+                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
+                                )
+                                .redirectionEndpoint(redirectionEndpoint ->
+                                        redirectionEndpoint
+                                                .baseUri("/oauth2/callback/*")
+
+                                )
+
+                                .userInfoEndpoint(userInfoEndpoint ->
+                                        userInfoEndpoint
+                                                .userService(customOAuth2UserService)
+                                )
+                                .successHandler(oAuth2AuthenticationSuccessHandler)
+                                .failureHandler(oAuth2AuthenticationFailureHandler)
+                );
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(1)
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrfConfigurer -> {
                     csrfConfigurer.disable();
@@ -121,11 +143,7 @@ public class SecurityAdminConfig {
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 )
-                .rememberMe(rememberMe ->
-                        rememberMe
-                        .rememberMeCookieName("remember-me")
-                        .tokenValiditySeconds(86400)
-                )
+
 
         ;
 
@@ -156,5 +174,6 @@ public class SecurityAdminConfig {
         return new CorsFilter(source);
 
     }
+
 
 }

@@ -1,6 +1,5 @@
 package com.greamz.backend.security.auth;
 
-import com.greamz.backend.model.Authority;
 import com.greamz.backend.annotations.PasswordValueMatch;
 import com.greamz.backend.annotations.ValidPassword;
 import jakarta.validation.constraints.Email;
@@ -39,7 +38,7 @@ public class RegisterRequest {
     @ValidPassword
     @NotBlank(message = "Xác nhận password đang để trống")
     private String confirmPassword;
-    private List<Authority> authorities;
+
     interface ValidationStepOne{
 
     }

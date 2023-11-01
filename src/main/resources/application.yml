@@ -1,17 +1,17 @@
 spring:
   security:
     oauth2:
-
       client:
         registration:
           google:
-            client-id: 914583679856-b2cqa56h84bor2ovdct6imlb84vgq912.apps.googleusercontent.com
-            client-secret: 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
-            redirect-uri: "http://localhost:8080/oauth2/callback/"
+            client-id: 174279917949-jldul43lq0as6pdkda9o51qbacf2ljuj.apps.googleusercontent.com
+            client-secret: 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
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - profile
-              - openid
+
+
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
