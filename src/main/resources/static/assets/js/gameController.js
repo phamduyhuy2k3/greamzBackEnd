@@ -28,8 +28,13 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             movies: [],
             categories: [],
         }
+        $scope.imageUrls = [];
+        $scope.movies = [];
 
-
+        $scope.setURL = function (url,scope) {
+            scope.push(url)
+            url = "";
+        }
         $scope.uppyImages = cloudinary.createMediaLibrary(
             {
                 cloud_name: "dtreuuola",
