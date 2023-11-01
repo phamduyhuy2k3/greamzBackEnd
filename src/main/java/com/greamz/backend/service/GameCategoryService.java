@@ -38,7 +38,7 @@ public class GameCategoryService {
 
     @Transactional
     public void deleteGameCategoryById(Long id) {
-        Category category = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
         repo.deleteById(id);
     }
 

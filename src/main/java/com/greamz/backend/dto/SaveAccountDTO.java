@@ -1,7 +1,6 @@
 package com.greamz.backend.dto;
 
 
-import com.greamz.backend.model.Authority;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -30,5 +29,5 @@ public class SaveAccountDTO {
     private String photo;
     private boolean isEnabled;
 
-    private List<Authority> authorities;
+
 }
