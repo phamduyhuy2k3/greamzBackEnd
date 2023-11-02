@@ -150,7 +150,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
             $("#btnCloseModal").click(function () {
                 // Thêm URL ảnh mới vào mảng imageUrls
-                $scope.imageUrls.push($scope.form.images); // Điền URL của ảnh mới ở đây
                 $scope.$apply(); // Cập nhật scope của AngularJS
                 $("#imageModal").modal("hide"); // Ẩn modal cloudinary
                 $("#exampleModal").modal("show"); // Hiện modal create
@@ -158,7 +157,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 //nút x modal
                 $("#btnCloseModal2").click(function () {
                     // Thêm URL ảnh mới vào mảng imageUrls
-                    $scope.imageUrls.push($scope.form.images); // Điền URL của ảnh mới ở đây
                     $scope.$apply(); // Cập nhật scope của AngularJS
                     $("#imageModal").modal("hide"); // Ẩn modal cloudinary
                     $("#exampleModal").modal("show"); // Hiện modal create
@@ -257,7 +255,44 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 theme: 'snow'
             }
         );
+    $scope.pager = {
+        toFirst() {
+            this.number = 0;
+            this.fetchPage();
+        },
+        toLast() {
+            this.number = this.totalPages - 1
+            this.fetchPage();
 
+        },
+        next() {
+            this.number++;
+            if (this.number >= this.totalPages) {
+                this.number = 0;
+            }
+            this.fetchPage();
+        },
+        prev() {
+            this.number--;
+            if (this.number < 0) {
+                this.number = this.totalPages - 1;
+            }
+            this.fetchPage();
+        },
+        fetchPage() {
+            $http.get(`/api/v1/game/findAllPagination?page=${this.number}&size=7`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
+            })
+        }
+
+    }
 
         $scope.initialize = function () {
 
@@ -308,18 +343,22 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 });
             });
 
-            $http.get("/api/v1/game/findALl",
+            $http.get("/api/v1/game/findAllPagination",
                 {
                     headers: {
                         "Authorization": "Bearer " + $cookies.get("accessToken")
                     }
-                }).then(resp => {
-                $scope.games = resp.data;
-                console.log($scope.games)
-            })
-                .catch(error => {
+                }).then(
+                resp => {
+                    $scope.pager = {
+                        ...$scope.pager,
+                        ...resp.data
+                    };
+                },
+                error => {
                     console.log("Error", error);
-                });
+                }
+            );
 
             $http.get("/api/v1/category/findAll", {
                 headers: {
@@ -474,7 +513,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 console.log(arr)
                 $scope.select.val(arr);
                 $scope.select.trigger('change');
-
             }, error => {
                 console.log(error);
             })

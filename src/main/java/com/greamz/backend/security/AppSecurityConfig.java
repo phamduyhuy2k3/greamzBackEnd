@@ -1,7 +1,9 @@
 package com.greamz.backend.security;
 
 
+import com.greamz.backend.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.greamz.backend.service.AccountService;
+import com.greamz.backend.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,26 +21,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class AppSecurityConfig {
     @Autowired
-    private AccountService accountService;
+    private CustomUserDetailsService accountService;
 
-
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
 
-        return username -> accountService
-                .findByUserNameOrEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
     //
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(accountService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

@@ -41,7 +41,7 @@ public class GameModel extends TimeStampEntity {
     private Set<String> movies;
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "gameModel")
     private List<Screenshot> screenshots;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany( fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JoinTable(name = "game_category",

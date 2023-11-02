@@ -14,6 +14,44 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
         image: '',
         categoryTypes: '',
     }
+    $scope.pager = {
+        toFirst() {
+            this.number = 0;
+            this.fetchPage();
+        },
+        toLast() {
+            this.number = this.totalPages - 1
+            this.fetchPage();
+
+        },
+        next() {
+            this.number++;
+            if (this.number >= this.totalPages) {
+                this.number = 0;
+            }
+            this.fetchPage();
+        },
+        prev() {
+            this.number--;
+            if (this.number < 0) {
+                this.number = this.totalPages - 1;
+            }
+            this.fetchPage();
+        },
+        fetchPage() {
+            $http.get(`/api/v1/category/findAllPagination?page=${this.number}&size=10`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
+            })
+        }
+
+    }
     //Image
     $scope.imageCloudinary = cloudinary.createMediaLibrary(
         {
@@ -57,14 +95,17 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
 
 
     $scope.initialize = function () {
-        $http.get("/api/v1/category/findAll", {
+
+        $http.get("/api/v1/category/findAllPagination", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
             }
         }).then(
             resp => {
-                $scope.categories = resp.data;
-                console.log($scope.categories)
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
             },
             error => {
                 console.log("Error", error);
@@ -144,5 +185,6 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
     $scope.edit = function (id) {
         $scope.form = $scope.categories.find(value => value.id === id);
     }
+
     $scope.initialize();
 })

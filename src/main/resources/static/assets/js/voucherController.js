@@ -70,19 +70,62 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
     $scope.edit = function (id) {
         $scope.voucher = id
     }
+    $scope.pager = {
+        toFirst() {
+            this.number = 0;
+            this.fetchPage();
+        },
+        toLast() {
+            this.number = this.totalPages - 1
+            this.fetchPage();
+
+        },
+        next() {
+            this.number++;
+            if (this.number >= this.totalPages) {
+                this.number = 0;
+            }
+            this.fetchPage();
+        },
+        prev() {
+            this.number--;
+            if (this.number < 0) {
+                this.number = this.totalPages - 1;
+            }
+            this.fetchPage();
+        },
+        fetchPage() {
+            $http.get(`/api/voucher/findAllPagination?page=${this.number}&size=7`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
+            })
+        }
+
+    }
+
     $scope.initialize = function () {
-        $http.get("/api/voucher/findALl", {
+        $http.get("/api/voucher/findAllPagination", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
 
             }
         }).then(
             resp => {
-                $scope.vouchers = resp.data;
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
             },
             error => {
+                console.log("Error", error);
             }
-        )
+        );
     }
     $scope.initialize()
 

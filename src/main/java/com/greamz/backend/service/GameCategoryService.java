@@ -6,6 +6,10 @@ import com.greamz.backend.repository.ICategory;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,11 +38,17 @@ public class GameCategoryService {
 
     @Transactional
     public void deleteGameCategoryById(Long id) {
-        Category category = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
         repo.deleteById(id);
     }
 
     public Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes) {
         return repo.findAllByCategoryTypes(categoryTypes);
     }
+    @Transactional
+    public Page<Category> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repo.findAll(pageable);
+    }
+
 }
