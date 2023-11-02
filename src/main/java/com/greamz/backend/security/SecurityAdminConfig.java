@@ -81,7 +81,6 @@ public class SecurityAdminConfig {
             "/pages/**",
             "/static/**",
             "/sign-in",
-            "login"
     };
 
 
@@ -99,16 +98,14 @@ public class SecurityAdminConfig {
                 })
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
-
                             .requestMatchers(WHITE_LIST_URL).permitAll()
                             .anyRequest().authenticated();
-
                 })
                 .sessionManagement(sessionManagement -> {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .authenticationProvider(authenticationProvider)
-                .formLogin(AbstractHttpConfigurer::disable)
+//                .oauth2Client(Customizer.withDefaults() )
                 .oauth2Login(oauth2Login ->
                         oauth2Login
 
@@ -129,40 +126,13 @@ public class SecurityAdminConfig {
                                 )
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                                 .failureHandler(oAuth2AuthenticationFailureHandler)
-                )
-        ;
-
-
+                );
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    @Bean
-    SecurityFilterChain securityFilterChainOauth2(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
 
-                .securityMatcher("/api/**")
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry
-
-                            .requestMatchers(WHITE_LIST_URL).permitAll()
-
-                            .anyRequest().authenticated();
-
-                })
-                .sessionManagement(sessionManagement -> {
-                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                })
-                .authenticationProvider(authenticationProvider);
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
 
     @Bean
     public CorsFilter corsFilter() {
