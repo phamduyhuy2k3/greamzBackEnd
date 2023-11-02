@@ -83,7 +83,56 @@ public class SecurityAdminConfig {
             "/sign-in",
     };
 
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    SecurityFilterChain securityFilterOauth2(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .httpBasic(httpSecurityHttpBasicConfigurer -> {
+                    httpSecurityHttpBasicConfigurer.disable();
+                })
 
+                .authorizeRequests(expressionInterceptUrlRegistry -> {
+
+                    expressionInterceptUrlRegistry
+                                .requestMatchers(WHITE_LIST_URL).permitAll()
+                                .anyRequest().authenticated();
+
+                })
+                .formLogin(formLoginConfigurer -> {
+                    formLoginConfigurer.loginPage("/sign-in");
+                })
+                .sessionManagement(sessionManagement -> {
+                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                })
+                .authenticationProvider(authenticationProvider)
+
+                .oauth2Login(oauth2Login ->
+                        oauth2Login
+
+                                .authorizationEndpoint(authorizationEndpoint ->
+                                        authorizationEndpoint
+                                                .baseUri("/oauth2/authorize")
+                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
+                                )
+                                .redirectionEndpoint(redirectionEndpoint ->
+                                        redirectionEndpoint
+                                                .baseUri("/oauth2/callback/*")
+
+                                )
+
+                                .userInfoEndpoint(userInfoEndpoint ->
+                                        userInfoEndpoint
+                                                .userService(customOAuth2UserService)
+                                )
+                                .successHandler(oAuth2AuthenticationSuccessHandler)
+                                .failureHandler(oAuth2AuthenticationFailureHandler)
+                );
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -106,6 +155,7 @@ public class SecurityAdminConfig {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .authenticationProvider(authenticationProvider)
+
                 .oauth2Login(oauth2Login ->
                         oauth2Login
 
