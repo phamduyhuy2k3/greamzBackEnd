@@ -1,16 +1,10 @@
 package com.greamz.backend.controller;
 
 import com.greamz.backend.annotations.CurrentUser;
-import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.security.UserPrincipal;
-import com.greamz.backend.security.auth.AuthenticationRequest;
-import com.greamz.backend.security.auth.AuthenticationResponse;
 import com.greamz.backend.security.auth.AuthenticationService;
 import com.greamz.backend.security.auth.RegisterRequest;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 

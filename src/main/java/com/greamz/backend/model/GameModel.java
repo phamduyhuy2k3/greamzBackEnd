@@ -3,9 +3,9 @@ package com.greamz.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.greamz.backend.common.TimeStampEntity;
+
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
 import java.util.Set;
 
@@ -35,12 +35,11 @@ public class GameModel extends TimeStampEntity {
     private String website;
     @Column(length = 1000)
     private String capsule_image;
+    private Integer stock;
     @ElementCollection(fetch = FetchType.LAZY)
     private Set<String> images;
     @ElementCollection(fetch = FetchType.LAZY)
     private Set<String> movies;
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "gameModel")
-    private List<Screenshot> screenshots;
     @ManyToMany( fetch = FetchType.EAGER)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
@@ -51,4 +50,9 @@ public class GameModel extends TimeStampEntity {
     private List<Category> categories;
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> supported_languages;
+    @ManyToOne
+    private Platform platform;
+    @OneToMany(mappedBy = "gameModel")
+    private List<Comment> comments;
+
 }
