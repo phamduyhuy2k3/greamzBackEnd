@@ -14,11 +14,17 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class GameRestController {
     private final GameModelService service;
-    @GetMapping("/findALl")
-    public ResponseEntity<Iterable<GameModel>> findAll(){
-        List<GameModel> gameModels = service.findAll();
-        return ResponseEntity.ok(gameModels);
+
+    @GetMapping("/findAllPagination")
+    public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "7") int size) {
+        return ResponseEntity.ok(service.findAll(page, size));
     }
+//    @GetMapping("/findALl")
+//    public ResponseEntity<Iterable<GameModel>> findAll(){
+//        List<GameModel> gameModels = service.findAll();
+//        return ResponseEntity.ok(gameModels);
+//    }
     @GetMapping("/findById/{appid}")
     public ResponseEntity<GameModel> findByAppid(@PathVariable("appid") Long appid){
         try {

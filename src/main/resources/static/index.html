@@ -284,8 +284,23 @@
                         </div>
                         <ul class="dropdown-menu"
                             aria-labelledby="dropdown3">
-                            <li><a class="dropdown-item" href="#"
-                                   ng-click="logout()">Log out</a></li>
+                            <li>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <a class="dropdown-item" href="#"
+                                       ng-click="logout()"
+                                        style="display: inline-flex">
+                                        <p class="text-xs text-secondary mb-0">
+                                        <span class="material-symbols-outlined">
+                                        logout
+                                        </span>
+                                        </p>
+                                        <h6 class="text-sm font-weight-normal mb-1"
+                                        style="margin-left: 8px">
+                                            Log out
+                                        </h6>
+                                    </a>
+                                </div>
+                            </li>
                         </ul>
                     </li>
                 </ul>

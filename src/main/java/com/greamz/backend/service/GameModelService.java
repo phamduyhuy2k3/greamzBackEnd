@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.greamz.backend.model.Category;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.repository.IGameRepo;
 import jakarta.transaction.Transactional;
@@ -118,9 +119,14 @@ public class GameModelService {
 //        executorService.shutdown();
 //    }
 
+//    @Transactional
+//    public List<GameModel> findAll() {
+//        return gameModelRepository.findAll();
+//    }
     @Transactional
-    public List<GameModel> findAll() {
-        return gameModelRepository.findAll();
+    public Page<GameModel> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return gameModelRepository.findAll(pageable);
     }
 
     @Transactional
