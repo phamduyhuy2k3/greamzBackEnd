@@ -33,7 +33,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="game in games">
+                        <tr ng-repeat="game in pager.content">
                             <td>
                                 <div class="d-flex px-2 py-1">
                                     <div>
@@ -74,6 +74,49 @@
                         </tr>
                         </tbody>
                     </table>
+                    <nav aria-label="Page navigation example align-center">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toFirst()">
+                                        <span class="material-icons">
+                                            first_page
+                                        </span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.prev()">
+                                        <span class="material-icons">
+                                          keyboard_arrow_left
+                                        </span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item" style="margin:5px 8px 5px 5px">
+                                {{pager.number + 1}} of {{pager.totalPages}}
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;"
+                                   ng-click="pager.next()">
+                                        <span class="material-icons">
+                                          keyboard_arrow_right
+                                        </span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toLast()">
+                                        <span class="material-icons">
+                                            last_page
+                                        </span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
