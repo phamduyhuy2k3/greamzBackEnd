@@ -23,8 +23,6 @@ public class Category extends TimeStampEntity {
     @Enumerated(EnumType.STRING)
     private CategoryTypes categoryTypes;
     @ManyToMany(mappedBy = "categories")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @JsonIgnore
     private List<GameModel> gameModels;
 

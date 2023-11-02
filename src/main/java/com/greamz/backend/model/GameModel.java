@@ -1,11 +1,14 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.greamz.backend.common.TimeStampEntity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+
 import java.util.List;
 import java.util.Set;
 
@@ -36,11 +39,14 @@ public class GameModel extends TimeStampEntity {
     @Column(length = 1000)
     private String capsule_image;
     private Integer stock;
-    @ElementCollection(fetch = FetchType.LAZY)
+    private Double price;
+    private Integer discount;
+    @ElementCollection()
     private Set<String> images;
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection()
+
     private Set<String> movies;
-    @ManyToMany( fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JoinTable(name = "game_category",
@@ -49,10 +55,12 @@ public class GameModel extends TimeStampEntity {
     )
     private List<Category> categories;
     @ElementCollection(fetch = FetchType.LAZY)
+
     private List<String> supported_languages;
     @ManyToOne
     private Platform platform;
-    @OneToMany(mappedBy = "gameModel")
+    @OneToMany(mappedBy = "gameModel",fetch = FetchType.LAZY)
+   @JsonIgnore
     private List<Comment> comments;
 
 }
