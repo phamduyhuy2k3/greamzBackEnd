@@ -2,8 +2,10 @@ package com.greamz.backend.config;
 
 
 import com.greamz.backend.repository.ITokenRepo;
+import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.security.auth.AuthenticationResponse;
 import com.greamz.backend.security.auth.AuthenticationService;
+import com.greamz.backend.service.CustomUserDetailsService;
 import com.greamz.backend.util.CookieUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -34,7 +36,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private final RestTemplate restTemplate;
 
     @Override
@@ -49,9 +51,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         final String authHeader = request.getHeader("Authorization");
         String jwt;
-        if (request.getServletPath().contains("/api") || request.getRequestURI().contains("dashboard")) {
-            if (CookieUtils.getCookie(request, "accessToken") != null) {
-                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).getValue();
+        if (request.getServletPath().contains("/api")|| request.getServletPath().equals("/") ) {
+            if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
+                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
                 isValid(jwt, request, response, filterChain);
                 return;
             }
@@ -74,9 +76,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String userName;
             userName = jwtService.extractUsername(jwtAccessToken);
+            logger.info("userName = " + userName);
             if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
+                UserPrincipal userDetails = this.userDetailsService.loadUserByUsername(userName);
+                logger.info("istoken valid = " + jwtService.isTokenValid(jwtAccessToken, userDetails));
                 if (jwtService.isTokenValid(jwtAccessToken, userDetails)) {
+                    logger.info("jwt is valid");
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -86,8 +91,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    logger.info("set Authentication to security context for '{}', uri: {}");
                     filterChain.doFilter(request, response);
                 }
+            }else {
+                logger.info("jwt is not valid");
+                filterChain.doFilter(request, response);
             }
         } catch (ExpiredJwtException e) {
             HttpHeaders headers = new HttpHeaders();
@@ -102,7 +111,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
             } catch (HttpClientErrorException e1) {
                 // Xử lý khi không thể làm mới hoặc lỗi xác thực refresh token
-                CookieUtils.removeCookie(response, "accessToken");
+                CookieUtils.deleteCookie(request,response, "accessToken");
 
 //                filterChain.doFilter(request, response);
                 if(request.getRequestURI().contains("api") ){

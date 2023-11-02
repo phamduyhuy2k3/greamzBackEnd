@@ -1,16 +1,21 @@
 package com.greamz.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.enumeration.AuthProvider;
+import com.greamz.backend.enumeration.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 @Getter
 @Setter
@@ -19,21 +24,23 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "Account")
 @AllArgsConstructor
-public class AccountModel extends TimeStampEntity implements UserDetails {
+public class AccountModel extends TimeStampEntity  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotBlank(message = "Username đang để trống")
     private String username;
-    @NotBlank(message = "Password đang để trống")
+    @JsonIgnore
     private String password;
-    @NotBlank(message = "Fullname đang để trống")
     private String fullname;
-    @NotBlank(message = "Email đang để trống")
-    @Email(message = "Email không đúng định dạng")
     private String email;
     private String photo;
     private boolean isEnabled;
+    @Column(nullable = false)
+    private Boolean emailVerified = false;
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+    private String providerId;
+    private String locale;
     @OneToMany
     private List<Voucher> vouchers;
     @OneToMany(mappedBy = "account")
@@ -42,30 +49,8 @@ public class AccountModel extends TimeStampEntity implements UserDetails {
     private List<Review> reviews;
     @OneToMany(mappedBy = "account")
     private List<Disscusion> disscusions;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @OneToMany(mappedBy = "account",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
-    private List<Authority> authorities;
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }
