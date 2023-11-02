@@ -1,6 +1,6 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.service.GameCategoryService;
+import com.greamz.backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequiredArgsConstructor
 public class RouteController {
-    private final GameCategoryService service;
+    private final CategoryService service;
     @GetMapping("/search")
     public String searchPage(
             @RequestParam("s") String searchText,

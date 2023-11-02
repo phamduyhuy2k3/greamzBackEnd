@@ -133,54 +133,54 @@ public class SecurityAdminConfig {
 
         return http.build();
     }
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .httpBasic(httpSecurityHttpBasicConfigurer -> {
-                    httpSecurityHttpBasicConfigurer.disable();
-                })
-                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-                    httpSecurityExceptionHandlingConfigurer
-                            .authenticationEntryPoint(new RestAuthenticationEntryPoint());
-                })
-                .securityMatcher("/api/**")
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry
-                            .requestMatchers(WHITE_LIST_URL).permitAll()
-                            .anyRequest().authenticated();
-                })
-                .sessionManagement(sessionManagement -> {
-                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                })
-                .authenticationProvider(authenticationProvider)
-
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-
-                                .authorizationEndpoint(authorizationEndpoint ->
-                                        authorizationEndpoint
-                                                .baseUri("/oauth2/authorize")
-                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
-                                )
-                                .redirectionEndpoint(redirectionEndpoint ->
-                                        redirectionEndpoint
-                                                .baseUri("/oauth2/callback/*")
-
-                                )
-
-                                .userInfoEndpoint(userInfoEndpoint ->
-                                        userInfoEndpoint
-                                                .userService(customOAuth2UserService)
-                                )
-                                .successHandler(oAuth2AuthenticationSuccessHandler)
-                                .failureHandler(oAuth2AuthenticationFailureHandler)
-                );
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .cors(Customizer.withDefaults())
+//                .httpBasic(httpSecurityHttpBasicConfigurer -> {
+//                    httpSecurityHttpBasicConfigurer.disable();
+//                })
+//                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+//                    httpSecurityExceptionHandlingConfigurer
+//                            .authenticationEntryPoint(new RestAuthenticationEntryPoint());
+//                })
+//                .securityMatcher("/api/**")
+//                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+//                    authorizationManagerRequestMatcherRegistry
+//                            .requestMatchers(WHITE_LIST_URL).permitAll()
+//                            .anyRequest().authenticated();
+//                })
+//                .sessionManagement(sessionManagement -> {
+//                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//                })
+//                .authenticationProvider(authenticationProvider)
+//
+//                .oauth2Login(oauth2Login ->
+//                        oauth2Login
+//
+//                                .authorizationEndpoint(authorizationEndpoint ->
+//                                        authorizationEndpoint
+//                                                .baseUri("/oauth2/authorize")
+//                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
+//                                )
+//                                .redirectionEndpoint(redirectionEndpoint ->
+//                                        redirectionEndpoint
+//                                                .baseUri("/oauth2/callback/*")
+//
+//                                )
+//
+//                                .userInfoEndpoint(userInfoEndpoint ->
+//                                        userInfoEndpoint
+//                                                .userService(customOAuth2UserService)
+//                                )
+//                                .successHandler(oAuth2AuthenticationSuccessHandler)
+//                                .failureHandler(oAuth2AuthenticationFailureHandler)
+//                );
+//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
 
 
 
