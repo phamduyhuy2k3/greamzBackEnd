@@ -516,19 +516,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             }, error => {
                 console.log(error);
             })
-            // await $http.get(`/api/category/game/${appid}`, {}).then(resp => {
-            //     return resp.data;
-            // }, error => {
-            //     console.log(error);
-            // }).then(r => {
-            //     $scope.form.categories = r;
-            //     let arr = $scope.form.categories.map(data => {
-            //         return data.id
-            //     });
-            //     console.log(arr)
-            //     $scope.select.val(arr);
-            //     $scope.select.trigger('change');
-            // })
+
             $scope.action = 'update';
         }
         $scope.initialize()

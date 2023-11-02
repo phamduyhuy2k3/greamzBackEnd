@@ -96,6 +96,7 @@ public class SecurityAdminConfig {
                     httpSecurityExceptionHandlingConfigurer
                             .authenticationEntryPoint(new RestAuthenticationEntryPoint());
                 })
+                .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
                     authorizationManagerRequestMatcherRegistry
                             .requestMatchers(WHITE_LIST_URL).permitAll()
@@ -105,7 +106,6 @@ public class SecurityAdminConfig {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .authenticationProvider(authenticationProvider)
-//                .oauth2Client(Customizer.withDefaults() )
                 .oauth2Login(oauth2Login ->
                         oauth2Login
 

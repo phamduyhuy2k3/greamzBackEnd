@@ -45,15 +45,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/v1/auth/") || request.getServletPath().contains("/sign-in")) {
+        if (request.getServletPath().contains("/api/v1/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
         final String authHeader = request.getHeader("Authorization");
         String jwt;
-        if (request.getServletPath().contains("/api") || request.getRequestURI().contains("dashboard")) {
+        if (request.getServletPath().contains("/api")|| request.getServletPath().equals("/") ) {
             if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
-                System.out.println("have sadsadsad");
                 jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
                 isValid(jwt, request, response, filterChain);
                 return;
