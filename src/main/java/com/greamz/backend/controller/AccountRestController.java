@@ -1,9 +1,11 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.AccountRequest;
 import com.greamz.backend.dto.UserProfileDTO;
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
+import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.AccountModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +25,11 @@ import static com.greamz.backend.util.Mapper.mapObject;
 public class AccountRestController {
     private final AccountModelService service;
     @GetMapping("/currentUser")
-    public ResponseEntity<UserProfileDTO> currentUser(@AuthenticationPrincipal Authentication currentUser) {
+    public ResponseEntity<UserPrincipal> currentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
         if(currentUser == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(mapObject(currentUser, UserProfileDTO.class));
+        return ResponseEntity.ok(currentUser);
     }
     @GetMapping("/findAll")
     public ResponseEntity<Iterable<AccountModel>> findAll() {
@@ -54,9 +56,9 @@ public class AccountRestController {
     }
 
     @PostMapping("/save")
-    public AccountModel save(@RequestBody AccountModel account) {
-        service.saveAccount(account);
-        return account;
+    public AccountModel save(@RequestBody AccountRequest account) {
+
+        return service.saveAccount(account);
     }
 
     @PutMapping("/update")

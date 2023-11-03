@@ -1,15 +1,18 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.dto.AccountRequest;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.repository.IAccountRepo;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import static com.greamz.backend.util.Mapper.mapObject;
 
 @Service
 @AllArgsConstructor
@@ -17,9 +20,16 @@ import java.util.NoSuchElementException;
 public class AccountModelService {
     private final IAccountRepo repo;
     private final PasswordEncoder passwordEncoder;
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AccountModel> findAll(){
         List<AccountModel> accountModels = repo.findAll();
+        for (AccountModel accountModel:accountModels
+             ) {
+            accountModel.setDisscusions(null);
+            accountModel.setOrders(null);
+            accountModel.setReviews(null);
+            accountModel.setVouchers(null);
+        }
         return accountModels;
     }
 
@@ -33,10 +43,13 @@ public class AccountModelService {
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + id));
     }
 
-    @Transactional
-    public AccountModel saveAccount(AccountModel account){
+    @Transactional()
+    public AccountModel saveAccount(AccountRequest account){
+        System.out.println(account.getUsername());
+        System.out.println(account.getPassword());
         account.setPassword(passwordEncoder.encode(account.getPassword()));
-        return repo.save(account);
+        AccountModel accountModel = mapObject(account, AccountModel.class);
+        return repo.save(accountModel);
     }
     @Transactional
     public AccountModel updateAccount(AccountModel account){

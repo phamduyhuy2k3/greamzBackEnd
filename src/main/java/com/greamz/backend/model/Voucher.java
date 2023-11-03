@@ -1,6 +1,5 @@
 package com.greamz.backend.model;
 
-import com.google.api.client.util.DateTime;
 import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

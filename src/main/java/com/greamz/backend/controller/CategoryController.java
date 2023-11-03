@@ -2,7 +2,7 @@ package com.greamz.backend.controller;
 
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.model.Category;
-import com.greamz.backend.service.GameCategoryService;
+import com.greamz.backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.Set;
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
 public class CategoryController {
-    private final GameCategoryService service;
+    private final CategoryService service;
 
 
 

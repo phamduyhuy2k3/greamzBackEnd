@@ -29,7 +29,7 @@ public class AccountModel extends TimeStampEntity  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String username;
-    @JsonIgnore
+
     private String password;
     private String fullname;
     private String email;

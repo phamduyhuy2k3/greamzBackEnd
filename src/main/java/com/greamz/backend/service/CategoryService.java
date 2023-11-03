@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class GameCategoryService {
+public class CategoryService {
     private final ICategory repo;
     @Transactional
     public List<Category> findAll() {
@@ -44,6 +43,9 @@ public class GameCategoryService {
 
     public Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes) {
         return repo.findAllByCategoryTypes(categoryTypes);
+    }
+    public List<Category> findAllByGameModelsAppid(Long gameId) {
+        return repo.findAllByGameModelsAppid(gameId);
     }
     @Transactional
     public Page<Category> findAll(int page, int size) {
