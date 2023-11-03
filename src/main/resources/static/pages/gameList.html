@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-12">
         <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 ">
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">Game List</h6>
                 </div>
@@ -12,8 +12,8 @@
                 <div class="table-responsive p-0">
                     <div class="row input-group
                                       input-group-dynamic">
-                        <button class="col-md-auto btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
-                                style="margin-left: 30px"
+                        <button class="col btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
+                                style="margin-left: 30px; max-width: 120px"
                                 data-bs-toggle="modal"
                                 data-bs-target="#exampleModal">
                         <span class="btn-inner--icon"><i
@@ -21,7 +21,7 @@
                             <span class="btn-inner--text">Create</span>
                         </button>
                         <input type="text"
-                               class="col form-control"
+                               class="col-md-auto form-control"
                                style="margin: 0px 10px 0px 10px"
                                placeholder="Search"
                                aria-label="Username"
@@ -311,7 +311,7 @@
                                      style="margin-top:70px"
                                      ng-if="form.images.length >0"
                                      ng-repeat="img in form.images track by $index">
-                                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                    <div class="card-header p-0 position-relative mt-n4 mx-3 ">
                                         <a class="d-block blur-shadow-image text-center">
                                             <img src="{{ img }}"
                                                  alt="img-blur-shadow"
@@ -372,7 +372,7 @@
                                      style="margin-top:70px"
                                      ng-if="form.movies.length >0"
                                      ng-repeat="img in form.movies track by $index">
-                                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                    <div class="card-header p-0 position-relative mt-n4 mx-3">
                                         <a class="d-block blur-shadow-image text-center">
                                             <video alt="img-blur-shadow"
                                                    style="height: 180px; object-fit: fill"
