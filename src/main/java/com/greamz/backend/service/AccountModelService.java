@@ -20,6 +20,14 @@ public class AccountModelService {
     @Transactional
     public List<AccountModel> findAll(){
         List<AccountModel> accountModels = repo.findAll();
+        for (AccountModel accountModel:accountModels
+             ) {
+            accountModel.setDisscusions(null);
+            accountModel.setOrders(null);
+            accountModel.setReviews(null);
+            accountModel.setVouchers(null);
+
+        }
         return accountModels;
     }
 
