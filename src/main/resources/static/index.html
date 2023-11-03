@@ -82,7 +82,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!category" >
+                <a class="nav-link text-white " href="#!category"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/categoryList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
@@ -90,7 +91,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!order">
+                <a class="nav-link text-white " href="#!order"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/orderList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">receipt_long</i>
                     </div>
@@ -98,7 +100,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!review">
+                <a class="nav-link text-white " href="#!review"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/review.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">view_in_ar</i>
                     </div>
@@ -106,7 +109,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!voucher">
+                <a class="nav-link text-white " href="#!voucher"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/voucherList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
                     </div>
@@ -114,7 +118,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!queue">
+                <a class="nav-link text-white " href="#!queue"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/notifications.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">notifications</i>
                     </div>
@@ -126,7 +131,8 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!user">
+                <a class="nav-link text-white " href="#!user"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/userList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">person</i>
                     </div>
@@ -164,12 +170,10 @@
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-
                     <div class="input-group input-group-outline">
                         <label class="form-label">Type here...</label>
                         <input type="text" class="form-control">
                     </div>
-
                 </div>
                 <ul class="navbar-nav  justify-content-end">
                     <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
