@@ -1,5 +1,6 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.AccountRequest;
 import com.greamz.backend.dto.UserProfileDTO;
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.enumeration.Role;
@@ -56,9 +57,9 @@ public class AccountRestController {
     }
 
     @PostMapping("/save")
-    public AccountModel save(@RequestBody AccountModel account) {
-        service.saveAccount(account);
-        return account;
+    public AccountModel save(@RequestBody AccountRequest account) {
+
+        return service.saveAccount(account);
     }
 
     @PutMapping("/update")
