@@ -6,8 +6,5 @@ public enum Role  {
     USER,
     ADMIN,
     MANAGER,
-    EMPLOYEE,
-    GAME_DEVELOPER;
-
-
+    EMPLOYEE;
 }
