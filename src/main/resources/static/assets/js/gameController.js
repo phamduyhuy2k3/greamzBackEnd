@@ -416,7 +416,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             console.log($scope.form.capsule_image)
         }
         $scope.delete = function (item) {
-            if (confirm("Do you want to delete this game?")) {
+            if (confirm("Bạn muốn xóa sản phẩm này?")) {
                 $http.delete(`/api/v1/game/delete/${item.appid}`, {
                     headers: {
                         "Authorization": "Bearer " + $cookies.get("accessToken")
@@ -424,9 +424,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 }).then(resp => {
                     $scope.reset();
                     $scope.initialize();
-                    alert("Successfully deleted the game!");
+                    alert("Xóa sản phẩm thành công!");
                 }).catch(error => {
-                    alert("Game deletion error!");
+                    alert("Lỗi xóa sản phẩm!");
                     console.log("Error", error);
                 })
             }
@@ -474,9 +474,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 $scope.reset();
                 $scope.initialize();
                 if ($scope.action === 'create') {
-                    alert("Save the game successfully!");
+                    alert("Thêm sản phẩm thành công!");
                 } else {
-                    alert("The game updated successfully!");
+                    alert("Cập nhật sản phẩm thành công!");
                 }
             })
                 .catch(error => {

@@ -20,28 +20,27 @@ public class GameRestController {
                                                @RequestParam(defaultValue = "7") int size) {
         return ResponseEntity.ok(service.findAll(page, size));
     }
-//    @GetMapping("/findALl")
-//    public ResponseEntity<Iterable<GameModel>> findAll(){
-//        List<GameModel> gameModels = service.findAll();
-//        return ResponseEntity.ok(gameModels);
-//    }
-    @GetMapping("/findById/{appid}")
-    public ResponseEntity<GameModel> findByAppid(@PathVariable("appid") Long appid){
-        try {
-            GameModel gameModel = service.findGameByAppid(appid);
-            return ResponseEntity.ok(gameModel);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/search")
+    public ResponseEntity<Iterable<GameModel>> searchGame(@RequestParam(defaultValue = "") String term,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "7") int size) {
+        Iterable<GameModel> gameModels = service.searchGame(term, page, size);
+        return ResponseEntity.ok(gameModels);
     }
+
     @PostMapping("/create")
     public GameModel create(@RequestBody GameModel game){
         service.saveGameModel(game);
         return game;
     }
     @GetMapping("{appid}")
-    public GameModel getOne(@PathVariable("appid") Long appid) {
-        return service.findByAppid(appid);
+    public ResponseEntity<GameModel> getOne(@PathVariable("appid") Long appid) {
+        try {
+            GameModel gameModel = service.findGameByAppid(appid);
+            return ResponseEntity.ok(gameModel);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/delete/{appid}")

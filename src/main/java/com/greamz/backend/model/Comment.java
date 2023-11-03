@@ -12,10 +12,9 @@ public class Comment extends TimeStampEntity {
     private int likes;
     private int dislikes;
     @ManyToOne
-    private Disscusion disscusion;
+    private GameModel gameModel;
     @ManyToOne
     private AccountModel account;
-    @ManyToOne
-    private ArtWork artWork;
+
 
 }

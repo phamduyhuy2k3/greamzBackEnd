@@ -1,21 +1,5 @@
 app.controller("mainController", function ($scope, $routeParams,$cookies, $http, $rootScope,$route, $location) {
-    $http.get(`/api/user/currentUser`,
-        {
-            headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken')
-            }
-        }).then(resp => {
-        if(resp.data){
-            $rootScope.account = resp.data;
-            console.log($rootScope.account)
-        }
-    });
-    $scope.logout = function () {
-        $cookies.remove('accessToken');
-        $cookies.remove('refreshToken');
-        $rootScope.account = null;
-        window.location.href = "/sign-in"
-    }
+
 //breadcrumb
     $scope.breadcrumb = function (){
         let path = $location.path();
