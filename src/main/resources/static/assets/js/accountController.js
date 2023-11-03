@@ -1,6 +1,6 @@
 app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.accounts = [];
-    $scope.roles = [];
+    $scope.roles = ["USER", "ADMIN", "MANAGER", "EMPLOYEE"];
     $scope.action = 'create'
     $scope.photoCloudinary;
     $scope.photoUrls = '';
@@ -12,11 +12,8 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         email: '',
         photo: '',
         isEnabled: false,
-        vouchers: [],
-        oders: [],
-        reviews: [],
-        discusios: [],
-        authorities: [],
+
+        role: '',
     }
     $scope.errors = {
         fullname: null,
@@ -87,28 +84,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             }
         )
 
-        $http.get("/api/user/authorities", {
-            headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
-            }
-        }).then(
-            resp => {
-                $scope.roles = resp.data;
-                console.log($scope.roles)
 
-            },
-            error => {
-                console.log("Error", error);
-            }
-        )
-        $http.get("/api/v1/authority/findAll", {
-            headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken'),
-            }
-        }).then(resp => {
-            $scope.authorities = resp.data;
-            console.log($scope.authorities)
-        })
 
     }
     $scope.initialize();
@@ -133,9 +109,9 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         }
     }
 
-    $scope.toggleSelection = function (authority) {
-        console.log(authority)
-    };
+    // $scope.toggleSelection = function (authority) {
+    //     console.log(authority)
+    // };
     $scope.reset = function () {
         $scope.form = {
             id: '',
@@ -145,25 +121,14 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             email: '',
             photo: '',
             isEnabled: false,
-            vouchers: [],
-            oders: [],
-            reviews: [],
-            discusios: [],
-            authorities: [],
+            role: '',
         }
         $scope.action = 'create';
-        $scope.initialize();
     }
 
     $scope.create = function () {
-        $scope.form.authorities = $scope.form.authorities.map(value => {
-            return {
-                role: value.role,
-                authority: value.authority
-            }
-        })
-        console.log($scope.form.authorities)
-        $http.post("/api/user/save", JSON.stringify($scope.form), {
+        console.log($scope.form)
+        $http.post("/api/user/save", $scope.form, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),
                 "Content-Type": "application/json"
@@ -173,28 +138,20 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                 $scope.reset();
             },
             error => {
-                console.log("Error", error);
-                for (var key in error.data) {
-                    if (error.data.hasOwnProperty(key)) {
-                        $scope.errors[key] = {
-                            message: error.data[key].split(', ')
-                        };
-                    }
-                }
-                console.log("Error", $scope.errors);
+                // console.log("Error", error);
+                // for (var key in error.data) {
+                //     if (error.data.hasOwnProperty(key)) {
+                //         $scope.errors[key] = {
+                //             message: error.data[key].split(', ')
+                //         };
+                //     }
+                // }
+                // console.log("Error", $scope.errors);
             }
         )
     }
 
     $scope.update = function () {
-        // $scope.form.authorities = $scope.form.authorities.map(value => {
-        //     return {
-        //         role: value.role,
-        //         authority: value.authority
-        //     }
-        // })
-        // console.log($scope.form.authorities)
-        $scope.form.authorities = null
         $http.put("/api/user/update", $scope.form, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),
@@ -217,120 +174,120 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
 
     }
 
-    $scope.setAuthority = function (account, value, authority) {
-        if (value === true) {
-            $http.post(`/api/v1/authority/save`, {
-                userId: account.id,
-                role: authority
-            }, {
-                headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken'),
-                    "Content-Type": "application/json"
-
-                }
-            }).then(resp => {
-                $scope.reset();
-            })
-
-        } else {
-            $http.delete(`/api/v1/authority/delete`, {
-                headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken'),
-
-                },
-                params: {
-                    userId: account.id,
-                    role: authority
-                }
-            }).then(resp => {
-                $scope.reset();
-            })
-        }
-    }
-    $scope.checkAuthority = function (account, authority) {
-        if (account.authorities) {
-            return account.authorities.findIndex(value => value.role === authority) !== -1;
-        }
-    }
-    $scope.setFormAuthority = function (value, authority) {
-        if (value === true) {
-            $scope.form.authorities.push({
-                role: authority,
-                authority: authority
-            })
-
-        } else {
-            $scope.form.authorities = $scope.form.authorities.filter(value => value.role !== authority)
-        }
-    }
-    $scope.authority_of = function (acc, role) {
-
-        if (acc.authorities) {
-            return acc.authorities.find(ur => ur.role == role);
-        }
-    }
-
-    $scope.authority_changed = function (acc, role, value = null) {
-        if (value === null) {
-            let authority = $scope.checkAuthority(acc, role);
-            if (authority) {
-                $scope.revoke_authority(role, acc);
-            } else { // chưa được cấp quyền => cấp quyền (thêm mới)
-                $scope.grant_authority(role, acc);
-            }
-        } else {
-            if (value === true) {
-                $scope.revoke_authority(role, acc);
-            } else {
-                $scope.grant_authority(role, acc);
-            }
-        }
-
-    }
+    // $scope.setAuthority = function (account, value, authority) {
+    //     if (value === true) {
+    //         $http.post(`/api/v1/authority/save`, {
+    //             userId: account.id,
+    //             role: authority
+    //         }, {
+    //             headers: {
+    //                 'Authorization': 'Bearer ' + $cookies.get('accessToken'),
+    //                 "Content-Type": "application/json"
     //
-    // // Thêm mới authority
-    $scope.grant_authority = function (authority, account) {
-        $http.post(`/api/v1/authority/save`, {
-            userId: account.id,
-            role: authority
-        }, {
-            headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken'),
-                "Content-Type": "application/json"
-
-            }
-        }).then(resp => {
-
-        })
-    }
-    // // Xóa authority
-    $scope.revoke_authority = function (authority, account) {
-        console.log(authority)
-        console.log(account)
-        $http.delete(`/api/v1/authority/delete`, {
-            headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken'),
-            },
-            params: {
-                userId: account.id,
-                role: authority
-            }
-        }).then(resp => {
-
-        })
-    }
-    $scope.toggleSelection = function (authority) {
-        var idx = $scope.form.authorities.indexOf(value => value.role = authority);
-
-        // Is currently selected
-        if (idx) {
-            $scope.form.authorities.splice(idx, 1);
-        }
-
-        // Is newly selected
-        else {
-            $scope.form.authorities.push(authority);
-        }
-        console.log($scope.form.authorities)
-    };
+    //             }
+    //         }).then(resp => {
+    //             $scope.reset();
+    //         })
+    //
+    //     } else {
+    //         $http.delete(`/api/v1/authority/delete`, {
+    //             headers: {
+    //                 'Authorization': 'Bearer ' + $cookies.get('accessToken'),
+    //
+    //             },
+    //             params: {
+    //                 userId: account.id,
+    //                 role: authority
+    //             }
+    //         }).then(resp => {
+    //             $scope.reset();
+    //         })
+    //     }
+    // }
+    // $scope.checkAuthority = function (account, authority) {
+    //     if (account.authorities) {
+    //         return account.authorities.findIndex(value => value.role === authority) !== -1;
+    //     }
+    // }
+    // $scope.setFormAuthority = function (value, authority) {
+    //     if (value === true) {
+    //         $scope.form.authorities.push({
+    //             role: authority,
+    //             authority: authority
+    //         })
+    //
+    //     } else {
+    //         $scope.form.authorities = $scope.form.authorities.filter(value => value.role !== authority)
+    //     }
+    // }
+    // $scope.authority_of = function (acc, role) {
+    //
+    //     if (acc.authorities) {
+    //         return acc.authorities.find(ur => ur.role == role);
+    //     }
+    // }
+    //
+    // $scope.authority_changed = function (acc, role, value = null) {
+    //     if (value === null) {
+    //         let authority = $scope.checkAuthority(acc, role);
+    //         if (authority) {
+    //             $scope.revoke_authority(role, acc);
+    //         } else { // chưa được cấp quyền => cấp quyền (thêm mới)
+    //             $scope.grant_authority(role, acc);
+    //         }
+    //     } else {
+    //         if (value === true) {
+    //             $scope.revoke_authority(role, acc);
+    //         } else {
+    //             $scope.grant_authority(role, acc);
+    //         }
+    //     }
+    //
+    // }
+    // //
+    // // // Thêm mới authority
+    // $scope.grant_authority = function (authority, account) {
+    //     $http.post(`/api/v1/authority/save`, {
+    //         userId: account.id,
+    //         role: authority
+    //     }, {
+    //         headers: {
+    //             'Authorization': 'Bearer ' + $cookies.get('accessToken'),
+    //             "Content-Type": "application/json"
+    //
+    //         }
+    //     }).then(resp => {
+    //
+    //     })
+    // }
+    // // // Xóa authority
+    // $scope.revoke_authority = function (authority, account) {
+    //     console.log(authority)
+    //     console.log(account)
+    //     $http.delete(`/api/v1/authority/delete`, {
+    //         headers: {
+    //             'Authorization': 'Bearer ' + $cookies.get('accessToken'),
+    //         },
+    //         params: {
+    //             userId: account.id,
+    //             role: authority
+    //         }
+    //     }).then(resp => {
+    //
+    //     })
+    // }
+    // $scope.toggleSelection = function (authority) {
+    //     var idx = $scope.form.authorities.indexOf(value => value.role = authority);
+    //
+    //     // Is currently selected
+    //     if (idx) {
+    //         $scope.form.authorities.splice(idx, 1);
+    //     }
+    //
+    //     // Is newly selected
+    //     else {
+    //         $scope.form.authorities.push(authority);
+    //     }
+    //     console.log($scope.form.authorities)
+    // };
 })
