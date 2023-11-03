@@ -1,5 +1,6 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.enumeration.Devices;
 import com.greamz.backend.model.Platform;
 import com.greamz.backend.repository.IPlatform;
 import jakarta.transaction.Transactional;
@@ -17,7 +18,6 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 @Slf4j
-
 public class PlatformService {
     private final IPlatform repo;
     @Transactional
@@ -27,7 +27,7 @@ public class PlatformService {
 
     @Transactional
     public Platform findById(Integer id) throws NoSuchElementException {
-        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game platform with id: " + id));
     }
 
     @Transactional
@@ -37,7 +37,7 @@ public class PlatformService {
 
     @Transactional
     public void deletePlatform(Integer id) {
-        repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game platform with id: " + id));
         repo.deleteById(id);
     }
 
@@ -45,5 +45,9 @@ public class PlatformService {
     public Page<Platform> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return repo.findAll(pageable);
+    }
+
+    public Set<Platform> findAllByPlatformTypes(Devices device) {
+        return repo.findAllByPlatformTypes(device);
     }
 }
