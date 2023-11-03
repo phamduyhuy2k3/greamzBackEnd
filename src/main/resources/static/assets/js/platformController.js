@@ -1,12 +1,12 @@
 app.controller("platformController", function ($scope, $http, $document, $cookies) {
     $scope.platformrs = [];
-    $scope.platformTypes = [];
+    $scope.devices = [];
     $scope.action = 'create'
     $scope.form = {
         id: '',
         name: '',
         description: '',
-        platformTypes: '',
+        devices: '',
     }
 
     $scope.pager = {
@@ -70,8 +70,8 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
             }
         }).then(
             resp => {
-                $scope.platformTypes = resp.data;
-                console.log($scope.platformTypes); // Kiểm tra giá trị của platformTypes
+                $scope.devices = resp.data;
+                console.log($scope.devices); // Kiểm tra giá trị của platformTypes
             },
             error => {
                 console.log("Error", error);

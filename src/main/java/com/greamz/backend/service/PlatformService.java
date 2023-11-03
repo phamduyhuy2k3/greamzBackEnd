@@ -2,7 +2,7 @@ package com.greamz.backend.service;
 
 import com.greamz.backend.enumeration.Devices;
 import com.greamz.backend.model.Platform;
-import com.greamz.backend.repository.IPlatform;
+import com.greamz.backend.repository.IPlatformRepo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Slf4j
 public class PlatformService {
-    private final IPlatform repo;
+    private final IPlatformRepo repo;
+
     @Transactional
     public List<Platform> findAll() {
         return repo.findAll();
