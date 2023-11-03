@@ -1,75 +1,14 @@
 app.controller("platformController", function ($scope, $http, $document, $cookies) {
-    $scope.platformrs = [];
-
+    $scope.platforms = [];
+    $scope.devices = [];
     $scope.action = 'create'
-    $scope.platformr = {
+    $scope.form = {
         id: null,
         name: '',
         description: '',
-        dateAt: '',
-        dateExpired: '',
-        discount: '',
-        orderCondition: '',
-        maxPrice: ''
+        devices: '',
     }
 
-    $scope.create = function () {
-        console.log($scope.voucher)
-        $http.post("/api/voucher/create", $scope.voucher,{
-            headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken"),
-                "Content-Type": "application/json"
-            }
-        }).then(
-            resp => {
-                $scope.initialize()
-            },
-            error => {
-
-            }
-        )
-    }
-
-    $scope.delete = function (item) {
-                if (confirm("Bạn muốn xóa sản phẩm này?")) {
-                    $http.delete(`/api/voucher/delete/${item.id}`, {
-                        headers: {
-                            "Authorization": "Bearer " + $cookies.get("accessToken")
-                        }
-                    }).then(resp => {
-                        $scope.initialize();
-                        // $scope.reset();
-                        alert("Xóa sản phẩm thành công!");
-                    }).catch(error => {
-                        alert("Lỗi xóa sản phẩm!");
-
-                        console.log("Error", error);
-                    })
-                }
-            }
-
-
-    $scope.update = function () {
-        $http.p("/api/voucher/update", {
-            headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
-            },
-            data: $scope.voucher
-        }).then(
-            resp => {
-                $scope.initialize();
-            },
-            error => {
-            }
-        )
-    }
-
-
-
-
-    $scope.edit = function (id) {
-        $scope.voucher = id
-    }
     $scope.pager = {
         toFirst() {
             this.number = 0;
@@ -95,7 +34,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
             this.fetchPage();
         },
         fetchPage() {
-            $http.get(`/api/voucher/findAllPagination?page=${this.number}&size=7`, {
+            $http.get(`/api/v1/platform/findAllPagination?page=${this.number}&size=10`, {
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
@@ -108,12 +47,10 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         }
 
     }
-
     $scope.initialize = function () {
-        $http.get("/api/voucher/findAllPagination", {
+        $http.get("/api/v1/platform/findAllPagination", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
-
             }
         }).then(
             resp => {
@@ -126,7 +63,61 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
                 console.log("Error", error);
             }
         );
-    }
-    $scope.initialize()
 
+        $http.get("/api/v1/platform/devices", {
+            headers: {
+                "Authorization": "Bearer " + $cookies.get("accessToken")
+            }
+        }).then(
+            resp => {
+                $scope.devices = resp.data;
+                console.log($scope.devices); //
+            },
+            error => {
+                console.log("Error", error);
+            }
+        );
+    }
+
+    $scope.create = function () {
+        $http.post("/api/v1/platform/create", $scope.form, {
+            headers: {
+                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Content-Type": "application/json"
+            },
+        }).then(
+            resp => {
+                alert("Saved successfully!");
+            },
+            error => {
+                console.log("Error", error);
+            }
+        )
+    }
+
+    $scope.delete = function (id) {
+        if (confirm("Do you want to delete this category?")) {
+            if (id) {
+                $http.delete(`/api/v1/platform/delete/${id}`, {
+                    headers: {
+                        "Authorization": "Bearer " + $cookies.get("accessToken")
+                    }
+                }).then(resp => {
+                    alert("Deleted successfully!");
+                    $scope.initialize();
+                }).catch(error => {
+                    alert("Error deleting platform!");
+                    console.log("Error", error);
+                });
+            } else {
+                alert("Error deleting platform!");
+            }
+        }
+    }
+
+    $scope.edit = function (id) {
+        $scope.form = $scope.platforms.find(value => value.id === id);
+    }
+
+    $scope.initialize();
 });

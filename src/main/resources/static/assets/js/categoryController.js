@@ -147,7 +147,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
                     console.log("Error", error);
                 });
             } else {
-                alert("Error deleting account!");
+                alert("Error deleting category!");
             }
         }
     }
