@@ -48,11 +48,11 @@ app.run(function ($rootScope, $http, $cookies, $location) {
     if ($cookies.get('accessToken') === 'undefined') {
         window.location.href = "/sign-in";
 
-    }else {
+    } else {
         console.log($cookies.get('accessToken'))
         $rootScope.$on('$routeChangeStart', function () {
-            $rootScope.fetchAccount().then(resp=>{
-                if(!resp){
+            $rootScope.fetchAccount().then(resp => {
+                if (!resp) {
                     window.location.href = "/sign-in";
                 }
             });
@@ -65,8 +65,8 @@ app.run(function ($rootScope, $http, $cookies, $location) {
             alert("Lỗi");
         });
 
-        $rootScope.fetchAccount =async function (){
-            let reult=await $http.get(`/api/user/currentUser`,
+        $rootScope.fetchAccount = async function () {
+            let reult = await $http.get(`/api/user/currentUser`,
                 {
                     headers: {
                         'Authorization': 'Bearer ' + $cookies.get('accessToken')
@@ -93,8 +93,6 @@ app.run(function ($rootScope, $http, $cookies, $location) {
             window.location.href = "/sign-in"
         }
     }
-
-
 
 
 })

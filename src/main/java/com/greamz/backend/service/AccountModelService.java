@@ -2,11 +2,11 @@ package com.greamz.backend.service;
 
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.repository.IAccountRepo;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,8 +31,13 @@ public class AccountModelService {
         return accountModels;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public AccountModel findAccountById(Integer id) throws NoSuchElementException{
+        AccountModel accountModel = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + id));
+        accountModel.setDisscusions(null);
+        accountModel.setOrders(null);
+        accountModel.setReviews(null);
+        accountModel.setVouchers(null);
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + id));
     }
 

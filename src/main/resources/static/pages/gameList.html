@@ -7,17 +7,28 @@
                 </div>
             </div>
 
-            <div class="card-body px-0 pb-2">
+            <div class="card-body px-0 pb-2"
+                 style="padding-top: 15px;">
                 <div class="table-responsive p-0">
-                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
-                            style="margin-left: 20px"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                    <div class="row input-group
+                                      input-group-dynamic">
+                        <button class="col-md-auto btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
+                                style="margin-left: 30px"
+                                data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
                         <span class="btn-inner--icon"><i
                                 class="material-icons material-symbols-outlined">library_add</i></span>
-                        <span class="btn-inner--text">Create</span>
-                    </button>
-                    <input type="text" class="ms-auto " placeholder="search" ng-model="searchGame" ng-change="searchGameEvent()">
+                            <span class="btn-inner--text">Create</span>
+                        </button>
+                        <input type="text"
+                               class="col form-control"
+                               style="margin: 0px 10px 0px 10px"
+                               placeholder="Search"
+                               aria-label="Username"
+                               aria-describedby="basic-addon1"
+                               ng-model="searchGame"
+                               ng-change="searchGameEvent()">
+                    </div>
                     <table class="table align-items-center mb-0">
                         <thead>
                         <tr>
@@ -189,6 +200,29 @@
                                    ng-model="form.website">
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Price</label>
+                            <input type="number" class="form-control"
+                                   placeholder="$"
+                                   ng-model="form.price">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Stock</label>
+                            <input type="number" class="form-control"
+                                   ng-model="form.stock">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>Discount</label>
+                            <input type="number" class="form-control"
+                                   placeholder="%"
+                                   ng-model="form.discount">
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
                             <label style="margin-top:10px">Header Image</label>
@@ -205,6 +239,7 @@
                                 Choose file
                             </button>
                         </div>
+
 
                         <div class="flex " style="max-height: 250px;" ng-hide="!form.header_image">
                             <div class="row row-cols-3 p-4">

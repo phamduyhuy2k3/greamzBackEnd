@@ -18,6 +18,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         $scope.form = {
             appid: '',
             name: '',
+            price:'',
+            stock:'',
+            discount:'',
             detailed_description: '',
             about_the_game: '',
             short_description: '',

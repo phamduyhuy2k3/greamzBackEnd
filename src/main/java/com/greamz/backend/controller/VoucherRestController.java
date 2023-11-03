@@ -15,17 +15,18 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class VoucherRestController {
     private final VoucherModelService service;
+    @GetMapping("/findALl")
+    public ResponseEntity<Iterable<Voucher>> findAll(){
+        List<Voucher> voucherModels = service.findAll();
+        return ResponseEntity.ok(voucherModels);
+    }
     @GetMapping("/findAllPagination")
     public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "7") int size) {
         return ResponseEntity.ok(service.findAll(page, size));
     }
 
-//    @GetMapping("/findALl")
-//    public ResponseEntity<Iterable<Voucher>> findAll(){
-//        List<Voucher> voucherModels = service.findAll();
-//        return ResponseEntity.ok(voucherModels);
-//    }
+
 
     @GetMapping("/findById/{id}")
     public ResponseEntity<Voucher> findByid(@PathVariable("id") Long id){
