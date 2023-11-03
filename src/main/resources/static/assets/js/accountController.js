@@ -98,6 +98,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                     }
                 }).then(resp => {
                     alert("Deleted successfully!");
+                    $scope.reset();
                     $scope.initialize();
                 }).catch(error => {
                     alert("Error deleting account!");
@@ -136,6 +137,8 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         }).then(
             resp => {
                 $scope.reset();
+                $scope.initialize();
+
             },
             error => {
                 // console.log("Error", error);
@@ -160,6 +163,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         }).then(
             resp => {
                 $scope.reset();
+                $scope.initialize();
             },
             error => {
                 console.log(error)

@@ -137,10 +137,8 @@ public class SecurityAdminConfig {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .authenticationProvider(authenticationProvider)
-
                 .oauth2Login(oauth2Login ->
                         oauth2Login
-
                                 .authorizationEndpoint(authorizationEndpoint ->
                                         authorizationEndpoint
                                                 .baseUri("/oauth2/authorize")
