@@ -80,7 +80,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
     }
 
     $scope.create = function () {
-        $http.post("/api/v1/platform/create", $scope.form, {
+        $http.post("/api/v1/platform/save", $scope.form, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),
                 "Content-Type": "application/json"
@@ -88,6 +88,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         }).then(
             resp => {
                 alert("Saved successfully!");
+                $scope.initialize();
             },
             error => {
                 console.log("Error", error);
