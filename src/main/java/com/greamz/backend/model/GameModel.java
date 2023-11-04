@@ -40,6 +40,7 @@ public class GameModel extends TimeStampEntity {
     private String capsule_image;
     private Integer stock;
     private Double price;
+    private Integer discount;
     @ElementCollection()
     private Set<String> images;
     @ElementCollection()

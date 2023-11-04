@@ -15,6 +15,11 @@ app.config(function ($routeProvider) {
             templateUrl: "/pages/categoryList.html",
             controller: "categoryController"
         })
+        //platform management
+        .when("/platform", {
+            templateUrl: "/pages/platformList.html",
+            controller: "platformController"
+        })
         //order management
         .when("/order", {
             templateUrl: "/pages/orderList.html",

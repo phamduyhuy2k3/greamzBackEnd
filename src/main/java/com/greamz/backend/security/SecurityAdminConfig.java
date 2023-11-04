@@ -2,16 +2,10 @@ package com.greamz.backend.security;
 
 
 import com.greamz.backend.config.JwtAuthenticationFilter;
-import com.greamz.backend.exception.RestAuthenticationEntryPoint;
 import com.greamz.backend.security.oauth2.CustomOAuth2UserService;
 import com.greamz.backend.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.greamz.backend.security.oauth2.OAuth2AuthenticationFailureHandler;
 import com.greamz.backend.security.oauth2.OAuth2AuthenticationSuccessHandler;
-import com.greamz.backend.service.CustomUserDetailsService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,23 +13,13 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -84,7 +68,7 @@ public class SecurityAdminConfig {
     };
 
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Order(324324)
     SecurityFilterChain securityFilterOauth2(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -133,54 +117,50 @@ public class SecurityAdminConfig {
 
         return http.build();
     }
-//    @Bean
-//    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .cors(Customizer.withDefaults())
-//                .httpBasic(httpSecurityHttpBasicConfigurer -> {
-//                    httpSecurityHttpBasicConfigurer.disable();
-//                })
-//                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-//                    httpSecurityExceptionHandlingConfigurer
-//                            .authenticationEntryPoint(new RestAuthenticationEntryPoint());
-//                })
-//                .securityMatcher("/api/**")
-//                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-//                    authorizationManagerRequestMatcherRegistry
-//                            .requestMatchers(WHITE_LIST_URL).permitAll()
-//                            .anyRequest().authenticated();
-//                })
-//                .sessionManagement(sessionManagement -> {
-//                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//                })
-//                .authenticationProvider(authenticationProvider)
-//
-//                .oauth2Login(oauth2Login ->
-//                        oauth2Login
-//
-//                                .authorizationEndpoint(authorizationEndpoint ->
-//                                        authorizationEndpoint
-//                                                .baseUri("/oauth2/authorize")
-//                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
-//                                )
-//                                .redirectionEndpoint(redirectionEndpoint ->
-//                                        redirectionEndpoint
-//                                                .baseUri("/oauth2/callback/*")
-//
-//                                )
-//
-//                                .userInfoEndpoint(userInfoEndpoint ->
-//                                        userInfoEndpoint
-//                                                .userService(customOAuth2UserService)
-//                                )
-//                                .successHandler(oAuth2AuthenticationSuccessHandler)
-//                                .failureHandler(oAuth2AuthenticationFailureHandler)
-//                );
-//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-//    }
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .httpBasic(httpSecurityHttpBasicConfigurer -> {
+                    httpSecurityHttpBasicConfigurer.disable();
+                })
+
+                .securityMatcher("/api/**")
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+                    authorizationManagerRequestMatcherRegistry
+                            .requestMatchers(WHITE_LIST_URL).permitAll()
+                            .anyRequest().authenticated();
+                })
+                .sessionManagement(sessionManagement -> {
+                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                })
+                .authenticationProvider(authenticationProvider)
+                .oauth2Login(oauth2Login ->
+                        oauth2Login
+                                .authorizationEndpoint(authorizationEndpoint ->
+                                        authorizationEndpoint
+                                                .baseUri("/oauth2/authorize")
+                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
+                                )
+                                .redirectionEndpoint(redirectionEndpoint ->
+                                        redirectionEndpoint
+                                                .baseUri("/oauth2/callback/*")
+
+                                )
+
+                                .userInfoEndpoint(userInfoEndpoint ->
+                                        userInfoEndpoint
+                                                .userService(customOAuth2UserService)
+                                )
+                                .successHandler(oAuth2AuthenticationSuccessHandler)
+                                .failureHandler(oAuth2AuthenticationFailureHandler)
+                );
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 
 
 

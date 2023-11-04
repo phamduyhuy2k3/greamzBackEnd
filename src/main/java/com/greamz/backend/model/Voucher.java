@@ -7,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Data
@@ -17,6 +17,7 @@ public class Voucher extends TimeStampEntity {
     private Long id;
     private String name;
     private String description;
+    private Date dateAt;
     private Integer dateExpired;
     private Integer discount;
     private Double orderCondition;

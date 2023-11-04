@@ -18,9 +18,6 @@ import java.util.Set;
 public class CategoryController {
     private final CategoryService service;
 
-
-
-
     @GetMapping("/type/{type}")
     public ResponseEntity<Set<Category>> finAdllByType(@PathVariable CategoryTypes type) {
 
