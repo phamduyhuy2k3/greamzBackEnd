@@ -1,32 +1,56 @@
 package com.greamz.backend.service;
 
-import com.greamz.backend.common.BaseEntityService;
 import com.greamz.backend.enumeration.CategoryTypes;
-import com.greamz.backend.model.GameCategory;
+import com.greamz.backend.model.Category;
 import com.greamz.backend.repository.ICategoryRepo;
-import lombok.RequiredArgsConstructor;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 @Service
-
-public class CategoryService extends BaseEntityService<GameCategory,Long,ICategoryRepo> {
-    public CategoryService(ICategoryRepo repository) {
-        super(repository);
+@AllArgsConstructor
+@Slf4j
+public class CategoryService {
+    private final ICategoryRepo repo;
+    @Transactional
+    public List<Category> findAll() {
+        return repo.findAll();
     }
 
-    @Override
-    public List<GameCategory> getAll() {
-        return super.getAll();
+    @Transactional
+    public Category findById(Long id) throws NoSuchElementException {
+        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
     }
 
-    public GameCategory findById(Long id){
-        return super.getById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+    @Transactional
+    public Category saveGameCategory(Category category) {
+        return repo.save(category);
     }
-    public Set<GameCategory> getCategoryByType(CategoryTypes type){
-        return repository.findAllByCategoryTypes(type);
+
+    @Transactional
+    public void deleteGameCategoryById(Long id) {
+        repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        repo.deleteById(id);
     }
+
+    public Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes) {
+        return repo.findAllByCategoryTypes(categoryTypes);
+    }
+    public List<Category> findAllByGameModelsAppid(Long gameId) {
+        return repo.findAllByGameModelsAppid(gameId);
+    }
+    @Transactional
+    public Page<Category> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repo.findAll(pageable);
+    }
+
 }

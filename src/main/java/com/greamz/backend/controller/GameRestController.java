@@ -1,6 +1,5 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.model.Countries;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.service.GameModelService;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +14,27 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class GameRestController {
     private final GameModelService service;
-    @GetMapping("/findALl")
-    public ResponseEntity<Iterable<GameModel>> findAll(){
-        List<GameModel> gameModels = service.findAll();
+
+    @GetMapping("/findAllPagination")
+    public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "7") int size) {
+        return ResponseEntity.ok(service.findAll(page, size));
+    }
+    @GetMapping("/search")
+    public ResponseEntity<Iterable<GameModel>> searchGame(@RequestParam(defaultValue = "") String term,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "7") int size) {
+        Iterable<GameModel> gameModels = service.searchGame(term, page, size);
         return ResponseEntity.ok(gameModels);
     }
-    @GetMapping("/findById/{appid}")
-    public ResponseEntity<GameModel> findByAppid(@PathVariable("appid") Long appid){
+
+    @PostMapping("/create")
+    public GameModel create(@RequestBody GameModel game){
+        service.saveGameModel(game);
+        return game;
+    }
+    @GetMapping("{appid}")
+    public ResponseEntity<GameModel> getOne(@PathVariable("appid") Long appid) {
         try {
             GameModel gameModel = service.findGameByAppid(appid);
             return ResponseEntity.ok(gameModel);
@@ -29,20 +42,15 @@ public class GameRestController {
             return ResponseEntity.notFound().build();
         }
     }
-    @PostMapping("/create")
-    public GameModel create(@RequestBody GameModel game){
-        service.saveGameModel(game);
-        return game;
-    }
-    @GetMapping("{appid}")
-    public GameModel getOne(@PathVariable("appid") Long appid) {
-        return service.findByAppid(appid);
-    }
 
     @DeleteMapping("/delete/{appid}")
     public void delete(@PathVariable("appid") Long appid){
         service.deleteGameByAppid(appid);
     }
-
+//    @GetMapping("/findByCategory/{categoryId}")
+//    public ResponseEntity<List<GameModel>> findByCategory(@PathVariable("categoryId") Long categoryId){
+//        List<GameModel> gameModels = service.findGameByCategory(categoryId);
+//        return ResponseEntity.ok(gameModels);
+//    }
 
 }

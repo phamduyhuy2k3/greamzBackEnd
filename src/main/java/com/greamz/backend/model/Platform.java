@@ -1,29 +1,28 @@
 package com.greamz.backend.model;
 
-import com.greamz.backend.enumeration.CategoryTypes;
+import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.enumeration.Devices;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameCategory {
+@Builder
+public class Platform extends TimeStampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String name;
     private String description;
-    private String image;
     @Enumerated(EnumType.STRING)
-    private CategoryTypes categoryTypes;
-    @ManyToMany(mappedBy = "gameCategory",cascade = CascadeType.PERSIST)
+    private Devices devices;
+    @OneToMany(mappedBy = "platform")
     private List<GameModel> gameModels;
-
 }

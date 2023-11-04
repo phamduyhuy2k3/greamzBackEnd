@@ -1,17 +1,15 @@
 package com.greamz.backend.security.auth;
 
-
 import com.greamz.backend.service.UserService;
 import com.greamz.backend.util.CookieUtils;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -45,18 +43,32 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request,HttpServletResponse response
     ) {
         AuthenticationResponse authenticationResponse = service.authenticate(request);
-        CookieUtils.addCookie(response,"accessToken",authenticationResponse.getAccessToken());
-        CookieUtils.addCookie(response,"refreshToken",authenticationResponse.getRefreshToken());
+        if(authenticationResponse!= null){
+            CookieUtils.addCookie(response,"accessToken",authenticationResponse.getAccessToken());
+            if(request.isRememberMe()){
+                CookieUtils.addCookie(response,"refreshToken",authenticationResponse.getRefreshToken());
+            }
+        }
         return ResponseEntity.ok().body(authenticationResponse);
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(
+    public ResponseEntity<AuthenticationResponse> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
-    ) throws IOException {
-        service.refreshToken(request, response);
+    ) {
+        try{
+            AuthenticationResponse authenticationResponse= service.refreshToken(request);
+            if(authenticationResponse!= null){
+                CookieUtils.addCookie(response,"accessToken",authenticationResponse.getAccessToken());
+                return ResponseEntity.ok().body(authenticationResponse);
+            }else {
+                return ResponseEntity.status(401).body(null);
+            }
+        }catch (ExpiredJwtException e){
+            CookieUtils.deleteCookie(request,response,"accessToken");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
     }
-
-
 }

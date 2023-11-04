@@ -2,6 +2,7 @@ package com.greamz.backend.model;
 
 
 
+import com.greamz.backend.common.TimeStampEntity;
 import com.greamz.backend.enumeration.TokenType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Token {
+public class Token extends TimeStampEntity {
 
     @Id
     @GeneratedValue

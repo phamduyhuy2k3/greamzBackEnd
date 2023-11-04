@@ -1,61 +1,77 @@
 <div class="row">
     <div class="col-12">
         <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 ">
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">Game List</h6>
                 </div>
             </div>
 
-            <div class="card-body px-0 pb-2">
+            <div class="card-body px-0 pb-2"
+                 style="padding-top: 15px;">
                 <div class="table-responsive p-0">
-                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
-                            style="margin-left: 20px"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                    <div class="row input-group
+                                      input-group-dynamic">
+                        <button class="col btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
+                                style="margin-left: 30px; max-width: 120px"
+                                data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
                         <span class="btn-inner--icon"><i
                                 class="material-icons material-symbols-outlined">library_add</i></span>
-                        <span class="btn-inner--text">Create</span>
-                    </button>
+                            <span class="btn-inner--text">Create</span>
+                        </button>
+                        <input type="text"
+                               class="col-md-auto form-control"
+                               style="margin: 0px 10px 0px 10px"
+                               placeholder="Search"
+                               aria-label="Username"
+                               aria-describedby="basic-addon1"
+                               ng-model="searchGame"
+                               ng-change="searchGameEvent()">
+                    </div>
                     <table class="table align-items-center mb-0">
                         <thead>
                         <tr>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Name
+                                INFORMATION
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                Type
+                                CATEGORIES
                             </th>
                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Website
+                                WEBSITE
                             </th>
                             <th class="text-secondary opacity-7"></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="game in items">
+                        <tr ng-repeat="game in pager.content">
                             <td>
                                 <div class="d-flex px-2 py-1">
                                     <div>
-                                        <img src="../assets/img/{{game.images}}"
+                                        <img src="{{game.header_image}}"
                                              class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0 text-sm">{{game.name}}}</h6>
+                                        <h6 class="mb-0 text-sm">{{game.name}}</h6>
+                                        <p class="text-xs text-secondary mb-0">GAMEID: {{game.appid}}</p>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <p class="text-xs font-weight-bold mb-0">{{game.type}}}</p>
+                                <p class="text-xs font-weight-bold mb-0" ng-repeat="category in game.categories">
+                                    {{category.name}}</p>
                             </td>
                             <td class="align-middle text-center text-sm">
-                                <!--                                <span class="badge badge-sm bg-gradient-success">{{game.website}}</span>-->
-                                <p class="text-xs font-weight-bold mb-0">{{game.website}}</p>
+                                <p class="text-xs font-weight-bold mb-0"><a href="{{game.website}}" target="_blank">{{game.website}}</a>
+                                </p>
+
                             </td>
                             <td class="align-middle">
                                 <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
                                    data-toggle="tooltip" data-original-title="Edit user"
-                                   data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                   data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                   ng-click="edit(game.appid)">
                                     Edit
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
@@ -70,6 +86,49 @@
                         </tr>
                         </tbody>
                     </table>
+                    <nav aria-label="Page navigation example align-center">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toFirst()">
+                                        <span class="material-icons">
+                                            first_page
+                                        </span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.prev()">
+                                        <span class="material-icons">
+                                          keyboard_arrow_left
+                                        </span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item" style="margin:5px 8px 5px 5px">
+                                {{pager.number + 1}} of {{pager.totalPages}}
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;"
+                                   ng-click="pager.next()">
+                                        <span class="material-icons">
+                                          keyboard_arrow_right
+                                        </span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toLast()">
+                                        <span class="material-icons">
+                                            last_page
+                                        </span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -85,6 +144,7 @@
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Game Modal</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        ng-click="reset()"
                         style="background-color: rebeccapurple"></button>
             </div>
             <div class="modal-body">
@@ -97,7 +157,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="input-group input-group-static">
+                        <div class="input-group input-group-static" id="category">
                             <label>Categories</label>
                             <select multiple id="categoriesSelect"
                                     class="form-select" style="width: 100%">
@@ -105,50 +165,29 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <!--                        <div class="input-group input-group-dynamic">-->
-                        <!--                            <textarea id="floatingTextarea2" class="form-control" rows="5"-->
-                        <!--                                      placeholder="Detail Description"-->
-                        <!--                                      spellcheck="true"-->
-                        <!--                                      ng-model="form.detailed_description"></textarea>-->
-                        <!--                        </div>-->
                         <label>Detail Description</label>
                         <div id="detail_description"
-                             ng-model="form.detailed_description">
+                             name="detail"
+                        >
                         </div>
                     </div>
-
                     <div class="col-12"
                          style="margin-top: 100px;">
-                        <!--                        <div class="input-group input-group-dynamic">-->
-                        <!--                        <textarea class="form-control" placeholder="About" rows="5"-->
-                        <!--                                  id="textarea-about"-->
-                        <!--                                  ng-model="form.about_the_game"></textarea>-->
-                        <!--                             Create the editor container -->
-                        <!--                            -->
-                        <!--                        </div>-->
                         <label>About</label>
-                        <div id="about"
-                             ng-model="form.about_the_game">
+                        <div id="about">
                         </div>
                     </div>
                     <div class="col-md-12"
                          style="margin-top: 100px;
                          margin-bottom: 100px">
-                        <!--                        <div class="input-group input-group-dynamic">-->
-                        <!--                        <textarea class="form-control" placeholder="Short Description"-->
-                        <!--                                  id="floatingTextarea3"-->
-                        <!--                                  rows="5"-->
-                        <!--                                  ng-model="form.short_description"></textarea>-->
-                        <!--                        </div>-->
                         <label>Short description</label>
-                        <div id="short_description"
-                             ng-model="form.short_description">
+                        <div id="short_description">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="input-group input-group-static">
                             <label>Support Language</label>
-                            <select multiple id="languagesSelect"
+                            <select multiple id="country"
                                     class="form-select" style="width: 100%">
                             </select>
                         </div>
@@ -157,92 +196,212 @@
                         <div class="input-group input-group-static">
                             <label>Website</label>
                             <input type="text" class="form-control"
+                                   placeholder="https://example.com/"
                                    ng-model="form.website">
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Price</label>
+                            <input type="number" class="form-control"
+                                   placeholder="$"
+                                   ng-model="form.price">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Stock</label>
+                            <input type="number" class="form-control"
+                                   ng-model="form.stock">
+                        </div>
+                    </div>
                     <div class="col-md-12">
-                        <label class="form-label">Header Image</label>
-                        <button style="padding: 17px 0px 0px 10px"
-                                class="btn "
-                                data-bs-target="#headerModal"
-                                data-bs-toggle="modal">
-                            <a id="header">Choose file</a>
-                        </button>
-                        <!--                        <table class="table">-->
-                        <!--                            <tbody>-->
-                        <!--                            <tr ng-repeat="headerUrls in form.header_image">-->
-                        <!--                                <td><img style="width: 25%" src="{{ headerUrls }}"></td>-->
-                        <!--                            </tr>-->
-                        <!--                            </tbody>-->
-                        <!--                        </table>-->
-                        <div class="card-group">
-                            <div class="card" data-animation="true" ng-repeat="headerUrls in form.header_image">
-                                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                                    <a class="d-block blur-shadow-image">
-                                        <img src="{{ headerUrls }}" alt="img-blur-shadow"
-                                             class="img-fluid shadow border-radius-lg">
-                                    </a>
-                                    <div class="colored-shadow"
-                                         style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);"></div>
-                                </div>
-                                <div class="card-body text-center">
-                                    <div class="d-flex mt-n6 mx-auto">
-                                        <a class="btn btn-link text-primary ms-auto border-0" data-bs-toggle="tooltip"
-                                           data-bs-placement="bottom" title="Refresh">
-                                            <i class="material-icons text-lg">refresh</i>
-                                        </a>
-                                        <button class="btn btn-link text-info me-auto border-0" data-bs-toggle="tooltip"
-                                                data-bs-placement="bottom" title="Edit">
-                                            <i class="material-icons text-lg">edit</i>
-                                        </button>
-                                    </div>
+                        <div class="input-group input-group-static">
+                            <label>Discount</label>
+                            <input type="number" class="form-control"
+                                   placeholder="%"
+                                   ng-model="form.discount">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label style="margin-top:10px">Header Image</label>
+                            <input type="text"
+                                   style="margin: 0px 10px 0px 10px"
+                                   class="form-control w-50"
+                                   placeholder="Nhập url ảnh vào đây"
+                                   ng-model="form.header_image">
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="uppyHeaderImage.show({search: {expression: 'resource_type:image'}})"
+                                    data-bs-target="#headerModal"
+                                    data-bs-toggle="modal">
+                                Choose file
+                            </button>
+                        </div>
 
-                                </div>
-                                <hr class="dark horizontal my-0">
-                                <div class="card-footer d-flex">
+
+                        <div class="flex " style="max-height: 250px;" ng-hide="!form.header_image">
+                            <div class="row row-cols-3 p-4">
+                                <div class="col position-relative mb-3 card">
+                                    <img class="w-100" style="height: 180px; object-fit: fill"
+                                         src="{{form.header_image}}">
+                                    <button type="button" ng-click="deleteImg2()"
+                                            style="width: 15px; height: 15px;"
+                                            class="btn-close position-absolute top-0 end-0 translate-middle-x rounded-circle bg-danger bg-danger text-white">
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label">Capsule Image</label>
-                        <button style="padding: 17px 0px 0px 10px"
-                                class="btn "
-                                data-bs-target="#capsuleModal"
-                                data-bs-toggle="modal">
-                            <a id="capsule">Choose file</a>
-                        </button>
-                        <table class="table">
-                            <tbody>
-                            <tr ng-repeat="capsuleUrls in form.capsule_image">
-                                <td><img style="width: 25%" src="{{ capsuleUrls }}"></td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Images</label>
-                        <button style="padding: 17px 0px 0px 10px"
-                                class="btn "
-                                data-bs-target="#imageModal"
-                                data-bs-toggle="modal">
-                            <a id="images">Choose file</a>
-                        </button>
-                        <div class="flex overflow-y-auto" style="max-height: 250px;" ng-if="form.images.length >0">
+                        <div class="input-group input-group-static">
+                            <label style="margin-top:10px">Capsule Image</label>
+                            <input type="text"
+                                   style="margin: 0px 10px 0px 10px"
+                                   class="form-control w-50"
+                                   placeholder="Nhập url ảnh vào đây"
+                                   ng-model="form.capsule_image">
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="uppyCapsuleImage.show({search: {expression: 'resource_type:image'}})"
+                                    data-bs-target="#capsuleModal"
+                                    data-bs-toggle="modal">
+                                Choose file
+                            </button>
+                        </div>
+                        <div class="" style="max-height: 250px;" ng-hide="!form.capsule_image">
                             <div class="row row-cols-3 p-4">
-                                <div class="col position-relative mb-3 card" ng-repeat="img in form.images track by $index" >
-                                    <img class="w-100" style="height: 180px; object-fit: fill"  src="{{img}}">
-                                    <button type="button" ng-click="deleteImg(form.images,img)" style="width: 15px; height: 15px;" class="btn-close position-absolute top-0 end-0 translate-middle-x rounded-circle bg-danger bg-danger text-white">
+                                <div class="col position-relative mb-3 card">
+                                    <img class="w-100" style="height: 180px; object-fit: fill"
+                                         src="{{form.capsule_image}}">
+                                    <button type="button" ng-click="deleteImg3()"
+                                            style="width: 15px; height: 15px;"
+                                            class="btn-close position-absolute top-0 end-0 translate-middle-x rounded-circle bg-danger bg-danger text-white">
                                     </button>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label">Movie</label>
-                        <button id="movies"></button>
+                        <div class="input-group input-group-static">
+                            <label style="margin-top:10px">Images</label>
+                            <input type="text"
+                                   style="margin: 0px 10px 0px 10px"
+                                   class="form-control w-50"
+                                   placeholder="Nhập url ảnh vào đây"
+                                   ng-model="imageUrls">
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="setURL(imageUrls, form.images)">+
+                            </button>
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="uppyImages.show({search: {expression: 'resource_type:image'}})"
+                                    data-bs-target="#imageModal"
+                                    data-bs-toggle="modal">
+                                Choose file
+                            </button>
+                        </div>
+                        <div class="card-group flex overflow-y-auto overflow-x-auto" ng-hide="!form.images">
+                            <div class="row row-cols-auto">
+                                <div class="col position-relative mb-3 card"
+                                     data-animation="true"
+                                     style="margin-top:70px"
+                                     ng-if="form.images.length >0"
+                                     ng-repeat="img in form.images track by $index">
+                                    <div class="card-header p-0 position-relative mt-n4 mx-3 ">
+                                        <a class="d-block blur-shadow-image text-center">
+                                            <img src="{{ img }}"
+                                                 alt="img-blur-shadow"
+                                                 style="height: 180px; object-fit: fill"
+                                                 class="img-fluid shadow border-radius-lg">
+                                        </a>
+                                        <div class="colored-shadow"
+                                             style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);"></div>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="d-flex mt-n6 mx-auto">
+                                            <a class="btn btn-link text-primary ms-auto border-0"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="bottom" title="Delete"
+                                               ng-click="deleteImg(form.images,img)">
+                                                <i class="material-icons text-lg">delete</i>
+                                            </a>
+                                            </a>
+                                            <button class="btn btn-link text-info me-auto border-0"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Edit"
+                                                    ng-click="deleteImg(form.images,img)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <hr class="dark horizontal my-0">
+                                    <div class="card-footer d-flex">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label style="margin-top:10px">Movie</label>
+                            <input type="text"
+                                   style="margin: 0px 10px 0px 10px"
+                                   class="form-control w-50"
+                                   placeholder="Nhập url ảnh vào đây"
+                                   ng-model="movies">
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="setURL(movies, form.movies)">+
+                            </button>
+                            <button style="margin: 5px 0px 0px 10px"
+                                    class="btn btn-primary"
+                                    ng-click="uppyMovies.show({search: {expression: 'resource_type:video'}})"
+                                    data-bs-target="#movieModal"
+                                    data-bs-toggle="modal">
+                                Choose file
+                            </button>
+                        </div>
+                        <div class="card-group flex overflow-y-auto overflow-x-auto">
+                            <div class="row row-cols-auto">
+                                <div class="col position-relative mb-3 card"
+                                     data-animation="true"
+                                     style="margin-top:70px"
+                                     ng-if="form.movies.length >0"
+                                     ng-repeat="img in form.movies track by $index">
+                                    <div class="card-header p-0 position-relative mt-n4 mx-3">
+                                        <a class="d-block blur-shadow-image text-center">
+                                            <video alt="img-blur-shadow"
+                                                   style="height: 180px; object-fit: fill"
+                                                   class="img-fluid shadow border-radius-lg">
+                                                <source src="{{ img }}">
+                                            </video>
+                                        </a>
+                                        <div class="colored-shadow"
+                                             style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);"></div>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="d-flex mt-n6 mx-auto">
+                                            <a class="btn btn-link text-primary ms-auto border-0"
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="bottom" title="Delete"
+                                               ng-click="deleteImg(form.movies,img)">
+                                                <i class="material-icons text-lg">delete</i>
+                                            </a>
+                                            <button class="btn btn-link text-info me-auto border-0"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="bottom" title="Edit"
+                                                    ng-click="deleteImg(form.movies,img)">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <!--                    <div class="col-md-12">-->
                     <!--                        <label class="form-label">Screenshots</label>-->
@@ -251,9 +410,9 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" ng-click="update()" ng-if="action==='update'">Save
-                    changes
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close
+                </button>
+                <button type="button" class="btn btn-primary" ng-click="create()"   ng-if="action==='update'">Save changes
                 </button>
                 <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='create'">Save
                 </button>
@@ -342,6 +501,31 @@
 </div>
 
 <!--movie modal-->
+<div class="modal fade" id="movieModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close"
+                        id="btnMovie"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal"
+                        style="background-color: rebeccapurple"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body " style="height: 1000px">
+                <div id="moviesCloudinary" style="height: 600px"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        id="btnCloseMovie"
+                        class="btn bg-gradient-info">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--js -->
 <script src="../assets/js/core/popper.min.js"></script>
 <script src="../assets/js/core/bootstrap.min.js"></script>

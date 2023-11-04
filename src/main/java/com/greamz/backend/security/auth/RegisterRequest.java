@@ -1,11 +1,7 @@
 package com.greamz.backend.security.auth;
 
-import com.greamz.backend.model.Authority;
-
-import com.greamz.backend.validation.annotations.PasswordValueMatch;
-import com.greamz.backend.validation.annotations.UniqueEmail;
-import com.greamz.backend.validation.annotations.UsernameUnique;
-import com.greamz.backend.validation.annotations.ValidPassword;
+import com.greamz.backend.annotations.PasswordValueMatch;
+import com.greamz.backend.annotations.ValidPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -30,11 +26,11 @@ public class RegisterRequest {
     @NotBlank(message = "Họ tên đang để trống")
     private String fullname;
     @NotBlank(message = "Username đang để trống")
-    @UsernameUnique
+//    @UsernameUnique
     private String username;
     @NotBlank(message = "Email đang để trống")
     @Email(message = "Email không đúng định dạng")
-    @UniqueEmail
+//    @UniqueEmail
     private String email;
     @ValidPassword
     @NotBlank(message = "Password đang để trống")
@@ -42,7 +38,7 @@ public class RegisterRequest {
     @ValidPassword
     @NotBlank(message = "Xác nhận password đang để trống")
     private String confirmPassword;
-    private List<Authority> authorities;
+
     interface ValidationStepOne{
 
     }

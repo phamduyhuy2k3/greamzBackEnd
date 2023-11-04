@@ -1,11 +1,18 @@
 package com.greamz.backend.repository;
 
 import com.greamz.backend.enumeration.CategoryTypes;
-import com.greamz.backend.model.GameCategory;
+import com.greamz.backend.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
 
-public interface ICategoryRepo extends JpaRepository<GameCategory,Long> {
-    Set<GameCategory> findAllByCategoryTypes(CategoryTypes categoryTypes);
+@Repository
+public interface ICategoryRepo extends JpaRepository<Category, Long> {
+
+    Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes);
+
+    List<Category> findAllByGameModelsAppid(Long gameId);
+
 }

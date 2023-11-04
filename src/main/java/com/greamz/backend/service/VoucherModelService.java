@@ -1,11 +1,15 @@
 package com.greamz.backend.service;
 
 
+import com.greamz.backend.model.GameModel;
 import com.greamz.backend.model.Voucher;
 import com.greamz.backend.repository.IVoucherRepo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +34,11 @@ public class VoucherModelService {
     @Transactional
     public List<Voucher> findAll() {
         return voucherRepository.findAll();
+    }
+    @Transactional
+    public Page<Voucher> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return voucherRepository.findAll(pageable);
     }
 
     @Transactional
