@@ -6,6 +6,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         id: null,
         name: '',
         description: '',
+        dateAt: '',
         dateExpired: '',
         discount: '',
         orderCondition: '',
