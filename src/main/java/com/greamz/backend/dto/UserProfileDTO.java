@@ -1,6 +1,7 @@
 package com.greamz.backend.dto;
 
 
+import com.greamz.backend.enumeration.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,7 @@ public class UserProfileDTO  {
     private String email;
     private String photo;
     private String fullname;
-    private Collection<? extends GrantedAuthority> authorities;
+    private Role role;
 
 
 }

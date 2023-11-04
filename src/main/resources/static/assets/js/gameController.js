@@ -1,5 +1,6 @@
 app.controller("gameController", function ($scope, $http, $document, $cookies) {
         $scope.games = [];
+        $scope.searchGame = '';
         $scope.action = 'create';
         $scope.categories = [];
         $scope.types = [];
@@ -31,7 +32,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         $scope.imageUrls = [];
         $scope.movies = [];
 
-        $scope.setURL = function (url,scope) {
+        $scope.setURL = function (url, scope) {
             scope.push(url)
             url = "";
         }
@@ -255,44 +256,73 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 theme: 'snow'
             }
         );
-    $scope.pager = {
-        toFirst() {
-            this.number = 0;
-            this.fetchPage();
-        },
-        toLast() {
-            this.number = this.totalPages - 1
-            this.fetchPage();
-
-        },
-        next() {
-            this.number++;
-            if (this.number >= this.totalPages) {
+        $scope.pager = {
+            toFirst() {
                 this.number = 0;
-            }
-            this.fetchPage();
-        },
-        prev() {
-            this.number--;
-            if (this.number < 0) {
-                this.number = this.totalPages - 1;
-            }
-            this.fetchPage();
-        },
-        fetchPage() {
-            $http.get(`/api/v1/game/findAllPagination?page=${this.number}&size=7`, {
-                headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
-                }
-            }).then(resp => {
-                $scope.pager = {
-                    ...$scope.pager,
-                    ...resp.data
-                };
-            })
-        }
+                this.fetchPage();
+            },
+            toLast() {
+                this.number = this.totalPages - 1
+                this.fetchPage();
 
-    }
+            },
+            next() {
+                this.number++;
+                if (this.number >= this.totalPages) {
+                    this.number = 0;
+                }
+                this.fetchPage();
+            },
+            prev() {
+                this.number--;
+                if (this.number < 0) {
+                    this.number = this.totalPages - 1;
+                }
+                this.fetchPage();
+            },
+            fetchPage() {
+                if ($scope.searchGame === '') {
+                    $http.get(`/api/v1/game/findAllPagination?page=${this.number}&size=7`, {
+                        headers: {
+                            'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                        }
+                    }).then(resp => {
+                        $scope.pager = {
+                            ...$scope.pager,
+                            ...resp.data
+                        };
+                    })
+                } else {
+                    $http.get(`/api/v1/game/search?term=${$scope.searchGame}&page=${this.number}&size=7`, {
+                        headers: {
+                            'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                        }
+                    }).then(resp => {
+                        $scope.pager = {
+                            ...$scope.pager,
+                            ...resp.data
+                        };
+                    })
+                }
+            }
+
+        }
+        $scope.searchGameEvent = function () {
+            if ($scope.searchGame === '') {
+                $scope.pager.fetchPage();
+            } else {
+                $http.get(`/api/v1/game/search?term=${$scope.searchGame}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    }
+                }).then(resp => {
+                    $scope.pager = {
+                        ...$scope.pager,
+                        ...resp.data
+                    };
+                })
+            }
+        }
 
         $scope.initialize = function () {
 
@@ -309,38 +339,41 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         country.text = country.name;
                     });
                 }).then(r => {
-                $scope.selectCountry = $('#country').select2({
-                    // Use the modified 'data' object
-                    data: $scope.countries,
-                    placeholder: "Select a country",
-                    templateResult: function (data) {
-                        if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                        let $result = $('<span><img src="' + data.flag + '" class="img-flag" style="width: 25px; height: 25px; border: #0a0c0d solid thin " /> ' + data.text + '</span>');
-                        return $result;
-                    },
-                    templateSelection: function (data) {
-                        if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                        let $selection = $('<span><img src="' + data.flag + '" class="img-flag" style="width: 25px; height: 25px; border: #0a0c0d solid thin" /> ' + data.text + '</span>');
-                        return $selection;
-                    }
-                });
-                $scope.selectCountry.on('select2:select', function (e) {
-                    let data = e.params.data;
-                    console.log(data);
-                    $scope.$apply(function () {
-                        $scope.form.supported_languages.push(data.name);
-                        console.log($scope.form.supported_languages);
+                if (!$scope.selectCountry) {
+                    $scope.selectCountry = $('#country').select2({
+                        // Use the modified 'data' object
+                        data: $scope.countries,
+                        placeholder: "Select a country",
+                        templateResult: function (data) {
+                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
+                            let $result = $('<span><img src="' + data.flag + '" class="img-flag" style="width: 25px; height: 25px; border: #0a0c0d solid thin " /> ' + data.text + '</span>');
+                            return $result;
+                        },
+                        templateSelection: function (data) {
+                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
+                            let $selection = $('<span><img src="' + data.flag + '" class="img-flag" style="width: 25px; height: 25px; border: #0a0c0d solid thin" /> ' + data.text + '</span>');
+                            return $selection;
+                        }
                     });
-                });
-                $scope.selectCountry.on('select2:unselect', function (e) {
-                    const name = e.params.data.name;
-                    console.log(name)
-                    const removedIndex = $scope.form.supported_languages.findIndex(data => data === name);
-                    console.log(removedIndex)
-                    $scope.form.supported_languages.splice(removedIndex, 1);
-                    console.log($scope.form.supported_languages)
+                    $scope.selectCountry.on('select2:select', function (e) {
+                        let data = e.params.data;
+                        console.log(data);
+                        $scope.$apply(function () {
+                            $scope.form.supported_languages.push(data.name);
+                            console.log($scope.form.supported_languages);
+                        });
+                    });
+                    $scope.selectCountry.on('select2:unselect', function (e) {
+                        const name = e.params.data.name;
+                        console.log(name)
+                        const removedIndex = $scope.form.supported_languages.findIndex(data => data === name);
+                        console.log(removedIndex)
+                        $scope.form.supported_languages.splice(removedIndex, 1);
+                        console.log($scope.form.supported_languages)
 
-                });
+                    });
+                }
+
             });
 
             $http.get("/api/v1/game/findAllPagination",
@@ -367,6 +400,11 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             }).then(
                 resp => {
                     $scope.categories = resp.data;
+                    $scope.categories.forEach(function (category) {
+                        category.categoryId = category.id;
+                        category.id = category.name;
+                        category.text = category.name;
+                    });
                 },
             ).then(
                 () => {
@@ -377,22 +415,22 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         placeholder: "Select Categories",
                         templateResult: function (data) {
                             if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                            let $result = $('<span>' + data.name + '</span>');
+                            let $result = $('<span>' + data.text + '</span>');
                             return $result;
                         },
                         templateSelection: function (data) {
                             if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                            let $selection = $('<span>' + data.name + '</span>');
+                            let $selection = $('<span>' + data.text + '</span>');
                             return $selection;
                         }
                     });
                     $scope.select.on('select2:select', function (e) {
-                        $scope.form.categories.push({id: parseInt(e.params.data.id)});
+                        console.log(e.params.data.categoryId)
+                        $scope.form.categories.push({id: parseInt(e.params.data.categoryId)});
 
                     });
                     $scope.select.on('select2:unselect', function (e) {
-                        const id = e.params.data.id;
-                        console.log(id)
+                        const id = e.params.data.categoryId;
                         const removedIndex = $scope.form.categories.findIndex(data => data.id === parseInt(id));
                         console.log(removedIndex)
                         $scope.$apply(() => {
@@ -402,7 +440,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 }
             )
         }
-
         $scope.deleteImg = function (scope, value) {
             const index = scope.findIndex(data => data === value);
             scope.splice(index, 1);
@@ -423,7 +460,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                     }
                 }).then(resp => {
                     $scope.reset();
-                    $scope.initialize();
+                    $scope.pager.fetchPage()
                     alert("Xóa sản phẩm thành công!");
                 }).catch(error => {
                     alert("Lỗi xóa sản phẩm!");
@@ -436,11 +473,10 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             $scope.form = {
                 appid: '',
                 name: '',
-                type: '',
                 detailed_description: '',
                 about_the_game: '',
                 short_description: '',
-                supported_languages: '',
+                supported_languages: [],
                 header_image: '',
                 website: '',
                 capsule_image: '',
@@ -456,10 +492,11 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             $scope.selectCountry.trigger('change');
             $scope.select.val(null);
             $scope.select.trigger('change');
-            // $scope.initialize();
+            $scope.pager.fetchPage()
 
         }
         $scope.create = function () {
+
             $scope.form.about_the_game = JSON.stringify($scope.quillAbout.getContents());
             $scope.form.short_description = JSON.stringify($scope.quillShortDescription.getContents());
             $scope.form.detailed_description = JSON.stringify($scope.quillDetailedDescription.getContents());
@@ -472,7 +509,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                     }
                 }).then(resp => {
                 $scope.reset();
-                $scope.initialize();
+                $scope.pager.fetchPage()
                 if ($scope.action === 'create') {
                     alert("Thêm sản phẩm thành công!");
                 } else {
@@ -482,13 +519,16 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 .catch(error => {
                     console.log("Error", error);
                 });
+
         }
         $scope.edit = async function (appid) {
-            await $http.get(`/api/v1/game/findById/${appid}`, {
+
+            await $http.get(`/api/v1/game/${appid}`, {
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
             }).then(resp => {
+                    $scope.action = 'update';
                     return resp.data;
                 }, error => {
                     return error;
@@ -508,7 +548,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 $scope.selectCountry.val($scope.form.supported_languages);
                 $scope.selectCountry.trigger('change');
                 let arr = $scope.form.categories.map(data => {
-                    return data.id
+                    return data.name
                 });
                 console.log(arr)
                 $scope.select.val(arr);
@@ -516,20 +556,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             }, error => {
                 console.log(error);
             })
-            // await $http.get(`/api/category/game/${appid}`, {}).then(resp => {
-            //     return resp.data;
-            // }, error => {
-            //     console.log(error);
-            // }).then(r => {
-            //     $scope.form.categories = r;
-            //     let arr = $scope.form.categories.map(data => {
-            //         return data.id
-            //     });
-            //     console.log(arr)
-            //     $scope.select.val(arr);
-            //     $scope.select.trigger('change');
-            // })
-            $scope.action = 'update';
         }
         $scope.initialize()
     }

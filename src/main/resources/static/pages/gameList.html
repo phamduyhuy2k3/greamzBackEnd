@@ -1,23 +1,34 @@
 <div class="row">
     <div class="col-12">
         <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 ">
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">Game List</h6>
                 </div>
             </div>
 
-            <div class="card-body px-0 pb-2">
+            <div class="card-body px-0 pb-2"
+                 style="padding-top: 15px;">
                 <div class="table-responsive p-0">
-                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
-                            style="margin-left: 20px"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                    <div class="row input-group
+                                      input-group-dynamic">
+                        <button class="col btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
+                                style="margin-left: 30px; max-width: 120px"
+                                data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
                         <span class="btn-inner--icon"><i
                                 class="material-icons material-symbols-outlined">library_add</i></span>
-                        <span class="btn-inner--text">Create</span>
-                    </button>
-                    <input type="text" class="ms-auto " placeholder="search" ng-model="searchGame" ng-change="searchGameEvent()">
+                            <span class="btn-inner--text">Create</span>
+                        </button>
+                        <input type="text"
+                               class="col-md-auto form-control"
+                               style="margin: 0px 10px 0px 10px"
+                               placeholder="Search"
+                               aria-label="Username"
+                               aria-describedby="basic-addon1"
+                               ng-model="searchGame"
+                               ng-change="searchGameEvent()">
+                    </div>
                     <table class="table align-items-center mb-0">
                         <thead>
                         <tr>
@@ -146,7 +157,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="input-group input-group-static">
+                        <div class="input-group input-group-static" id="category">
                             <label>Categories</label>
                             <select multiple id="categoriesSelect"
                                     class="form-select" style="width: 100%">
@@ -189,6 +200,29 @@
                                    ng-model="form.website">
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Price</label>
+                            <input type="number" class="form-control"
+                                   placeholder="$"
+                                   ng-model="form.price">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Stock</label>
+                            <input type="number" class="form-control"
+                                   ng-model="form.stock">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>Discount</label>
+                            <input type="number" class="form-control"
+                                   placeholder="%"
+                                   ng-model="form.discount">
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
                             <label style="margin-top:10px">Header Image</label>
@@ -205,6 +239,7 @@
                                 Choose file
                             </button>
                         </div>
+
 
                         <div class="flex " style="max-height: 250px;" ng-hide="!form.header_image">
                             <div class="row row-cols-3 p-4">
@@ -276,7 +311,7 @@
                                      style="margin-top:70px"
                                      ng-if="form.images.length >0"
                                      ng-repeat="img in form.images track by $index">
-                                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                    <div class="card-header p-0 position-relative mt-n4 mx-3 ">
                                         <a class="d-block blur-shadow-image text-center">
                                             <img src="{{ img }}"
                                                  alt="img-blur-shadow"
@@ -337,7 +372,7 @@
                                      style="margin-top:70px"
                                      ng-if="form.movies.length >0"
                                      ng-repeat="img in form.movies track by $index">
-                                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                    <div class="card-header p-0 position-relative mt-n4 mx-3">
                                         <a class="d-block blur-shadow-image text-center">
                                             <video alt="img-blur-shadow"
                                                    style="height: 180px; object-fit: fill"
@@ -377,8 +412,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close
                 </button>
-                <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='update'">Save
-                    changes
+                <button type="button" class="btn btn-primary" ng-click="create()"   ng-if="action==='update'">Save changes
                 </button>
                 <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='create'">Save
                 </button>
