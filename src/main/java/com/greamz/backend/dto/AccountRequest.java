@@ -1,28 +1,21 @@
 package com.greamz.backend.dto;
 
-
 import com.greamz.backend.enumeration.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 
-import javax.security.auth.Subject;
-import java.security.Principal;
-import java.util.Collection;
-
-
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
-public class UserProfileDTO  {
+public class AccountRequest {
     private String username;
+    private String password;
     private String email;
-    private String photo;
     private String fullname;
+    private String photo;
     private Role role;
-
 
 }

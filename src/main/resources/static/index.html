@@ -43,8 +43,8 @@
 
 </head>
 
-<body class="g-sidenav-show  bg-gray-100" ng-app="myApp" >
-<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark"
+<body class="g-sidenav-show  bg-gray-100" ng-app="myApp" ng-controller="mainController">
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 z-index-sticky border-radius-xl my-3 fixed-start ms-3   bg-gradient-dark"
        id="sidenav-main">
 
     <div class="sidenav-header">
@@ -62,7 +62,8 @@
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link text-white " href="/">
+                <a class="nav-link  text-white " href="/"
+                ng-class="{'active': $route.current.templateUrl=='/pages/dashboard.html'}">
 
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">dashboard</i>
@@ -72,7 +73,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!game">
+                <a class="nav-link text-white " href="#!game"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/gameList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
@@ -80,7 +82,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!category">
+                <a class="nav-link text-white " href="#!category"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/categoryList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
@@ -88,7 +91,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!order">
+                <a class="nav-link text-white " href="#!order"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/orderList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">receipt_long</i>
                     </div>
@@ -96,7 +100,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!review">
+                <a class="nav-link text-white " href="#!review"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/review.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">view_in_ar</i>
                     </div>
@@ -104,7 +109,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!voucher">
+                <a class="nav-link text-white " href="#!voucher"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/voucherList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
                     </div>
@@ -112,7 +118,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!queue">
+                <a class="nav-link text-white " href="#!queue"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/notifications.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">notifications</i>
                     </div>
@@ -124,7 +131,8 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link text-white " href="#!user">
+                <a class="nav-link text-white " href="#!user"
+                   ng-class="{'active': $route.current.templateUrl=='/pages/userList.html'}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">person</i>
                     </div>
@@ -162,12 +170,10 @@
             </nav>
             <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                 <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-
                     <div class="input-group input-group-outline">
                         <label class="form-label">Type here...</label>
                         <input type="text" class="form-control">
                     </div>
-
                 </div>
                 <ul class="navbar-nav  justify-content-end">
                     <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -413,20 +419,23 @@
         }
         Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
     }
+
 </script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <!-- Github buttons -->
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
 <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/material-dashboard.min.js?v=3.1.0"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>-->
 <!-- Angular JS-->
 <script src="/assets/angular-1.8.2/angular.min.js"></script>
 <script src="/assets/angular-1.8.2/angular-route.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-cookies/1.8.3/angular-cookies.min.js"
         integrity="sha512-eM4WApD53FS2pv6fIgY4E2utWB82WSp3QPeoemIzA9VeOv9vQ1UzYBKIkXAwS71SCilEFpfkwtCZHj2uSS3keQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 <script src="https://media-library.cloudinary.com/global/all.js"></script>
 <!-- Include the Quill library -->
