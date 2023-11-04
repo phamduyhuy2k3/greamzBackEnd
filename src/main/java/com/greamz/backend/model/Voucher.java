@@ -18,7 +18,7 @@ public class Voucher extends TimeStampEntity {
     private String name;
     private String description;
     private Date dateAt;
-    private Integer dateExpired;
+    private Date dateExpired;
     private Integer discount;
     private Double orderCondition;
     private Double maxPrice;
