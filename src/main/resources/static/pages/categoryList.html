@@ -148,10 +148,13 @@
                                    ng-model="form.description">
                         </div>
                     </div>
-                    <select class="form-select" aria-label="Category Types" ng-model="form.categoryTypes"
-                            ng-options="categoryType for categoryType in categoryTypes">
-                        <!--                        <option value="" selected>Choose a category type</option>-->
-                    </select>
+                    <div class="col-md-12">
+                        <label>Category type</label>
+                        <select class="form-select border-1" aria-label="Category Types" ng-model="form.categoryTypes"
+                                ng-options="categoryType for categoryType in categoryTypes">
+                        </select>
+                    </div>
+
                     <!--                    <div class="col-md-12">-->
                     <!--                        <label class="form-label">Image</label>-->
                     <!--                        <button style="margin: 5px 0px 0px 10px"-->
