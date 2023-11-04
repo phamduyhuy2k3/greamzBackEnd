@@ -11,5 +11,5 @@ import java.util.Set;
 @Repository
 public interface IPlatformRepo extends JpaRepository<Platform, Integer> {
 
-    Set<Platform> findAllByPlatformTypes(Devices devices);
+    Set<Platform> findAllByDevices(Devices devices);
 }
