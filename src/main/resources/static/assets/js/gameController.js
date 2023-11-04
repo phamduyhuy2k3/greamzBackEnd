@@ -1,6 +1,6 @@
 app.controller("gameController", function ($scope, $http, $document, $cookies) {
         $scope.games = [];
-        $scope.searchGame= '';
+        $scope.searchGame = '';
         $scope.action = 'create';
         $scope.categories = [];
         $scope.types = [];
@@ -281,7 +281,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 this.fetchPage();
             },
             fetchPage() {
-                if($scope.searchGame === ''){
+                if ($scope.searchGame === '') {
                     $http.get(`/api/v1/game/findAllPagination?page=${this.number}&size=7`, {
                         headers: {
                             'Authorization': 'Bearer ' + $cookies.get('accessToken')
@@ -292,7 +292,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                             ...resp.data
                         };
                     })
-                }else {
+                } else {
                     $http.get(`/api/v1/game/search?term=${$scope.searchGame}&page=${this.number}&size=7`, {
                         headers: {
                             'Authorization': 'Bearer ' + $cookies.get('accessToken')
@@ -308,9 +308,9 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
 
         }
         $scope.searchGameEvent = function () {
-            if($scope.searchGame === ''){
+            if ($scope.searchGame === '') {
                 $scope.pager.fetchPage();
-            }else {
+            } else {
                 $http.get(`/api/v1/game/search?term=${$scope.searchGame}`, {
                     headers: {
                         'Authorization': 'Bearer ' + $cookies.get('accessToken')
@@ -496,6 +496,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
 
         }
         $scope.create = function () {
+
             $scope.form.about_the_game = JSON.stringify($scope.quillAbout.getContents());
             $scope.form.short_description = JSON.stringify($scope.quillShortDescription.getContents());
             $scope.form.detailed_description = JSON.stringify($scope.quillDetailedDescription.getContents());
@@ -518,13 +519,16 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 .catch(error => {
                     console.log("Error", error);
                 });
+
         }
         $scope.edit = async function (appid) {
+
             await $http.get(`/api/v1/game/${appid}`, {
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
             }).then(resp => {
+                    $scope.action = 'update';
                     return resp.data;
                 }, error => {
                     return error;
@@ -552,8 +556,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             }, error => {
                 console.log(error);
             })
-
-            $scope.action = 'update';
         }
         $scope.initialize()
     }

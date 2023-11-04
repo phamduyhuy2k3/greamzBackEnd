@@ -157,7 +157,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="input-group input-group-static">
+                        <div class="input-group input-group-static" id="category">
                             <label>Categories</label>
                             <select multiple id="categoriesSelect"
                                     class="form-select" style="width: 100%">
@@ -412,8 +412,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close
                 </button>
-                <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='update'">Save
-                    changes
+                <button type="button" class="btn btn-primary" ng-click="create()"   ng-if="action==='update'">Save changes
                 </button>
                 <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='create'">Save
                 </button>
