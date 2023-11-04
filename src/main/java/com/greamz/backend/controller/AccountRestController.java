@@ -25,11 +25,12 @@ import static com.greamz.backend.util.Mapper.mapObject;
 public class AccountRestController {
     private final AccountModelService service;
     @GetMapping("/currentUser")
-    public ResponseEntity<UserPrincipal> currentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
+    public ResponseEntity<AccountModel> currentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
         if(currentUser == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(currentUser);
+        AccountModel accountModel = service.findAccountById(currentUser.getId());
+        return ResponseEntity.ok(accountModel);
     }
     @GetMapping("/findAll")
     public ResponseEntity<Iterable<AccountModel>> findAll() {

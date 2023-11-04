@@ -24412,10 +24412,11 @@ hr.horizontal.gray-light {
 }
 
 .sidenav {
-  /*z-index: 9999;*/
+  z-index: 9999;
 }
-.modal-crud{
-
+#movieModal,#capsuleModal,#headerModal,#imageModal,#exampleModal,
+#imageCategoryModal,#categoryModal,#orderModal,#userModal,#photoModal{
+  z-index: 10001;
 }
 
 .sidenav .navbar-brand,
