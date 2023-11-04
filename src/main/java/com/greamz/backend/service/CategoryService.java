@@ -2,7 +2,7 @@ package com.greamz.backend.service;
 
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.model.Category;
-import com.greamz.backend.repository.ICategory;
+import com.greamz.backend.repository.ICategoryRepo;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Slf4j
 public class CategoryService {
-    private final ICategory repo;
+    private final ICategoryRepo repo;
     @Transactional
     public List<Category> findAll() {
         return repo.findAll();
