@@ -1,8 +1,8 @@
 app.controller("platformController", function ($scope, $http, $document, $cookies) {
-    $scope.platformrs = [];
+    $scope.platforms = [];
 
     $scope.action = 'create'
-    $scope.platformr = {
+    $scope.platform = {
         id: null,
         name: '',
         description: '',
