@@ -1,4 +1,6 @@
 app.controller("mainController", function ($scope, $routeParams,$cookies, $http, $rootScope,$route, $location) {
+$rootScope.$route = $route;
+console.log($rootScope.$route)
 
 //breadcrumb
     $scope.breadcrumb = function (){

@@ -20,7 +20,7 @@ public class PlatformRestController {
 
     @GetMapping("/findAllByDevice/{device}")
     public ResponseEntity<Set<Platform>> findAllByDevice(@PathVariable Devices device) {
-        return ResponseEntity.ok(service.findAllByPlatformTypes(device));
+        return ResponseEntity.ok(service.findAllByDevices(device));
     }
 
     @GetMapping("/devices")
@@ -34,19 +34,16 @@ public class PlatformRestController {
         return ResponseEntity.ok(gamePlatforms);
     }
 
-    @GetMapping("/findById/{id}")
-    public ResponseEntity<Platform> findById(@PathVariable("id") Integer id) {
+
+
+    @GetMapping("{id}")
+    public ResponseEntity<Platform> getOne(@PathVariable("id") Integer id) {
         try {
             Platform platform = service.findById(id);
             return ResponseEntity.ok(platform);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @GetMapping("{id}")
-    public Platform getOne(@PathVariable("id") Integer id) {
-        return service.findById(id);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -56,8 +53,7 @@ public class PlatformRestController {
 
     @PostMapping("/save")
     public Platform save(@RequestBody Platform platform) {
-        service.savePlatform(platform);
-        return platform;
+        return service.savePlatform(platform);
     }
 
     @GetMapping("/findAllPagination")

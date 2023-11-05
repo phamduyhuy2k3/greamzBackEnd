@@ -1,5 +1,5 @@
 app.controller("platformController", function ($scope, $http, $document, $cookies) {
-    $scope.platformrs = [];
+    $scope.platforms = [];
     $scope.devices = [];
     $scope.action = 'create'
     $scope.form = {
@@ -71,7 +71,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         }).then(
             resp => {
                 $scope.devices = resp.data;
-                console.log($scope.devices); // Kiểm tra giá trị của platformTypes
+                console.log($scope.devices);
             },
             error => {
                 console.log("Error", error);
@@ -89,7 +89,8 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         }).then(
             resp => {
                 alert("Saved successfully!");
-                $scope.reset();
+                console.log($scope.form)
+                $scope.initialize();
             },
             error => {
                 console.log("Error", error);
@@ -118,7 +119,20 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
     }
 
     $scope.edit = function (id) {
-        $scope.form = $scope.platformrs.find(value => value.id === id);
+        $http.get("/api/v1/platform/"+id, {
+                    headers: {
+                        "Authorization": "Bearer " + $cookies.get("accessToken"),
+                        "Content-Type": "application/json"
+                    },
+                }).then(
+                    resp => {
+                        $scope.form= resp.data
+                        $scope.initialize();
+                    },
+                    error => {
+                        console.log("Error", error);
+                    }
+                )
     }
 
     $scope.initialize();
