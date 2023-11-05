@@ -1,5 +1,6 @@
 app.controller("categoryController", function ($scope, $http, $document, $cookies) {
     $scope.categories = [];
+    $scope.searchCategory = '';
     $scope.categoryTypes = [];
     $scope.imageUrls = '';
     $scope.selectedCategoryType = '';
@@ -51,6 +52,22 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             })
         }
 
+    }
+    $scope.searchCategoryEvent = function () {
+        if ($scope.searchCategory === '') {
+            $scope.pager.fetchPage();
+        } else {
+            $http.get(`/api/v1/category/search?term=${$scope.searchCategory}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
+            })
+        }
     }
     //Image
     $scope.imageCloudinary = cloudinary.createMediaLibrary(
