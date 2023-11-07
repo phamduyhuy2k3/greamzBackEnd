@@ -18,6 +18,7 @@ import java.util.Collection;
 @Data
 @Builder
 public class UserProfileDTO  {
+    private Integer id;
     private String username;
     private String email;
     private String photo;

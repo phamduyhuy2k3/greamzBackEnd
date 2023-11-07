@@ -24,12 +24,16 @@ public class CategoryService {
     private final ICategoryRepo repo;
     @Transactional
     public List<Category> findAll() {
-        return repo.findAll();
+        List<Category> gameCategories = repo.findAll();
+        gameCategories.forEach(category -> category.setGameModels(null));
+        return gameCategories;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Category findById(Long id) throws NoSuchElementException {
-        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        Category category=repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+
+        return category;
     }
 
     @Transactional
@@ -52,7 +56,10 @@ public class CategoryService {
     @Transactional
     public Page<Category> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repo.findAll(pageable);
+        Page<Category> gameCategories = repo.findAll(pageable);
+        gameCategories.forEach(category -> category.setGameModels(null));
+
+        return gameCategories;
     }
     @Transactional(readOnly = true)
     public Page<Category> searchCategory(String searchTerm, int page, int size) {

@@ -53,6 +53,7 @@ public class CategoryController {
         }
     }
 
+
     @GetMapping("{id}")
     public Category getOne(@PathVariable("id") Long id) {
         return service.findById(id);

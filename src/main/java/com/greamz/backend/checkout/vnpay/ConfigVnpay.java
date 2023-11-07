@@ -1,21 +1,28 @@
-package com.greamz.backend.util;
+package com.greamz.backend.checkout.vnpay;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@Configuration
 public class ConfigVnpay {
-    public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:8080/vnpay_jsp/vnpay_return.jsp";
-    public static String vnp_TmnCode = "";
-    public static String secretKey = "";
-    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
-
-    //Util for VNPAY
-    public static String hashAllFields(Map fields) {
+    @Value("${application.payment.vnpay.payUrl}")
+    public String vnp_PayUrl;
+    @Value("${application.payment.vnpay.returnUrl}")
+    public String vnp_ReturnUrl;
+    @Value("${application.payment.vnpay.tmnCode}")
+    public String vnp_TmnCode;
+    @Value("${application.payment.vnpay.secretKey}")
+    public String secretKey;
+    @Value("${application.payment.vnpay.apiUrl}")
+    public String vnp_ApiUrl;
+    public String hashAllFields(Map fields) {
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
@@ -58,7 +65,7 @@ public class ConfigVnpay {
         }
     }
 
-    public static String getIpAddress(HttpServletRequest request) {
+    public String getIpAddress(HttpServletRequest request) {
         String ipAdress;
         try {
             ipAdress = request.getHeader("X-FORWARDED-FOR");
@@ -71,7 +78,7 @@ public class ConfigVnpay {
         return ipAdress;
     }
 
-    public static String getRandomNumber(int len) {
+    public String getRandomNumber(int len) {
         Random rnd = new Random();
         String chars = "0123456789";
         StringBuilder sb = new StringBuilder(len);

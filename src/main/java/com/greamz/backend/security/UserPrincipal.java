@@ -47,6 +47,9 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         System.out.println("userPrincipal = " + userPrincipal.getAttributes());
         return userPrincipal;
     }
+    public void setAuthoritiesFromEntity(Role role){
+        this.authorities = Collections.singletonList(new SimpleGrantedAuthority(role.name()));
+    }
 
     public Integer getId() {
         return id;
