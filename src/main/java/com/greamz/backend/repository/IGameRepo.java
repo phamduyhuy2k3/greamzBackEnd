@@ -17,9 +17,7 @@ public interface IGameRepo extends JpaRepository<GameModel, Long> {
 
 //    List<GameModel> findBy(Long categoryId);
 
-    @Override
-    @Query("select distinct g from GameModel g join fetch g.categories")
-    Page<GameModel> findAll(Pageable pageable);
+
 
     List<GameModel> findAllByCategoriesId(Long categoryId);
 

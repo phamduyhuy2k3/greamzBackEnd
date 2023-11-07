@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greamz.backend.model.Category;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.repository.IGameRepo;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
@@ -18,6 +19,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
 
 
@@ -29,6 +31,7 @@ public class GameModelService {
     private EntityManager entityManager;
     private final IGameRepo gameModelRepository;
     private final CategoryService categoryService;
+
     @Transactional
     public GameModel saveGameModel(GameModel gameModel) {
 
@@ -108,24 +111,30 @@ public class GameModelService {
 //        executorService.shutdown();
 //    }
 
-//    @Transactional
+    //    @Transactional
 //    public List<GameModel> findAll() {
 //        return gameModelRepository.findAll();
 //    }
+
+
     @Transactional(readOnly = true)
     public Page<GameModel> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<GameModel> gameModelPage= gameModelRepository.findAll(pageable);
+        Page<GameModel> gameModelPage = gameModelRepository.findAll(pageable);
         gameModelPage.forEach(gameModel -> {
-            Hibernate.initialize(gameModel.getImages());
-            Hibernate.initialize(gameModel.getMovies());
-            Hibernate.initialize(gameModel.getSupported_languages());
+            gameModel.setComments(null);
+            gameModel.setSupported_languages(null);
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            Hibernate.initialize(gameModel.getCategories());
+
         });
         return gameModelPage;
     }
+
     @Transactional(readOnly = true)
     public GameModel findGameByAppid(Long appid) throws NoSuchElementException {
-        GameModel gameModel= gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
+        GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         List<Category> categories = categoryService.findAllByGameModelsAppid(appid);
         gameModel.setCategories(categories);
         Hibernate.initialize(gameModel.getImages());
@@ -133,17 +142,19 @@ public class GameModelService {
         Hibernate.initialize(gameModel.getSupported_languages());
         return gameModel;
     }
+
     @Transactional(readOnly = true)
     public List<GameModel> findGameByCategory(Long categoryId) {
         return gameModelRepository.findAllByCategoriesId(categoryId);
     }
 
     @Transactional
-    public void deleteGameByAppid(Long appid){
-        GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(()->new NoSuchElementException("Not found product with id: "+ appid));
+    public void deleteGameByAppid(Long appid) {
+        GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         gameModelRepository.delete(gameModel);
 
     }
+
     @Transactional(readOnly = true)
     public Page<GameModel> searchGame(String searchTerm, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -158,6 +169,7 @@ public class GameModelService {
 
         return gameModelPage;
     }
+
     public List<Category> getCategoriesForGame(GameModel gameModel) {
         // Load the categories when needed
         return gameModel.getCategories();

@@ -36,15 +36,6 @@ public class CategoryController {
         return ResponseEntity.ok(gameCategories);
     }
 
-    @GetMapping("/findById/{id}")
-    public ResponseEntity<Category> findById(@PathVariable("id") Long id) {
-        try {
-            Category category = service.findById(id);
-            return ResponseEntity.ok(category);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @GetMapping("{id}")
     public Category getOne(@PathVariable("id") Long id) {

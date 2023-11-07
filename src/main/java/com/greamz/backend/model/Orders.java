@@ -24,14 +24,14 @@ public class Orders extends TimeStampEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @ManyToOne
-    @JsonBackReference(value = "userOrders")
     private AccountModel account;
     private Double totalPrice;
-    @OneToMany(mappedBy = "orders",cascade = {CascadeType.MERGE,CascadeType.PERSIST},fetch = FetchType.EAGER)
-    @JsonIgnore
+    @OneToMany(mappedBy = "orders",cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
     private List<OrdersDetail> ordersDetails;
     @Enumerated(EnumType.STRING)
     private PAYMENTMETHOD paymentmethod;
     @Enumerated(EnumType.STRING)
     private OrdersStatus ordersStatus;
+    @ManyToOne
+    private Voucher voucher;
 }

@@ -182,8 +182,18 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             }
         )
     }
-    $scope.edit = function (id) {
-        $scope.form = $scope.categories.find(value => value.id === id);
+    $scope.edit =async function (id) {
+        await $http.get(`/api/v1/category/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+            }
+        }).then(resp => {
+                $scope.action = 'update';
+                $scope.form = resp.data;
+            }, error => {
+                return error;
+            }
+        )
     }
 
     $scope.initialize();
