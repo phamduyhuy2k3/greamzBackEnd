@@ -2,6 +2,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         $scope.games = [];
         $scope.action = 'create';
         $scope.categories = [];
+        $scope.platforms = [];
         $scope.types = [];
         $scope.countries = [];
         $scope.uppyHeaderImage;
@@ -27,6 +28,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             images: [],
             movies: [],
             categories: [],
+            platform:[],
         }
         $scope.imageUrls = [];
         $scope.movies = [];
@@ -359,6 +361,54 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                     console.log("Error", error);
                 }
             );
+
+            $http.get("/api/v1/platform/findAll", {
+                header:{
+                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                }
+            }).then(
+                resp => {
+                    $scope.platforms = resp.data;
+                    console.log($scope.platforms)
+                    $scope.platforms.forEach(function (platform) {
+                        platform.platformId = platform.id;
+                        platform.id = platform.name;
+                        platform.text = platform.name;
+                    });
+                }
+            ).then(
+                () => {
+                    $scope.selectPlatform = $('#platformSelect').select2({
+                        // Use the modified 'data' object
+                        data: $scope.platforms,
+                        placeholder: "Select Platforms",
+                        templateResult: function (data) {
+                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
+                            let $result = $('<span>' + data.text + '</span>');
+                            return $result;
+                        },
+                        templateSelection: function (data) {
+                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
+                            let $selection = $('<span>' + data.text + '</span>');
+                            return $selection;
+                        }
+                    });
+                    $scope.selectPlatform.on('select2:select', function (e) {
+                        console.log(e.params.data.platformId)
+                        $scope.form.platform.push({id: parseInt(e.params.data.platformId)});
+
+                    });
+                    $scope.selectPlatform.on('select2:unselect', function (e) {
+                        const id = e.params.data.platformId;
+                        const removedIndex = $scope.form.platform.findIndex(data => data.id === parseInt(id));
+                        console.log(removedIndex)
+                        $scope.$apply(() => {
+                            $scope.form.platformId.splice(removedIndex, 1);
+                        })
+                    });
+                }
+            )
+
 
             $http.get("/api/v1/category/findAll", {
                 headers: {

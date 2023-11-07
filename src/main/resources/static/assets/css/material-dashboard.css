@@ -27912,4 +27912,36 @@ pre[class*="language-"] {
   }
 }
 /*new css*/
+ .introduce {
+   position: relative; /* Để thiết lập vị trí tương đối cho phần tử con */
+   display: inline-block; /* Để phần tử con không mở rộng toàn bộ chiều rộng của container */
+ }
+
+.imageIntroduce {
+  display: block; /* Đảm bảo hình ảnh hiển thị là một khối (block) */
+  border-radius: 30px;
+}
+
+.textIntroduce {
+  position: absolute; /* Để thiết lập vị trí tuyệt đối cho phần tử văn bản */
+  top: 0; /* Vị trí từ trên xuống (có thể thay đổi tùy ý) */
+  left: 0; /* Vị trí từ trái sang (có thể thay đổi tùy ý) */
+  /*background-color: rgba(0, 0, 0, 0.5); !* Màu nền văn bản (chọn màu và độ mờ tùy ý) *!*/
+  color: black; /* Màu văn bản (có thể thay đổi tùy ý) */
+  padding: 50px 50px 0px 50px; /* Khoảng cách giữa văn bản và biên của phần tử */
+  font-size: 60px;
+  /*font-weight: bold;*/
+  font-family: Google Sans,-apple-system,BlinkMacSystemFont,sans-serif;
+  white-space: pre-line;
+}
+.textIntro{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 75%;
+  padding: 0px 50px 120px 50px;
+  color: black;
+  font-family: Google Sans,-apple-system,BlinkMacSystemFont,sans-serif;
+}
+
 /*# sourceMappingURL=dashboard-free.css.map */

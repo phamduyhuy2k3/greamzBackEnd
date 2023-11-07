@@ -1,10 +1,10 @@
 app.controller("categoryController", function ($scope, $http, $document, $cookies) {
-        $scope.categories = [];
-        $scope.categoryTypes = [];
-        $scope.imageUrls = '';
-        $scope.selectedCategoryType = '';
-        $scope.action = 'create';
-        $scope.imageCloudinary;
+    $scope.categories = [];
+    $scope.categoryTypes = [];
+    $scope.imageUrls = '';
+    $scope.selectedCategoryType = '';
+    $scope.action = 'create';
+    $scope.imageCloudinary;
 
 
         $scope.form = {
@@ -51,47 +51,63 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
                 })
             }
 
-        }
-        //Image
-        $scope.imageCloudinary = cloudinary.createMediaLibrary(
-            {
-                cloud_name: "dtreuuola",
-                api_key: "118212349948963",
-                use_saml: false,
-                remove_header: true,
-                insert_caption: "Insert",
-                inline_container: "#imageCloudinary",
-                default_transformations: [[]],
-                multiple: false
-            },
-            {
-                insertHandler: function (data) {
-                    data.assets.forEach((asset) => {
-                        let url = asset.url
-                        $scope.form.image = url;
-                        $scope.imageUrls = url;
-                        console.log("image: " + $scope.form.image)
-                    });
+    }
+    $scope.searchCategoryEvent = function () {
+        if ($scope.searchCategory === '') {
+            $scope.pager.fetchPage();
+        } else {
+            $http.get(`/api/v1/category/search?term=${$scope.searchCategory}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
+            }).then(resp => {
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
+            })
+        }
+    }
+    //Image
+    $scope.imageCloudinary = cloudinary.createMediaLibrary(
+        {
+            cloud_name: "dtreuuola",
+            api_key: "118212349948963",
+            use_saml: false,
+            remove_header: true,
+            insert_caption: "Insert",
+            inline_container: "#imageCloudinary",
+            default_transformations: [[]],
+            multiple: false
+        },
+        {
+            insertHandler: function (data) {
+                data.assets.forEach((asset) => {
+                    let url = asset.url
+                    $scope.form.image = url;
+                    $scope.imageUrls = url;
+                    console.log("image: " + $scope.form.image)
+                });
             }
-        );
-        //Image
-        $(document).ready(function () {
-            // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
-            $("#btnCloseCategoryModalHeader").click(function () {
+        }
+    );
+    //Image
+    $(document).ready(function () {
+        // Xử lý sự kiện khi nhấn nút "Thêm ảnh" trong modal cloudinary
+        $("#btnCloseCategoryModalHeader").click(function () {
+            // Thêm URL ảnh mới vào mảng imageUrls
+            $scope.$apply(); // Cập nhật scope của AngularJS
+            $("#headerModal").modal("hide"); // Ẩn modal cloudinary
+            $("#categoryModal").modal("show"); // Hiện modal create
+        }),
+            //nút x modal
+            $("#btnCloseCategoryModalHeader2").click(function () {
                 // Thêm URL ảnh mới vào mảng imageUrls
                 $scope.$apply(); // Cập nhật scope của AngularJS
                 $("#headerModal").modal("hide"); // Ẩn modal cloudinary
                 $("#categoryModal").modal("show"); // Hiện modal create
-            }),
-                //nút x modal
-                $("#btnCloseCategoryModalHeader2").click(function () {
-                    // Thêm URL ảnh mới vào mảng imageUrls
-                    $scope.$apply(); // Cập nhật scope của AngularJS
-                    $("#headerModal").modal("hide"); // Ẩn modal cloudinary
-                    $("#categoryModal").modal("show"); // Hiện modal create
-                })
-        });
+            })
+    });
 
 
         $scope.initialize = function () {

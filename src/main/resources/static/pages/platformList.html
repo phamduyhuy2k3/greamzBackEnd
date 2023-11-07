@@ -144,9 +144,13 @@
                                    ng-model="form.description">
                         </div>
                     </div>
-                    <select class="form-select" aria-label="Category Types" ng-model="form.devices"
-                            ng-options="device for device in devices">
-                    </select>
+                    <div class="col-md-12">
+                            <label>Device Type</label>
+                            <select class="form-select" ng-model="form.devices"
+                                    ng-options="device for device in devices">
+                            </select>
+                    </div>
+
                 </form>
             </div>
             <div class="modal-footer">

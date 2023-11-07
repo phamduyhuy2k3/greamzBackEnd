@@ -29,20 +29,20 @@
                                 DESCRIPTION
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                DateAt
+                                Date At
                             </th>
 
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                DATEEXPIRED
+                                DATE EXPIRED
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 discount
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                orderCondition
+                                order Condition
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                maxPrice
+                                max Price
                             </th>
                             <th class="text-secondary opacity-7"></th>
                         </tr>
@@ -59,19 +59,19 @@
                                 <span class="text-secondary text-xs font-weight-bold">{{v.description}}</span>
                             </td>
                             <td class="align-middle">
-                                <span  class="text-secondary text-xs font-weight-bold">{{v.dateAt}}</span>
+                                <span  class="text-secondary text-xs font-weight-bold ps-3">{{v.dateAt}}</span>
                             </td>
                             <td class="align-middle">
                                 <span class="text-secondary text-xs font-weight-bold">{{v.dateExpired}}</span>
                             </td>
                             <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">{{v.discount}}</span>
+                                <span class="text-secondary text-xs font-weight-bold ps-3">{{v.discount}}</span>
                             </td>
                             <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">{{v.orderCondition}}</span>
+                                <span class="text-secondary text-xs font-weight-bold ps-3">{{v.orderCondition}}</span>
                             </td>
                             <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">{{v.maxPrice}}</span>
+                                <span class="text-secondary text-xs font-weight-bold ps-3">{{v.maxPrice}}</span>
                             </td>
                             <td class="align-middle">
                                 <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
@@ -141,7 +141,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Voucher</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                style="background-color: #6f42c1"></button>
             </div>
             <div class="modal-body">
                 <form class="row g-3">
@@ -170,14 +171,14 @@
                     </div>
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
-                            <label>DATEAT</label>
+                            <label>DATE AT</label>
                             <input type="date" class="form-control"
                                    ng-model="voucher.dateAt">
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
-                            <label>DATEEXPIRED</label>
+                            <label>DATE EXPIRED</label>
                             <input type="date" class="form-control"
                                    ng-model="voucher.dateExpired">
                         </div>
@@ -191,14 +192,14 @@
                     </div>
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
-                            <label>ORDERCONDITION</label>
+                            <label>ORDER CONDITION</label>
                             <input type="number" class="form-control"
                                    ng-model="voucher.orderCondition">
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
-                            <label>MAXPRICE</label>
+                            <label>MAX PRICE</label>
                             <input type="number" class="form-control"
                                    ng-model="voucher.maxPrice">
                         </div>
