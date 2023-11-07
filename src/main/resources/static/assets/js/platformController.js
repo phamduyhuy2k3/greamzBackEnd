@@ -119,20 +119,20 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
     }
 
     $scope.edit = function (id) {
-        $http.get("/api/v1/platform/"+id, {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken"),
-                        "Content-Type": "application/json"
-                    },
-                }).then(
-                    resp => {
-                        $scope.form= resp.data
-                        $scope.initialize();
-                    },
-                    error => {
-                        console.log("Error", error);
-                    }
-                )
+        $http.get("/api/v1/platform/" + id, {
+            headers: {
+                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Content-Type": "application/json"
+            },
+        }).then(
+            resp => {
+                $scope.form = resp.data
+                $scope.initialize();
+            },
+            error => {
+                console.log("Error", error);
+            }
+        )
     }
 
     $scope.initialize();
