@@ -416,20 +416,37 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             console.log($scope.form.capsule_image)
         }
         $scope.delete = function (item) {
-            if (confirm("Bạn muốn xóa sản phẩm này?")) {
-                $http.delete(`/api/v1/game/delete/${item.appid}`, {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(resp => {
-                    $scope.reset();
-                    $scope.initialize();
-                    alert("Xóa sản phẩm thành công!");
-                }).catch(error => {
-                    alert("Lỗi xóa sản phẩm!");
-                    console.log("Error", error);
-                })
-            }
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $http.delete(`/api/v1/game/delete/${item.appid}`, {
+                        headers: {
+                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                        }
+                    }).then(resp => {
+                        $scope.reset();
+                        $scope.initialize();
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Deleted the game successfully!",
+                            icon: "success"
+                        });
+                    }).catch(error => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Error deleting game!",
+                        });
+                    })
+                }
+            });
         }
 
         $scope.reset = function () {
@@ -474,14 +491,31 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 $scope.reset();
                 $scope.initialize();
                 if ($scope.action === 'create') {
-                    alert("Thêm sản phẩm thành công!");
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Saved the game successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                 } else {
-                    alert("Cập nhật sản phẩm thành công!");
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Game update successful!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                 }
-            })
-                .catch(error => {
-                    console.log("Error", error);
+            }).catch(error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error saving game!",
                 });
+                console.log("Error", error);
+            });
+
         }
         $scope.edit = async function (appid) {
             await $http.get(`/api/v1/game/findById/${appid}`, {
