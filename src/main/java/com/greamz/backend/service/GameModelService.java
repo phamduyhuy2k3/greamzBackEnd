@@ -160,10 +160,11 @@ public class GameModelService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<GameModel> gameModelPage = gameModelRepository.searchGame(searchTerm, pageable);
+
         gameModelPage.forEach(gameModel -> {
             Hibernate.initialize(gameModel.getImages());
             Hibernate.initialize(gameModel.getMovies());
-            Hibernate.initialize(gameModel.getCategories());
+//            Hibernate.initialize(gameModel.getCategories());
             Hibernate.initialize(gameModel.getSupported_languages());
         });
 

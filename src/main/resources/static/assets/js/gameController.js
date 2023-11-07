@@ -508,13 +508,13 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                         "Content-Type": "application/json"
                     }
                 }).then(resp => {
-                $scope.reset();
                 $scope.pager.fetchPage()
                 if ($scope.action === 'create') {
                     alert("Thêm sản phẩm thành công!");
                 } else {
                     alert("Cập nhật sản phẩm thành công!");
                 }
+                $scope.reset();
             })
                 .catch(error => {
                     console.log("Error", error);
@@ -522,19 +522,18 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
 
         }
         $scope.edit = async function (appid) {
-
             await $http.get(`/api/v1/game/${appid}`, {
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
             }).then(resp => {
-                    $scope.action = 'update';
                     return resp.data;
                 }, error => {
                     return error;
                 }
             ).then(r => {
                 $scope.form = r;
+
                 if ($scope.form.about_the_game != null || $scope.form.about_the_game !== '' || $scope.form.about_the_game !== undefined) {
                     $scope.quillAbout.setContents(JSON.parse($scope.form.about_the_game));
                 }
@@ -556,6 +555,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             }, error => {
                 console.log(error);
             })
+            $scope.action = 'update';
         }
         $scope.initialize()
     }
