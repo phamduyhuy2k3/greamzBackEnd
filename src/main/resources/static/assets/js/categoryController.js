@@ -173,7 +173,6 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
                 }
             }
         });
-
     }
 
 
@@ -205,6 +204,8 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
                     timer: 1500
                 });
                 $scope.reset();
+                console.log($scope.form)
+                $scope.initialize();
             },
             error => {
                 Swal.fire({
@@ -221,13 +222,13 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             headers: {
                 'Authorization': 'Bearer ' + $cookies.get('accessToken')
             }
-        }).then(resp => {
+        }).then(
+            resp => {
                 $scope.action = 'update';
                 $scope.form = resp.data;
             }, error => {
                 console.log("Error", error);
-            }
-        )
+            })
     }
 
     $scope.initialize();

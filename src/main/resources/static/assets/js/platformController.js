@@ -79,6 +79,16 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         );
     }
 
+    $scope.reset = function () {
+        $scope.form = {
+            id: '',
+            name: '',
+            description: '',
+            devices: '',
+        };
+        $scope.action = 'create';
+    }
+
     $scope.create = function () {
         // Gán giá trị type từ selectedCategoryType vào form
         $http.post("/api/v1/platform/save", $scope.form, {
@@ -88,34 +98,69 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
             },
         }).then(
             resp => {
-                alert("Saved successfully!");
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Saved successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $scope.reset();
                 console.log($scope.form)
                 $scope.initialize();
             },
             error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error saving platform!",
+                });
                 console.log("Error", error);
             }
         )
     }
 
     $scope.delete = function (id) {
-        if (confirm("Do you want to delete this category?")) {
-            if (id) {
-                $http.delete(`/api/v1/platform/delete/${id}`, {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(resp => {
-                    alert("Deleted successfully!");
-                    $scope.initialize();
-                }).catch(error => {
-                    alert("Error deleting platform!");
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (id) {
+                    $http.delete(`/api/v1/platform/delete/${id}`, {
+                        headers: {
+                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                        }
+                    }).then(resp => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Deleted successfully!",
+                            icon: "success"
+                        });
+                        $scope.initialize();
+                    }).catch(error => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Error deleting platform!",
+                        });
+                        console.log("Error", error);
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Error deleting platform!",
+                    });
                     console.log("Error", error);
-                });
-            } else {
-                alert("Error deleting platform!");
+                }
             }
-        }
+        });
     }
 
     $scope.edit = function (id) {
@@ -126,8 +171,9 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
             },
         }).then(
             resp => {
+                $scope.action = 'update';
                 $scope.form = resp.data
-                $scope.initialize();
+                // $scope.initialize();
             },
             error => {
                 console.log("Error", error);

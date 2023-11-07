@@ -88,24 +88,47 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.initialize();
 
     $scope.delete = function (id) {
-        if (confirm("Do you want to delete this account?")) {
-            if (id) {
-                $http.delete(`/api/user/delete/${id}`, {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(resp => {
-                    alert("Deleted successfully!");
-                    $scope.reset();
-                    $scope.initialize();
-                }).catch(error => {
-                    alert("Error deleting account!");
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (id) {
+                    $http.delete(`/api/user/delete/${id}`, {
+                        headers: {
+                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                        }
+                    }).then(resp => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Deleted successfully!",
+                            icon: "success"
+                        });
+                        $scope.reset();
+                        $scope.initialize();
+                    }).catch(error => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Error deleting account!",
+                        });
+                        console.log("Error", error);
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Error deleting account!",
+                    });
                     console.log("Error", error);
-                });
-            } else {
-                alert("Error deleting account!");
+                }
             }
-        }
+        });
     }
 
     $scope.reset = function () {
@@ -131,11 +154,24 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             },
         }).then(
             resp => {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Saved successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 $scope.reset();
+                console.log($scope.form)
                 $scope.initialize();
 
             },
             error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error saving account!",
+                });
                 console.log("Error", error);
             }
         )
@@ -149,10 +185,22 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             },
         }).then(
             resp => {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Updated successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 $scope.reset();
                 $scope.initialize();
             },
             error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error updating account!",
+                });
                 console.log(error)
             }
         )
