@@ -502,22 +502,65 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             $scope.form.capsule_image = $scope.form.capsule_image.replace($scope.form.capsule_image, '');
             console.log($scope.form.capsule_image)
         }
-        $scope.delete = function (item) {
-            if (confirm("Bạn muốn xóa sản phẩm này?")) {
-                $http.delete(`/api/v1/game/delete/${item.appid}`, {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(resp => {
-                    $scope.reset();
-                    $scope.pager.fetchPage()
-                    alert("Xóa sản phẩm thành công!");
-                }).catch(error => {
-                    alert("Lỗi xóa sản phẩm!");
+        // $scope.delete = function (item) {
+        //     if (confirm("Bạn muốn xóa sản phẩm này?")) {
+        //         $http.delete(`/api/v1/game/delete/${item.appid}`, {
+        //             headers: {
+        //                 "Authorization": "Bearer " + $cookies.get("accessToken")
+        //             }
+        //         }).then(resp => {
+        //             $scope.reset();
+        //             $scope.pager.fetchPage()
+        //             alert("Xóa sản phẩm thành công!");
+        //         }).catch(error => {
+        //             alert("Lỗi xóa sản phẩm!");
+        //             console.log("Error", error);
+        //         })
+        //     }
+        // }
+
+    $scope.delete = function (appid) {
+        Swal.fire({
+            title: "Do you want to delete this game?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (appid) {
+                    $http.delete(`/api/v1/game/delete/${appid}`, {
+                        headers: {
+                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                        }
+                    }).then(resp => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your game has been deleted.",
+                            icon: "success"
+                        });
+                        $scope.reset();
+                        $scope.pager.fetchPage()
+                    }).catch(error => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Error deleting game!",
+                        });
+                        console.log("Error", error);
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Error deleting game!",
+                    });
                     console.log("Error", error);
-                })
+                }
             }
-        }
+        });
+    }
 
         $scope.reset = function () {
             $scope.form = {
@@ -561,12 +604,31 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 $scope.reset();
                 $scope.pager.fetchPage()
                 if ($scope.action === 'create') {
-                    alert("Thêm sản phẩm thành công!");
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Saved successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    // alert("Thêm sản phẩm thành công!");
                 } else {
-                    alert("Cập nhật sản phẩm thành công!");
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Updated successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    // alert("Cập nhật sản phẩm thành công!");
                 }
             })
                 .catch(error => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Error deleting category!",
+                    });
                     console.log("Error", error);
                 });
 

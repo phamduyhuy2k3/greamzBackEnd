@@ -15,7 +15,7 @@
                         <button class="col btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
                                 style="margin-left: 30px; max-width: 120px"
                                 data-bs-toggle="modal"
-                                data-bs-target="#exampleModal">
+                                data-bs-target="#gameModal" ng-click="reset()">
                         <span class="btn-inner--icon"><i
                                 class="material-icons material-symbols-outlined">library_add</i></span>
                             <span class="btn-inner--text">Create</span>
@@ -70,13 +70,13 @@
                             <td class="align-middle">
                                 <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
                                    data-toggle="tooltip" data-original-title="Edit user"
-                                   data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                   data-bs-toggle="modal" data-bs-target="#gameModal"
                                    ng-click="edit(game.appid)">
                                     Edit
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
                                    href="javascript:;"
-                                   ng-click="delete(game)">
+                                   ng-click="delete(game.appid)">
                                     Delete
                                 </a>
                             </td>
@@ -137,7 +137,7 @@
 
 
 <!--modal-->
-<div class="modal fade modal-crud" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div class="modal fade modal-crud" id="gameModal" tabindex="-1" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
         <div class="modal-content">

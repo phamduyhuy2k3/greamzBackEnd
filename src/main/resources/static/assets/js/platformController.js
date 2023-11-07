@@ -88,8 +88,78 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
             },
         }).then(
             resp => {
-                alert("Saved successfully!");
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Saved successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 console.log($scope.form)
+                $scope.initialize();
+            },
+            error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error deleting platform!",
+                });
+                console.log("Error", error);
+            }
+        )
+    }
+
+    $scope.delete = function (id) {
+        Swal.fire({
+            title: "Do you want to delete this category?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (id) {
+                    $http.delete(`/api/v1/platform/delete/${id}`, {
+                        headers: {
+                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                        }
+                    }).then(resp => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your platfrom has been deleted.",
+                            icon: "success"
+                        });
+                        $scope.initialize();
+                    }).catch(error => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Error deleting platform!",
+                        });
+                        console.log("Error", error);
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Error deleting platform!",
+                    });
+                    console.log("Error", error);
+                }
+            }
+        });
+    }
+
+    $scope.edit = function (id) {
+        $http.get("/api/v1/platform/" + id, {
+            headers: {
+                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Content-Type": "application/json"
+            },
+        }).then(
+            resp => {
+                $scope.form = resp.data
                 $scope.initialize();
             },
             error => {
@@ -98,41 +168,15 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         )
     }
 
-    $scope.delete = function (id) {
-        if (confirm("Do you want to delete this category?")) {
-            if (id) {
-                $http.delete(`/api/v1/platform/delete/${id}`, {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(resp => {
-                    alert("Deleted successfully!");
-                    $scope.initialize();
-                }).catch(error => {
-                    alert("Error deleting platform!");
-                    console.log("Error", error);
-                });
-            } else {
-                alert("Error deleting platform!");
-            }
-        }
-    }
-
-    $scope.edit = function (id) {
-        $http.get("/api/v1/platform/"+id, {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken"),
-                        "Content-Type": "application/json"
-                    },
-                }).then(
-                    resp => {
-                        $scope.form= resp.data
-                        $scope.initialize();
-                    },
-                    error => {
-                        console.log("Error", error);
-                    }
-                )
+    $scope.reset = function () {
+        $scope.form = {
+            id: '',
+            name: '',
+            description: '',
+            devices: '',
+        };
+        $scope.action = 'create';
+        $scope.initialize();
     }
 
     $scope.initialize();
