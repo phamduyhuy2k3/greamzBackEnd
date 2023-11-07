@@ -1,4 +1,4 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.checkout.vnpay;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

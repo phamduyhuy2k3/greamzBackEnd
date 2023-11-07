@@ -1,5 +1,6 @@
 package com.greamz.backend;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,5 +18,7 @@ public class BackEndApplication {
         SpringApplication.run(BackEndApplication.class, args);
 
     }
+
+
 
 }

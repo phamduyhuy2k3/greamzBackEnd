@@ -1,4 +1,4 @@
-package com.greamz.backend.annotations;
+package com.greamz.backend.validation.annotations;
 
 
 import com.greamz.backend.validation.constraint.PasswordFieldsValueMatchValidator;

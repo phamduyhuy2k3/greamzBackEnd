@@ -1,8 +1,7 @@
 package com.greamz.backend.validation.constraint;
 
 
-
-import com.greamz.backend.annotations.ValidPassword;
+import com.greamz.backend.validation.annotations.ValidPassword;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;

@@ -4,6 +4,7 @@ import com.greamz.backend.model.GameModel;
 import com.greamz.backend.service.GameModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class GameRestController {
     @GetMapping("/findAllPagination")
     public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "7") int size) {
+
         return ResponseEntity.ok(service.findAll(page, size));
     }
     @GetMapping("/search")
@@ -32,7 +34,7 @@ public class GameRestController {
         service.saveGameModel(game);
         return game;
     }
-    @GetMapping("{appid}")
+    @GetMapping("/{appid}")
     public ResponseEntity<GameModel> getOne(@PathVariable("appid") Long appid) {
         try {
             GameModel gameModel = service.findGameByAppid(appid);
@@ -43,6 +45,7 @@ public class GameRestController {
     }
 
     @DeleteMapping("/delete/{appid}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','EMPLOYEE')")
     public void delete(@PathVariable("appid") Long appid){
         service.deleteGameByAppid(appid);
     }

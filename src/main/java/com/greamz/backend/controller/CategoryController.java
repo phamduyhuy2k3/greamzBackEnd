@@ -2,7 +2,6 @@ package com.greamz.backend.controller;
 
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.model.Category;
-import com.greamz.backend.model.GameModel;
 import com.greamz.backend.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,22 +35,7 @@ public class CategoryController {
         List<Category> gameCategories = service.findAll();
         return ResponseEntity.ok(gameCategories);
     }
-    @GetMapping("/search")
-    public ResponseEntity<Iterable<Category>> searchGame(@RequestParam(defaultValue = "") String term,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "7") int size) {
-        Iterable<Category> categoryModels = service.searchCategory(term, page, size);
-        return ResponseEntity.ok(categoryModels);
-    }
-    @GetMapping("/findById/{id}")
-    public ResponseEntity<Category> findById(@PathVariable("id") Long id) {
-        try {
-            Category category = service.findById(id);
-            return ResponseEntity.ok(category);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 
     @GetMapping("{id}")
     public Category getOne(@PathVariable("id") Long id) {

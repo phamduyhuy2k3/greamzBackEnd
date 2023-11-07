@@ -2,10 +2,8 @@ package com.greamz.backend.security;
 
 
 import com.greamz.backend.config.JwtAuthenticationFilter;
-import com.greamz.backend.security.oauth2.CustomOAuth2UserService;
-import com.greamz.backend.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.greamz.backend.security.oauth2.OAuth2AuthenticationFailureHandler;
-import com.greamz.backend.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.greamz.backend.security.oauth2.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -48,7 +47,7 @@ public class SecurityAdminConfig {
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
-    public static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
+    public static final String[] WHITE_LIST_URLS = {"/api/v1/auth/**",
             "/oauth2/**",
             "/v2/api-docs",
             "/v3/api-docs",
@@ -65,77 +64,47 @@ public class SecurityAdminConfig {
             "/pages/**",
             "/static/**",
             "/sign-in",
+//            "/api/v1/game/**",
+            "/"
     };
 
     @Bean
-    @Order(324324)
+//    @Order(324324)
     SecurityFilterChain securityFilterOauth2(HttpSecurity http) throws Exception {
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .httpBasic(httpSecurityHttpBasicConfigurer -> {
                     httpSecurityHttpBasicConfigurer.disable();
                 })
-
                 .authorizeRequests(expressionInterceptUrlRegistry -> {
-
                     expressionInterceptUrlRegistry
-                                .requestMatchers(WHITE_LIST_URL).permitAll()
-                                .anyRequest().authenticated();
+                            .requestMatchers(request -> {
+                                switch (request.getMethod().toLowerCase()) {
+                                    case "post":
+                                    case "put":
+                                    case "delete":
+                                        return request.getServletPath().contains("/api/v1/game/");
+                                    default:
+                                        return false;
+                                }
 
+                            }).hasAnyAuthority("ADMIN","EMPLOYEE","MANAGER")
+                            .requestMatchers(WHITE_LIST_URLS).permitAll()
+                            .anyRequest().authenticated();
+
+                })
+                .exceptionHandling(exceptionHandlingConfigurer -> {
+                    exceptionHandlingConfigurer
+                            .authenticationEntryPoint(new RestAuthenticationEntryPoint());
+                })
+                .sessionManagement(sessionManagement -> {
+                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .formLogin(formLoginConfigurer -> {
                     formLoginConfigurer.loginPage("/sign-in");
                 })
-                .sessionManagement(sessionManagement -> {
-                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                })
-                .authenticationProvider(authenticationProvider)
-
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-
-                                .authorizationEndpoint(authorizationEndpoint ->
-                                        authorizationEndpoint
-                                                .baseUri("/oauth2/authorize")
-                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
-                                )
-                                .redirectionEndpoint(redirectionEndpoint ->
-                                        redirectionEndpoint
-                                                .baseUri("/oauth2/callback/*")
-
-                                )
-
-                                .userInfoEndpoint(userInfoEndpoint ->
-                                        userInfoEndpoint
-                                                .userService(customOAuth2UserService)
-                                )
-                                .successHandler(oAuth2AuthenticationSuccessHandler)
-                                .failureHandler(oAuth2AuthenticationFailureHandler)
-                );
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .httpBasic(httpSecurityHttpBasicConfigurer -> {
-                    httpSecurityHttpBasicConfigurer.disable();
-                })
-
-                .securityMatcher("/api/**")
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry
-                            .requestMatchers(WHITE_LIST_URL).permitAll()
-                            .anyRequest().authenticated();
-                })
-                .sessionManagement(sessionManagement -> {
-                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                })
                 .authenticationProvider(authenticationProvider)
                 .oauth2Login(oauth2Login ->
                         oauth2Login
@@ -147,9 +116,7 @@ public class SecurityAdminConfig {
                                 .redirectionEndpoint(redirectionEndpoint ->
                                         redirectionEndpoint
                                                 .baseUri("/oauth2/callback/*")
-
                                 )
-
                                 .userInfoEndpoint(userInfoEndpoint ->
                                         userInfoEndpoint
                                                 .userService(customOAuth2UserService)
@@ -158,10 +125,52 @@ public class SecurityAdminConfig {
                                 .failureHandler(oAuth2AuthenticationFailureHandler)
                 );
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
-
+//    @Bean
+//    @Order(Ordered.HIGHEST_PRECEDENCE)
+//    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .cors(Customizer.withDefaults())
+//                .httpBasic(httpSecurityHttpBasicConfigurer -> {
+//                    httpSecurityHttpBasicConfigurer.disable();
+//                })
+//
+//                .securityMatcher("/api/**")
+//                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+//                    authorizationManagerRequestMatcherRegistry
+//                            .requestMatchers(WHITE_LIST_URL).permitAll()
+//                            .anyRequest().authenticated();
+//                })
+//                .sessionManagement(sessionManagement -> {
+//                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//                })
+//                .authenticationProvider(authenticationProvider)
+//                .oauth2Login(oauth2Login ->
+//                        oauth2Login
+//                                .authorizationEndpoint(authorizationEndpoint ->
+//                                        authorizationEndpoint
+//                                                .baseUri("/oauth2/authorize")
+//                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
+//                                )
+//                                .redirectionEndpoint(redirectionEndpoint ->
+//                                        redirectionEndpoint
+//                                                .baseUri("/oauth2/callback/*")
+//
+//                                )
+//
+//                                .userInfoEndpoint(userInfoEndpoint ->
+//                                        userInfoEndpoint
+//                                                .userService(customOAuth2UserService)
+//                                )
+//                                .successHandler(oAuth2AuthenticationSuccessHandler)
+//                                .failureHandler(oAuth2AuthenticationFailureHandler)
+//                );
+//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
 
 
     @Bean
@@ -169,7 +178,7 @@ public class SecurityAdminConfig {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000", "https://greamz.games", "https://www.greamz.games", "https://admin.greamz.games", "https://main.dlqgfk9hgo94w.amplifyapp.com"));
         config.setAllowedHeaders(Arrays.asList(
                 ORIGIN,
                 CONTENT_TYPE,

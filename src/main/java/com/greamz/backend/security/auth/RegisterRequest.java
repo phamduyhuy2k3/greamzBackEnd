@@ -1,7 +1,8 @@
 package com.greamz.backend.security.auth;
 
-import com.greamz.backend.annotations.PasswordValueMatch;
-import com.greamz.backend.annotations.ValidPassword;
+
+import com.greamz.backend.validation.annotations.PasswordValueMatch;
+import com.greamz.backend.validation.annotations.ValidPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

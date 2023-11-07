@@ -1,9 +1,7 @@
 package com.greamz.backend.validation.constraint;
 
 
-
-
-import com.greamz.backend.annotations.PasswordValueMatch;
+import com.greamz.backend.validation.annotations.PasswordValueMatch;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;

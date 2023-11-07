@@ -1,4 +1,4 @@
-package com.greamz.backend.annotations;
+package com.greamz.backend.validation.annotations;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
