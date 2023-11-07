@@ -64,7 +64,7 @@ public class SecurityAdminConfig {
             "/pages/**",
             "/static/**",
             "/sign-in",
-//            "/api/v1/game/**",
+            "/api/v1/game/**",
             "/"
     };
 
@@ -89,8 +89,32 @@ public class SecurityAdminConfig {
                                     default:
                                         return false;
                                 }
+                            }).hasAnyAuthority("ADMIN", "EMPLOYEE", "MANAGER")
 
-                            }).hasAnyAuthority("ADMIN","EMPLOYEE","MANAGER")
+                            .requestMatchers(request -> {
+                                switch (request.getMethod().toLowerCase()) {
+                                    case "post":
+                                    case "get":
+                                    case "put":
+                                    case "delete":
+                                        return request.getServletPath().contains("/api/v1/user/");
+                                    default:
+                                        return false;
+                                }
+                            }).hasAnyAuthority("ADMIN")
+
+                            .requestMatchers(request -> {
+                                switch (request.getMethod().toLowerCase()) {
+                                    case "post":
+                                    case "get":
+                                    case "put":
+                                    case "delete":
+                                        return request.getServletPath().contains("/api/v1/user/employee");
+                                    default:
+                                        return false;
+                                }
+
+                            }).hasAnyAuthority("MANAGER")
                             .requestMatchers(WHITE_LIST_URLS).permitAll()
                             .anyRequest().authenticated();
 
