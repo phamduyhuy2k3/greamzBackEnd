@@ -90,7 +90,6 @@ public class SecurityAdminConfig {
                                         return false;
                                 }
                             }).hasAnyAuthority("ADMIN", "EMPLOYEE", "MANAGER")
-
                             .requestMatchers(request -> {
                                 switch (request.getMethod().toLowerCase()) {
                                     case "post":
@@ -102,7 +101,6 @@ public class SecurityAdminConfig {
                                         return false;
                                 }
                             }).hasAnyAuthority("ADMIN")
-
                             .requestMatchers(request -> {
                                 switch (request.getMethod().toLowerCase()) {
                                     case "post":
@@ -115,12 +113,19 @@ public class SecurityAdminConfig {
                                 }
 
                             }).hasAnyAuthority("MANAGER")
+                            .requestMatchers(GET,"/api/v1/game/**").permitAll()
+                            .requestMatchers(GET,"/api/v1/category/**").permitAll()
                             .requestMatchers(WHITE_LIST_URLS).permitAll()
                             .anyRequest().authenticated();
 
                 })
                 .exceptionHandling(exceptionHandlingConfigurer -> {
                     exceptionHandlingConfigurer
+                            .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                if(request.getServletPath().equals("/")){
+                                    response.sendRedirect("/sign-in");
+                                }
+                            })
                             .authenticationEntryPoint(new RestAuthenticationEntryPoint());
                 })
                 .sessionManagement(sessionManagement -> {
