@@ -17,7 +17,6 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class GameRestController {
     private final GameModelService service;
-
     @GetMapping("/findAllPagination")
     public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "7") int size) {
