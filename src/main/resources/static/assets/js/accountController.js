@@ -1,4 +1,5 @@
 app.controller("userController", function ($scope, $http, $document, $cookies) {
+
     $scope.accounts = [];
     $scope.roles = ["USER", "ADMIN", "MANAGER", "EMPLOYEE"];
     $scope.action = 'create'
@@ -22,6 +23,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         email: null,
 
     }
+
     //photo
     $scope.photoCloudinary = cloudinary.createMediaLibrary(
         {
@@ -69,6 +71,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     }
 
     $scope.initialize = function () {
+
         $http.get("/api/user/findAll", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
@@ -85,7 +88,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         )
 
     }
-    $scope.initialize();
 
     $scope.delete = function (id) {
         if (confirm("Do you want to delete this account?")) {
@@ -164,5 +166,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         $scope.action = 'update';
 
     }
+    $scope.initialize();
 
 })

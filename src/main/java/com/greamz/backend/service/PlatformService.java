@@ -22,9 +22,13 @@ import java.util.Set;
 public class PlatformService {
     private final IPlatformRepo repo;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Platform> findAll() {
-        return repo.findAll();
+        List<Platform> platforms = repo.findAll();
+        platforms.forEach(platform -> {
+            platform.setGameModels(null);
+        });
+        return platforms;
     }
 
     @Transactional

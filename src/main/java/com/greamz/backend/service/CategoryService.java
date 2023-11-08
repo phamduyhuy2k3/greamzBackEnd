@@ -2,6 +2,7 @@ package com.greamz.backend.service;
 
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.model.Category;
+import com.greamz.backend.model.GameModel;
 import com.greamz.backend.repository.ICategoryRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +60,20 @@ public class CategoryService {
         gameCategories.forEach(category -> category.setGameModels(null));
 
         return gameCategories;
+    }
+    @Transactional(readOnly = true)
+    public Page<Category> searchCategory(String searchTerm, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Category> categoryModelPage = repo.searchCategory(searchTerm, pageable);
+        categoryModelPage.forEach(gameModel -> {
+            Hibernate.initialize(gameModel.getGameModels());
+            Hibernate.initialize(gameModel.getCategoryTypes());
+            Hibernate.initialize(gameModel.getName());
+            Hibernate.initialize(gameModel.getId());
+        });
+
+        return categoryModelPage;
     }
 
 }

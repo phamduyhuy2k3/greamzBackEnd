@@ -158,7 +158,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="input-group input-group-static" id="category">
+                        <div class="input-group input-group-static">
                             <label>Categories</label>
                             <select multiple id="categoriesSelect"
                                     class="form-select" style="width: 100%">
@@ -216,7 +216,15 @@
                                    ng-model="form.stock">
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-static">
+                            <label>Platform</label>
+                            <select multiple id="platformSelect"
+                                    class="form-select" style="width: 100%">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="input-group input-group-static">
                             <label>Discount</label>
                             <input type="number" class="form-control"
@@ -404,16 +412,12 @@
                             </div>
                         </div>
                     </div>
-                    <!--                    <div class="col-md-12">-->
-                    <!--                        <label class="form-label">Screenshots</label>-->
-                    <!--                        <div id="drag-drop-area5"></div>-->
-                    <!--                    </div>-->
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" ng-click="reset()">Close
                 </button>
-                <button type="button" class="btn btn-primary" ng-click="create()"   ng-if="action==='update'">Save changes
+                <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='update'">Save changes
                 </button>
                 <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='create'">Save
                 </button>

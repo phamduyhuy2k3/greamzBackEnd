@@ -21,8 +21,8 @@ console.log($rootScope.$route)
             return "Queue Management";
         } else if (path === "/voucher") {
             return "Voucher Management";
-        } else if (path === "/profile") {
-            return "Profile";
+        } else if (path === "/platform") {
+            return "Platform Management";
         } else if (path === "/change-password") {
             return "Change Password";
         } else if (path === "/sign-in") {
