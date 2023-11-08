@@ -1,18 +1,4 @@
 spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 174279917949-jldul43lq0as6pdkda9o51qbacf2ljuj.apps.googleusercontent.com
-            client-secret: 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
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - email
-              - profile
-
-
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${MYSQL.HOST}/datn?useUnicode=yes&autoReconnect=true
@@ -34,6 +20,21 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+
+  profiles:
+    active: prod
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 174279917949-jldul43lq0as6pdkda9o51qbacf2ljuj.apps.googleusercontent.com
+            client-secret: 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
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - profile
+
 springdoc:
   api-docs:
     path: /api-docs

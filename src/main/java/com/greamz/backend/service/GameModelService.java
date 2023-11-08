@@ -123,7 +123,7 @@ public class GameModelService {
         Pageable pageable = PageRequest.of(page, size);
         Page<GameModel> gameModelPage = gameModelRepository.findAll(pageable);
         gameModelPage.forEach(gameModel -> {
-            gameModel.setComments(null);
+            gameModel.setReviews(null);
             gameModel.setSupported_languages(null);
             gameModel.setMovies(null);
             gameModel.setImages(null);
@@ -138,10 +138,12 @@ public class GameModelService {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         List<Category> categories = categoryService.findAllByGameModelsAppid(appid);
         gameModel.setCategories(categories);
+        gameModel.setReviews(null);
         Hibernate.initialize(gameModel.getImages());
         Hibernate.initialize(gameModel.getMovies());
         Hibernate.initialize(gameModel.getSupported_languages());
         Hibernate.initialize(gameModel.getCategories());
+
         return gameModel;
     }
 

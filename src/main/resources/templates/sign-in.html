@@ -194,8 +194,14 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     const app = angular.module("myApp", ["ngCookies"]);
-    app.controller("myCtrl", function ($scope, $cookies, $http) {
+    app.controller("myCtrl", function ($scope, $cookies, $location, $http) {
+        const queryParams = new URLSearchParams(window.location.search);
 
+// Access individual query parameters
+        const param1 = queryParams.get('error');
+        if (param1 === 'access_denied') {
+            alert("You dont have enough permission to access this page!");
+        }
         $scope.login = function () {
             $http.post('/api/v1/auth/authenticate',
                 {

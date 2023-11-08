@@ -64,7 +64,7 @@ public class SecurityAdminConfig {
             "/pages/**",
             "/static/**",
             "/sign-in",
-//            "/api/v1/game/**",
+            "/api/v1/game/**",
             "/"
     };
 
@@ -89,8 +89,30 @@ public class SecurityAdminConfig {
                                     default:
                                         return false;
                                 }
+                            }).hasAnyAuthority("ADMIN", "EMPLOYEE", "MANAGER")
+                            .requestMatchers(request -> {
+                                switch (request.getMethod().toLowerCase()) {
+                                    case "post":
+                                    case "get":
+                                    case "put":
+                                    case "delete":
+                                        return request.getServletPath().contains("/api/v1/user/");
+                                    default:
+                                        return false;
+                                }
+                            }).hasAnyAuthority("ADMIN")
+                            .requestMatchers(request -> {
+                                switch (request.getMethod().toLowerCase()) {
+                                    case "post":
+                                    case "get":
+                                    case "put":
+                                    case "delete":
+                                        return request.getServletPath().contains("/api/v1/user/employee");
+                                    default:
+                                        return false;
+                                }
 
-                            }).hasAnyAuthority("ADMIN","EMPLOYEE","MANAGER")
+                            }).hasAnyAuthority("MANAGER")
                             .requestMatchers(GET,"/api/v1/game/**").permitAll()
                             .requestMatchers(GET,"/api/v1/category/**").permitAll()
                             .requestMatchers(WHITE_LIST_URLS).permitAll()
@@ -99,11 +121,7 @@ public class SecurityAdminConfig {
                 })
                 .exceptionHandling(exceptionHandlingConfigurer -> {
                     exceptionHandlingConfigurer
-                            .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                if(request.getServletPath().equals("/")){
-                                    response.sendRedirect("/sign-in");
-                                }
-                            })
+
                             .authenticationEntryPoint(new RestAuthenticationEntryPoint());
                 })
                 .sessionManagement(sessionManagement -> {
