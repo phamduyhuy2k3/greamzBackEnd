@@ -22,6 +22,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
             }
         }).then(
             resp => {
+                alert("Saved successfully!")
                 $scope.initialize()
             },
             error => {

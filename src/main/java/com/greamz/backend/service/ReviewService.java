@@ -21,7 +21,7 @@ public class ReviewService {
     private final IReviewRepo repo;
 
     public Review saveReviewModel(Review reviewModel) {
-        return repo.saveAndFlush(reviewModel);
+        return repo.save(reviewModel);
     }
 
     @Transactional

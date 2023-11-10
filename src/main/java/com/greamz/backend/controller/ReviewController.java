@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/review")
+@RequestMapping("/api/v1/review")
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService service;

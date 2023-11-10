@@ -34,7 +34,6 @@ public class GameModelService {
 
     @Transactional
     public GameModel saveGameModel(GameModel gameModel) {
-
         return gameModelRepository.saveAndFlush(gameModel);
     }
 
