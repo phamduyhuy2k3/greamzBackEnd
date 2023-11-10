@@ -91,8 +91,6 @@ app.run(function ($rootScope, $location, $http, $cookies, $route) {
         }
         $rootScope.logout = function () {
             $cookies.remove('accessToken');
-            $cookies.remove('refreshToken');
-            $rootScope.account = null;
             window.location.href = "/sign-in"
         }
         $rootScope.$on('$routeChangeStart', function () {
@@ -120,11 +118,7 @@ app.run(function ($rootScope, $location, $http, $cookies, $route) {
 
             alert("Lỗi");
         });
-        //     $rootScope.fetchAccount().then(resp => {
-        //         if (!resp) {
-        //             window.location.href = "/sign-in";
-        //         }
-        //     });
+
     }
 
 

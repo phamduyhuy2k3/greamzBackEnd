@@ -59,8 +59,8 @@ public class GameModel extends TimeStampEntity {
     private List<String> supported_languages;
     @ManyToOne
     private Platform platform;
-    @OneToMany(mappedBy = "gameModel", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "game")
+    private List<Review> reviews;
+
 
 }

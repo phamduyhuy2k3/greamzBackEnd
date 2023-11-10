@@ -1,10 +1,12 @@
 package com.greamz.backend.controller;
 
 import com.greamz.backend.model.GameModel;
+import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.GameModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,7 +45,16 @@ public class GameRestController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @GetMapping("/ids/{appids}")
+    public ResponseEntity<List<GameModel>> findGamesByIds(@PathVariable("appids") String appid) {
+        System.out.println(appid);
+        try {
+            List<GameModel> gameModels = service.findGameByGameIds(appid);
+            return ResponseEntity.ok(gameModels);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @DeleteMapping("/delete/{appid}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','EMPLOYEE')")
     public void delete(@PathVariable("appid") Long appid){

@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -121,7 +122,7 @@ public class GameModelService {
         Pageable pageable = PageRequest.of(page, size);
         Page<GameModel> gameModelPage = gameModelRepository.findAll(pageable);
         gameModelPage.forEach(gameModel -> {
-            gameModel.setComments(null);
+            gameModel.setReviews(null);
             gameModel.setSupported_languages(null);
             gameModel.setMovies(null);
             gameModel.setImages(null);
@@ -136,9 +137,12 @@ public class GameModelService {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         List<Category> categories = categoryService.findAllByGameModelsAppid(appid);
         gameModel.setCategories(categories);
+        gameModel.setReviews(null);
         Hibernate.initialize(gameModel.getImages());
         Hibernate.initialize(gameModel.getMovies());
         Hibernate.initialize(gameModel.getSupported_languages());
+        Hibernate.initialize(gameModel.getCategories());
+
         return gameModel;
     }
 
@@ -147,6 +151,21 @@ public class GameModelService {
         return gameModelRepository.findAllByCategoriesId(categoryId);
     }
 
+    @Transactional(readOnly = true)
+    public List<GameModel> findGameByGameIds(String ids) {
+        List<Long> idList = parseIds(ids);
+        System.out.println(idList);
+        List<GameModel> gameModels=gameModelRepository.findAllById(idList);
+        System.out.println(gameModels.size());
+        gameModels.forEach(gameModel -> {
+            gameModel.setImages(null);
+            gameModel.setMovies(null);
+            gameModel.setSupported_languages(null);
+            Hibernate.initialize(gameModel.getCategories());
+
+        });
+        return gameModels;
+    }
     @Transactional
     public void deleteGameByAppid(Long appid) {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
@@ -179,9 +198,20 @@ public class GameModelService {
         // Load the supported_languages when needed
         return gameModel.getSupported_languages();
     }
-//    @Transactional
+
+    //    @Transactional
 //    public List<GameModel> findGameByCategory(Long categoryId) {
 //        return gameModelRepository.findByGameCategory_Id(categoryId);
 //    }
-
+    private List<Long> parseIds(String idsParam) {
+        if (idsParam == null || idsParam.equals("null")) {
+            return Collections.emptyList();
+        } else {
+            List<String> idStrings = Arrays.asList(idsParam.split(","));
+            return idStrings.stream()
+                    .filter(s -> !s.isEmpty()) // Filter out empty strings
+                    .map(Long::parseLong)
+                    .collect(Collectors.toList());
+        }
+    }
 }
