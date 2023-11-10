@@ -2,8 +2,12 @@ package com.greamz.backend.model;
 
 import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.Date;
 
 @Entity
+@Data
 public class Review extends TimeStampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

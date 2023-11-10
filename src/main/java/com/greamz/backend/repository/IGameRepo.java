@@ -27,8 +27,9 @@ public interface IGameRepo extends JpaRepository<GameModel, Long> {
 
     @Query("""
             select distinct g from GameModel g
-             where cast(g.appid as string ) like %?1% or g.name like %?1% or cast(g.price as string ) like %?1%
-            
+            join fetch g.categories c
+            where cast(g.appid as string ) like %?1% or g.name like %?1% or cast(g.price as string ) like %?1%
+            or c.name like %?1% or cast(c.categoryTypes as string) like %?1%
             """)
     Page<GameModel> searchGame(String search, Pageable pageable);
 }
