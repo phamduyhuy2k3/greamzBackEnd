@@ -65,8 +65,8 @@
   --bs-border-radius-xl: 0.75rem;
   --bs-border-radius-2xl: 1rem;
   --bs-border-radius-pill: 50rem;
-  --bs-link-color: #e91e63;
-  --bs-link-hover-color: #e91e63;
+  --bs-link-color: rgb(1, 81, 130);
+  --bs-link-hover-color: rgb(2, 91, 149);
   --bs-code-color: #d63384;
   --bs-highlight-bg: #fcf8e3;
 }
@@ -4629,7 +4629,7 @@ fieldset:disabled .btn {
   --bs-nav-tabs-border-radius: 0.375rem;
   --bs-nav-tabs-link-hover-border-color: #f0f2f5 #f0f2f5 #dee2e6;
   --bs-nav-tabs-link-active-color: #495057;
-  --bs-nav-tabs-link-active-bg: #fff;
+  --bs-nav-tabs-link-active-bg: #d8d8d8;
   --bs-nav-tabs-link-active-border-color: #dee2e6 #dee2e6 #fff;
   border-bottom: var(--bs-nav-tabs-border-width) solid var(--bs-nav-tabs-border-color);
 }
@@ -4671,7 +4671,7 @@ fieldset:disabled .btn {
 .nav-pills {
   --bs-nav-pills-border-radius: 0.75rem;
   --bs-nav-pills-link-active-color: #344767;
-  --bs-nav-pills-link-active-bg: #fff;
+  --bs-nav-pills-link-active-bg: #dcdada;
 }
 
 .nav-pills .nav-link {
@@ -24846,7 +24846,7 @@ body:not(.dark-version) .sidenav.bg-transparent .collapse .nav-item .nav-link.ac
   z-index: 3;
   color: #344767;
   border-radius: 0.5rem;
-  background-color: inherit;
+  /*background-color: inherit;*/
 }
 
 .nav.nav-pills .nav-link.active {
@@ -24858,8 +24858,8 @@ body:not(.dark-version) .sidenav.bg-transparent .collapse .nav-item .nav-link.ac
 }
 
 .nav.nav-pills.nav-pills-primary {
-  background: #fff;
-  color: #fff;
+  background: rgba(58, 174, 247, 0.4);
+  color: rgba(58, 174, 247, 0.4);
 }
 
 .nav.nav-pills.nav-pills-primary .nav-link.active {
@@ -24867,8 +24867,8 @@ body:not(.dark-version) .sidenav.bg-transparent .collapse .nav-item .nav-link.ac
 }
 
 .nav.nav-pills.nav-pills-primary .moving-tab .nav-link.active {
-  background: #EC407A;
-  color: #EC407A;
+  background: rgba(58, 174, 247, 0.4);
+  color: rgba(58, 174, 247, 0.4);
 }
 
 .nav.nav-pills.nav-pills-info {
@@ -24923,8 +24923,8 @@ body:not(.dark-version) .sidenav.bg-transparent .collapse .nav-item .nav-link.ac
 }
 
 .nav.nav-pills.nav-pills-danger .moving-tab .nav-link.active {
-  background: #EF5350;
-  color: #EF5350;
+  background: rgba(58, 174, 247, 0.4);
+  color: rgba(58, 174, 247, 0.4);
 }
 
 .nav.nav-pills .nav-item {

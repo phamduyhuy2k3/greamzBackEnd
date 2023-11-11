@@ -111,10 +111,20 @@ public class GameModelService {
 //        executorService.shutdown();
 //    }
 
-    //    @Transactional
-//    public List<GameModel> findAll() {
-//        return gameModelRepository.findAll();
-//    }
+    @Transactional(readOnly = true)
+    public List<GameModel> findAllV1() {
+        List<GameModel> gameModels = gameModelRepository.findAll();
+        gameModels.forEach(gameModel -> {
+            gameModel.setReviews(null);
+            gameModel.setSupported_languages(null);
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            Hibernate.initialize(gameModel.getCategories());
+
+
+        });
+        return gameModels;
+    }
 
 
     @Transactional(readOnly = true)
@@ -155,7 +165,7 @@ public class GameModelService {
     public List<GameModel> findGameByGameIds(String ids) {
         List<Long> idList = parseIds(ids);
         System.out.println(idList);
-        List<GameModel> gameModels=gameModelRepository.findAllById(idList);
+        List<GameModel> gameModels = gameModelRepository.findAllById(idList);
         System.out.println(gameModels.size());
         gameModels.forEach(gameModel -> {
             gameModel.setImages(null);
@@ -166,6 +176,7 @@ public class GameModelService {
         });
         return gameModels;
     }
+
     @Transactional
     public void deleteGameByAppid(Long appid) {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));

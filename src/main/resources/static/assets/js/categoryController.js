@@ -1,5 +1,21 @@
 app.controller("categoryController", function ($scope, $http, $document, $cookies) {
     $scope.categories = [];
+    $scope.gamesDetail = {
+        appid: '',
+        name: '',
+        detailed_description: '',
+        about_the_game: '',
+        short_description: '',
+        supported_languages: [],
+        header_image: '',
+        website: '',
+        capsule_image: '',
+        images: [],
+        movies: [],
+        categories: [],
+        platform:[],
+
+    };
     $scope.searchCategory = '';
     $scope.categoryTypes = [];
     $scope.imageUrls = '';
@@ -112,6 +128,19 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
 
 
     $scope.initialize = function () {
+        $http.get("/api/v1/game/findAll",
+            {
+                headers: {
+                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                }
+            }).then(
+            resp => {
+                $scope.gamesDetail = resp.data;
+            },
+            error => {
+                console.log("Error", error);
+            }
+        );
 
         $http.get("/api/v1/category/findAllPagination", {
             headers: {
