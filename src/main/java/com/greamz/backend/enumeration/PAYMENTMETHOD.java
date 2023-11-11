@@ -1,4 +1,4 @@
-package com.greamz.backend.model;
+package com.greamz.backend.enumeration;
 
 public enum PAYMENTMETHOD {
     MOMO,

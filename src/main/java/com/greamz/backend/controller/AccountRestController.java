@@ -1,12 +1,12 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.dto.AccountRequest;
-import com.greamz.backend.dto.UserProfileDTO;
+import com.greamz.backend.dto.*;
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.AccountModelService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +36,24 @@ public class AccountRestController {
         log.info("userProfileDTO: {}", userProfileDTO);
         return ResponseEntity.ok(userProfileDTO);
     }
+    @PutMapping("/edit-username")
+    public ResponseEntity<UserProfileDTO> editUsername(@RequestBody @Valid EditUsername accountModel) {
+        return ResponseEntity.ok( service.editUsername(accountModel));
+    }
+    @PutMapping("/edit-fullname")
+    public ResponseEntity<UserProfileDTO> editEmail(@RequestBody @Valid EditFullname accountModel) {
+        return ResponseEntity.ok( service.editFullname(accountModel));
+    }
+    @PutMapping("/edit-photo")
+    public ResponseEntity<UserProfileDTO> editPhoto(@RequestBody @Valid EditPhoto accountModel) {
+
+        return ResponseEntity.ok( service.editPhoto(accountModel));
+    }
+    @PutMapping("/edit-sensitive")
+    public ResponseEntity<UserProfileDTO> editProfile(@RequestBody @Valid UserProfileImportant accountModel) {
+        return ResponseEntity.ok( service.userEditProfileImportant(accountModel));
+    }
+
     @GetMapping("/findAll")
     public ResponseEntity<Iterable<AccountModel>> findAll() {
         List<AccountModel> accountModels = service.findAll();

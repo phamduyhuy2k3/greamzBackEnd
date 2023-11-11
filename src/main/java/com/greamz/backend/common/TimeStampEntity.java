@@ -3,24 +3,24 @@ package com.greamz.backend.common;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Data
 @MappedSuperclass
 public class TimeStampEntity {
     @Column(updatable = false)
-    @Temporal(TemporalType.DATE)
-    private LocalDate createdAt;
-
-    private LocalDate updatedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
 
     @PrePersist
     protected void onCreated() {
-        createdAt = LocalDate.now();
+        createdAt = new Date();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDate.now();
+        updatedAt = new Date();
     }
 }

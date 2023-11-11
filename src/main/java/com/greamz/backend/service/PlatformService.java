@@ -27,6 +27,7 @@ public class PlatformService {
     public List<Platform> findAll() {
         List<Platform> platforms = repo.findAll();
         platforms.forEach(platform -> Hibernate.initialize(platform.getDevices()));
+
         return platforms;
     }
 

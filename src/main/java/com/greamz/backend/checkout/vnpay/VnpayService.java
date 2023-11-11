@@ -1,13 +1,15 @@
 package com.greamz.backend.checkout.vnpay;
 
 import com.google.gson.JsonObject;
-import com.greamz.backend.checkout.CheckoutService;
+import com.greamz.backend.checkout.CheckOutResponse;
 import com.greamz.backend.model.Orders;
-import com.greamz.backend.model.OrdersStatus;
-import com.nimbusds.jose.shaded.gson.Gson;
+import com.greamz.backend.enumeration.OrdersStatus;
+import com.greamz.backend.service.OrderService;
+import com.greamz.backend.util.GlobalState;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -17,15 +19,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class VnpayService {
-    @Autowired
-    ConfigVnpay ConfigVnpay;
+    private final ConfigVnpay ConfigVnpay;
+    private final OrderService orderService;
 
-    public String createPaymentUrl(Orders orders, HttpServletRequest req, HttpServletResponse response) throws UnsupportedEncodingException {
+    public CheckOutResponse createPaymentUrl(Orders orders, HttpServletRequest req) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount = Math.round(orders.getTotalPrice()) * 100000;
+        long amount = Math.round(orders.getTotalPrice()) *100;
         String vnp_TxnRef = ConfigVnpay.getRandomNumber(8);
         String vnp_IpAddr = ConfigVnpay.getIpAddress(req);
         String vnp_TmnCode = ConfigVnpay.vnp_TmnCode;
@@ -45,7 +48,7 @@ public class VnpayService {
         } else {
             vnp_Params.put("vnp_Locale", "vn");
         }
-        vnp_Params.put("vnp_ReturnUrl", ConfigVnpay.vnp_ReturnUrl);
+        vnp_Params.put("vnp_ReturnUrl", ConfigVnpay.vnp_ReturnUrl+"?orderId="+orders.getId());
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -83,7 +86,10 @@ public class VnpayService {
         String vnp_SecureHash = ConfigVnpay.hmacSHA512(ConfigVnpay.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = ConfigVnpay.vnp_PayUrl + "?" + queryUrl;
-        return paymentUrl;
+        return CheckOutResponse.builder()
+                .orderId(orders.getId())
+                .payUrl(paymentUrl)
+                .build();
     }
 
     public void queryPayment(Orders orders, HttpServletRequest req,HttpServletResponse servletResponse) throws IOException {
@@ -214,36 +220,25 @@ public class VnpayService {
 //            out.print("{\"RspCode\":\"99\",\"Message\":\"Unknow error\"}");
         }
     }
-    public OrdersStatus returnUrl(HttpServletRequest request, HttpServletResponse response){
-        Map fields = new HashMap();
-        for (Enumeration params = request.getParameterNames(); params.hasMoreElements();) {
-            String fieldName = (String) params.nextElement();
-            String fieldValue = request.getParameter(fieldName);
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                fields.put(fieldName, fieldValue);
-            }
-        }
-        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
-        if (fields.containsKey("vnp_SecureHashType")) {
-            fields.remove("vnp_SecureHashType");
-        }
-        if (fields.containsKey("vnp_SecureHash")) {
-            fields.remove("vnp_SecureHash");
-        }
-        String signValue = ConfigVnpay.hashAllFields(fields);
-
-
-        if (signValue.equals(vnp_SecureHash)) {
-            if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
-
-                return OrdersStatus.SUCCESS;
-
+    public void returnUrl(Map<String, String> queryParams, HttpServletResponse response) throws IOException, ChangeSetPersister.NotFoundException {
+        String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
+        String contractId = queryParams.get("orderId");
+        if(contractId!= null && !contractId.equals("")) {
+            if ("00".equals(vnp_ResponseCode)) {
+                // Giao dịch thành công
+                // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
+                Orders orders = orderService.getOrdersById(UUID.fromString(queryParams.get("orderId")));
+                orders.setOrdersStatus(OrdersStatus.SUCCESS);
+                orderService.saveOrdersAndUpdateTheStockForGames(orders);
+                response.sendRedirect(GlobalState.FRONTEND_URL+"/order/success?orderId="+queryParams.get("orderId") );
             } else {
-                return OrdersStatus.FAILED;
-            }
+                // Giao dịch thất bại
+                // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
 
-        } else {
-            return OrdersStatus.FAILED;
+                response.addHeader("Authorization", "*");
+                response.sendRedirect("http://localhost:8080/api/v1/checkout/failed?orderId="+queryParams.get("orderId"));
+
+            }
         }
     }
 }
