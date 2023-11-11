@@ -15,39 +15,90 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
 
     $scope.create = function () {
         console.log($scope.voucher)
-        $http.post("/api/voucher/create", $scope.voucher,{
+        $http.post("/api/voucher/create", $scope.voucher, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),
                 "Content-Type": "application/json"
             }
         }).then(
             resp => {
-                $scope.initialize()
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Saved successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $scope.reset();
+                $scope.initialize();
             },
             error => {
-
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error deleting voucher!",
+                });
+                console.log("Error", error);
             }
         )
     }
 
-    $scope.delete = function (item) {
-                if (confirm("Bạn muốn xóa sản phẩm này?")) {
-                    $http.delete(`/api/voucher/delete/${item.id}`, {
+    $scope.delete = function (id) {
+        Swal.fire({
+            title: "Do you want to delete this category?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (id) {
+                    $http.delete(`/api/voucher/delete/${id}`, {
                         headers: {
                             "Authorization": "Bearer " + $cookies.get("accessToken")
                         }
                     }).then(resp => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your voucher has been deleted.",
+                            icon: "success"
+                        });
                         $scope.initialize();
-                        // $scope.reset();
-                        alert("Xóa sản phẩm thành công!");
                     }).catch(error => {
-                        alert("Lỗi xóa sản phẩm!");
-
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Error deleting voucher!",
+                        });
                         console.log("Error", error);
-                    })
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Error deleting voucher!",
+                    });
+                    console.log("Error", error);
                 }
             }
+        });
+    }
 
+    $scope.reset = function () {
+        $scope.voucher = {
+            id: null,
+            name: '',
+            description: '',
+            dateAt: '',
+            dateExpired: '',
+            discount: '',
+            orderCondition: '',
+            maxPrice: ''
+        }
+        $scope.action = 'create';
+        $scope.initialize();
+    }
 
     $scope.update = function () {
         $http.p("/api/voucher/update", {
@@ -65,11 +116,20 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
     }
 
 
-
-
-    $scope.edit = function (id) {
-        $scope.voucher = id
+    $scope.edit = async function (id) {
+        await $http.get(`/api/voucher/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+            }
+        }).then(resp => {
+                $scope.action = 'update';
+                $scope.voucher = resp.data;
+            }, error => {
+                return error;
+            }
+        )
     }
+
     $scope.pager = {
         toFirst() {
             this.number = 0;
@@ -127,6 +187,6 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
             }
         );
     }
-    $scope.initialize()
+    $scope.initialize();
 
 });
