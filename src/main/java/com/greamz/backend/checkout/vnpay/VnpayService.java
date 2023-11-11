@@ -1,7 +1,9 @@
 package com.greamz.backend.checkout.vnpay;
 
 import com.google.gson.JsonObject;
+import com.greamz.backend.checkout.CheckoutService;
 import com.greamz.backend.model.Orders;
+import com.greamz.backend.model.OrdersStatus;
 import com.nimbusds.jose.shaded.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,11 +20,12 @@ import java.util.*;
 public class VnpayService {
     @Autowired
     ConfigVnpay ConfigVnpay;
+
     public String createPaymentUrl(Orders orders, HttpServletRequest req, HttpServletResponse response) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount = Math.round(orders.getTotalPrice())*10000;
+        long amount = Math.round(orders.getTotalPrice()) * 100000;
         String vnp_TxnRef = ConfigVnpay.getRandomNumber(8);
         String vnp_IpAddr = ConfigVnpay.getIpAddress(req);
         String vnp_TmnCode = ConfigVnpay.vnp_TmnCode;
@@ -42,7 +45,7 @@ public class VnpayService {
         } else {
             vnp_Params.put("vnp_Locale", "vn");
         }
-        vnp_Params.put("vnp_ReturnUrl", "http://localhost:8080/api/v1/payment/vnpay/return");
+        vnp_Params.put("vnp_ReturnUrl", ConfigVnpay.vnp_ReturnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -83,7 +86,7 @@ public class VnpayService {
         return paymentUrl;
     }
 
-    public void queryPayment(Orders orders, HttpServletRequest req) throws IOException {
+    public void queryPayment(Orders orders, HttpServletRequest req,HttpServletResponse servletResponse) throws IOException {
         String vnp_RequestId = ConfigVnpay.getRandomNumber(8);
         String vnp_Version = "2.1.0";
         String vnp_Command = "querydr";
@@ -99,7 +102,7 @@ public class VnpayService {
 
         String vnp_IpAddr = ConfigVnpay.getIpAddress(req);
 
-        JsonObject  vnp_Params = new JsonObject ();
+        JsonObject vnp_Params = new JsonObject();
 
         vnp_Params.addProperty("vnp_RequestId", vnp_RequestId);
         vnp_Params.addProperty("vnp_Version", vnp_Version);
@@ -112,13 +115,13 @@ public class VnpayService {
         vnp_Params.addProperty("vnp_CreateDate", vnp_CreateDate);
         vnp_Params.addProperty("vnp_IpAddr", vnp_IpAddr);
 
-        String hash_Data= String.join("|", vnp_RequestId, vnp_Version, vnp_Command, vnp_TmnCode, vnp_TxnRef, vnp_TransDate, vnp_CreateDate, vnp_IpAddr, vnp_OrderInfo);
+        String hash_Data = String.join("|", vnp_RequestId, vnp_Version, vnp_Command, vnp_TmnCode, vnp_TxnRef, vnp_TransDate, vnp_CreateDate, vnp_IpAddr, vnp_OrderInfo);
         String vnp_SecureHash = ConfigVnpay.hmacSHA512(ConfigVnpay.secretKey, hash_Data.toString());
 
         vnp_Params.addProperty("vnp_SecureHash", vnp_SecureHash);
 
-        URL url = new URL (ConfigVnpay.vnp_ApiUrl);
-        HttpURLConnection con = (HttpURLConnection)url.openConnection();
+        URL url = new URL(ConfigVnpay.vnp_ApiUrl);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json");
         con.setDoOutput(true);
@@ -141,4 +144,106 @@ public class VnpayService {
         System.out.println(response.toString());
     }
 
+    public void ipnUrl(Orders orders,HttpServletRequest request,HttpServletResponse response) {
+        try {
+
+	/*  IPN URL: Record payment results from VNPAY
+	Implementation steps:
+	Check checksum
+	Find transactions (vnp_TxnRef) in the database (checkOrderId)
+	Check the payment status of transactions before updating (checkOrderStatus)
+	Check the amount (vnp_Amount) of transactions before updating (checkAmount)
+	Update results to Database
+	Return recorded results to VNPAY
+	*/
+
+            // ex:  	PaymnentStatus = 0; pending
+            //              PaymnentStatus = 1; success
+            //              PaymnentStatus = 2; Faile
+
+            //Begin process return from VNPAY
+            Map fields = new HashMap();
+            for (Enumeration params = request.getParameterNames(); params.hasMoreElements(); ) {
+                String fieldName = (String) params.nextElement();
+                String fieldValue = request.getParameter(fieldName);
+                if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                    fields.put(fieldName, fieldValue);
+                }
+            }
+
+            String vnp_SecureHash = request.getParameter("vnp_SecureHash");
+            if (fields.containsKey("vnp_SecureHashType")) {
+                fields.remove("vnp_SecureHashType");
+            }
+            if (fields.containsKey("vnp_SecureHash")) {
+                fields.remove("vnp_SecureHash");
+            }
+
+            // Check checksum
+            String signValue = ConfigVnpay.hashAllFields(fields);
+            if (signValue.equals(vnp_SecureHash)) {
+
+                boolean checkOrderId = true; // vnp_TxnRef exists in your database
+                boolean checkAmount = true; // vnp_Amount is valid (Check vnp_Amount VNPAY returns compared to the amount of the code (vnp_TxnRef) in the Your database).
+                boolean checkOrderStatus = true; // PaymnentStatus = 0 (pending)
+                if (checkOrderId) {
+                    if (checkAmount) {
+                        if (checkOrderStatus) {
+                            if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
+
+                                //Here Code update PaymnentStatus = 1 into your Database
+                            } else {
+
+                                // Here Code update PaymnentStatus = 2 into your Database
+                            }
+//                            out.print ("{\"RspCode\":\"00\",\"Message\":\"Confirm Success\"}");
+                        } else {
+
+//                            out.print("{\"RspCode\":\"02\",\"Message\":\"Order already confirmed\"}");
+                        }
+                    } else {
+//                        out.print("{\"RspCode\":\"04\",\"Message\":\"Invalid Amount\"}");
+                    }
+                } else {
+//                    out.print("{\"RspCode\":\"01\",\"Message\":\"Order not Found\"}");
+                }
+            } else {
+//                out.print("{\"RspCode\":\"97\",\"Message\":\"Invalid Checksum\"}");
+            }
+        } catch (Exception e) {
+//            out.print("{\"RspCode\":\"99\",\"Message\":\"Unknow error\"}");
+        }
+    }
+    public OrdersStatus returnUrl(HttpServletRequest request, HttpServletResponse response){
+        Map fields = new HashMap();
+        for (Enumeration params = request.getParameterNames(); params.hasMoreElements();) {
+            String fieldName = (String) params.nextElement();
+            String fieldValue = request.getParameter(fieldName);
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                fields.put(fieldName, fieldValue);
+            }
+        }
+        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
+        if (fields.containsKey("vnp_SecureHashType")) {
+            fields.remove("vnp_SecureHashType");
+        }
+        if (fields.containsKey("vnp_SecureHash")) {
+            fields.remove("vnp_SecureHash");
+        }
+        String signValue = ConfigVnpay.hashAllFields(fields);
+
+
+        if (signValue.equals(vnp_SecureHash)) {
+            if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
+
+                return OrdersStatus.SUCCESS;
+
+            } else {
+                return OrdersStatus.FAILED;
+            }
+
+        } else {
+            return OrdersStatus.FAILED;
+        }
+    }
 }

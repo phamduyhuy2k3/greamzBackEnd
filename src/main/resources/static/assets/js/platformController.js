@@ -6,9 +6,16 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         id: '',
         name: '',
         description: '',
-        devices: '',
+        devices: [],
     }
-
+    $scope.reset= function(){
+        $scope.form = {
+            id: '',
+            name: '',
+            description: '',
+            devices: [],
+        }
+    }
     $scope.pager = {
         toFirst() {
             this.number = 0;
@@ -48,6 +55,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
 
     }
     $scope.initialize = function () {
+        $scope.reset();
         $http.get("/api/v1/platform/findAllPagination", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
@@ -71,12 +79,48 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         }).then(
             resp => {
                 $scope.devices = resp.data;
-                console.log($scope.devices);
+                $scope.devices.forEach(device => {
+                    device.text = device;
+                    device.id = device;
+                })
             },
             error => {
                 console.log("Error", error);
             }
-        );
+        ).then(()=>{
+            if (!$scope.selectDevice) {
+                $scope.selectDevice = $('#deviceSelect').select2({
+                    // Use the modified 'data' object
+                    data: $scope.devices,
+                    placeholder: "Select devices",
+                    templateResult: function (data) {
+                        if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
+                        let $result = $('<span>' + data.text + '</span>');
+                        return $result;
+                    },
+                    templateSelection: function (data) {
+                        if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
+                        let $selection = $('<span>' + data.text + '</span>');
+                        return $selection;
+                    }
+                });
+                $scope.selectDevice.on('select2:select', function (e) {
+                    let data = e.params.data;
+                    $scope.$apply(function () {
+                        $scope.form.devices.push(data.id);
+                    });
+                });
+                $scope.selectDevice.on('select2:unselect', function (e) {
+                    const id = e.params.data.id;
+                    const removedIndex = $scope.form.devices.findIndex(data => data === id);
+                    console.log(removedIndex)
+                    $scope.$apply(() => {
+                        $scope.form.devices.splice(removedIndex, 1);
+                    })
+
+                });
+            }
+        });
     }
 
     $scope.create = function () {

@@ -4,7 +4,6 @@ import com.greamz.backend.checkout.momo.MomoService;
 import com.greamz.backend.checkout.paypal.PaypalService;
 import com.greamz.backend.checkout.vnpay.VnpayService;
 import com.greamz.backend.model.Orders;
-import com.greamz.backend.model.PAYMENTMETHOD;
 import com.greamz.backend.repository.IOrderRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
+
 @Service
 @RequiredArgsConstructor
 public class CheckoutService {
@@ -25,22 +25,15 @@ public class CheckoutService {
     private final PaypalService paypalService;
     private final MomoService momoService;
     private final RestTemplate restTemplate;
-    public void placeOrder(Orders order, HttpServletRequest request, HttpServletResponse response) {
-        System.out.println(order.getPaymentmethod().name());
-        System.out.println("user id: " + order.getAccount().getId());
+    @Transactional
+    public String placeOrder(Orders order, HttpServletRequest request, HttpServletResponse response) {
         switch (order.getPaymentmethod()) {
-
             case VNPAY:
                 try {
-                    String paymentUrl = vnpayService.createPaymentUrl(order, request, response);
-                    System.out.println(paymentUrl);
-                    restTemplate.getForObject(paymentUrl, String.class);
+                    return vnpayService.createPaymentUrl(order, request, response);
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
                 }
-                break;
             case PAYPAL:
 
                 break;
@@ -50,12 +43,26 @@ public class CheckoutService {
             default:
                 throw new IllegalStateException("Please select a payment method: " + order.getPaymentmethod());
         }
+
+        return "redirect:/";
     }
     @Transactional
     public UUID saveOrder(Orders orders) {
        Orders orders1= orderRepo.saveAndFlush(orders);
        return orders1.getId();
     }
+//    @Transactional
+//    public UUID updateStatusOrder(Orders orders) {
+//        orderRepo.findById(orders.getId()).orElseThrow()
+//                .setOrdersStatus(PAID);
+//        Orders orders1= orderRepo.saveAndFlush(orders);
+//        return orders1.getId();
+//    }
+//    @Transactional
+//    public boolean updateStatusOrderCancel(UUID id) {
+//        orderRepo.delete(orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found")));
+//        return true;
+//    }
 }
 
 

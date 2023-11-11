@@ -18,8 +18,9 @@ import java.util.UUID;
 public class CheckoutController {
     private final CheckoutService checkoutService;
     @PostMapping("/placeorder")
-    public void checkout(@RequestBody Orders orders, HttpServletRequest request, HttpServletResponse response) {
-        checkoutService.placeOrder(orders, request, response);
+    public ResponseEntity<String> checkout(@RequestBody Orders orders, HttpServletRequest request, HttpServletResponse response) {
+        String payUrl= checkoutService.placeOrder(orders, request, response);
+        return ResponseEntity.ok(payUrl);
     }
     @PostMapping("/saveOrder")
     public ResponseEntity<UUID> saveOrder(@RequestBody Orders orders) {

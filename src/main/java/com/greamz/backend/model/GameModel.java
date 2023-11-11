@@ -1,5 +1,6 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -57,7 +58,8 @@ public class GameModel extends TimeStampEntity {
     @ElementCollection(fetch = FetchType.LAZY)
 
     private List<String> supported_languages;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Platform platform;
     @OneToMany(mappedBy = "game")
     private List<Review> reviews;
