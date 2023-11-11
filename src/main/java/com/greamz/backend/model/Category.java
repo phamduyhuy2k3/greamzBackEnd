@@ -20,6 +20,8 @@ public class Category extends TimeStampEntity {
     private String name;
     private String description;
     private String image;
+    @Transient
+    private Long gameCount;
     @Enumerated(EnumType.STRING)
     private CategoryTypes categoryTypes;
     @ManyToMany(mappedBy = "categories")

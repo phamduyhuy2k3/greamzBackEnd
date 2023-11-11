@@ -63,9 +63,7 @@ public class SecurityAdminConfig {
             "/component/**",
             "/pages/**",
             "/static/**",
-            "/sign-in",
-//            "/api/v1/game/**",
-            "/"
+            "/sign-in"
     };
 
     @Bean
@@ -80,31 +78,48 @@ public class SecurityAdminConfig {
                 })
                 .authorizeRequests(expressionInterceptUrlRegistry -> {
                     expressionInterceptUrlRegistry
+
                             .requestMatchers(request -> {
                                 switch (request.getMethod().toLowerCase()) {
                                     case "post":
+                                    case "get":
                                     case "put":
                                     case "delete":
-                                        return request.getServletPath().contains("/api/v1/game/");
+                                        return request.getServletPath().contains("/api/v1/user/");
+                                    default:
+                                        return false;
+                                }
+                            }).hasAnyAuthority("ADMIN")
+                            .requestMatchers(request -> {
+                                switch (request.getMethod().toLowerCase()) {
+                                    case "post":
+                                    case "get":
+                                    case "put":
+                                    case "delete":
+                                        return request.getServletPath().contains("/api/v1/user/employee");
                                     default:
                                         return false;
                                 }
 
-                            }).hasAnyAuthority("ADMIN","EMPLOYEE","MANAGER")
+                            }).hasAnyAuthority("MANAGER")
+                            .requestMatchers(GET,"/api/v1/game/**").permitAll()
+                            .requestMatchers(GET,"/api/v1/category/**").permitAll()
+                            .requestMatchers(GET,"/api/v1/platform/**").permitAll()
                             .requestMatchers(WHITE_LIST_URLS).permitAll()
                             .anyRequest().authenticated();
 
                 })
                 .exceptionHandling(exceptionHandlingConfigurer -> {
                     exceptionHandlingConfigurer
+                            .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                System.out.println(request.getRequestURI());
+                            })
                             .authenticationEntryPoint(new RestAuthenticationEntryPoint());
                 })
                 .sessionManagement(sessionManagement -> {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                .formLogin(formLoginConfigurer -> {
-                    formLoginConfigurer.loginPage("/sign-in");
-                })
+
                 .authenticationProvider(authenticationProvider)
                 .oauth2Login(oauth2Login ->
                         oauth2Login
@@ -127,51 +142,6 @@ public class SecurityAdminConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-//    @Bean
-//    @Order(Ordered.HIGHEST_PRECEDENCE)
-//    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .cors(Customizer.withDefaults())
-//                .httpBasic(httpSecurityHttpBasicConfigurer -> {
-//                    httpSecurityHttpBasicConfigurer.disable();
-//                })
-//
-//                .securityMatcher("/api/**")
-//                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-//                    authorizationManagerRequestMatcherRegistry
-//                            .requestMatchers(WHITE_LIST_URL).permitAll()
-//                            .anyRequest().authenticated();
-//                })
-//                .sessionManagement(sessionManagement -> {
-//                    sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//                })
-//                .authenticationProvider(authenticationProvider)
-//                .oauth2Login(oauth2Login ->
-//                        oauth2Login
-//                                .authorizationEndpoint(authorizationEndpoint ->
-//                                        authorizationEndpoint
-//                                                .baseUri("/oauth2/authorize")
-//                                                .authorizationRequestRepository(cookieAuthorizationRequestRepository)
-//                                )
-//                                .redirectionEndpoint(redirectionEndpoint ->
-//                                        redirectionEndpoint
-//                                                .baseUri("/oauth2/callback/*")
-//
-//                                )
-//
-//                                .userInfoEndpoint(userInfoEndpoint ->
-//                                        userInfoEndpoint
-//                                                .userService(customOAuth2UserService)
-//                                )
-//                                .successHandler(oAuth2AuthenticationSuccessHandler)
-//                                .failureHandler(oAuth2AuthenticationFailureHandler)
-//                );
-//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-//    }
-
 
     @Bean
     public CorsFilter corsFilter() {
