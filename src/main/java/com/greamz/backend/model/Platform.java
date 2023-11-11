@@ -1,5 +1,7 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.greamz.backend.common.TimeStampEntity;
 import com.greamz.backend.enumeration.Devices;
 import jakarta.persistence.*;
@@ -23,6 +25,8 @@ public class Platform extends TimeStampEntity {
     private String description;
     @Enumerated(EnumType.STRING)
     private Devices devices;
-    @OneToMany(mappedBy = "platform")
+    @OneToMany(mappedBy = "platform", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @JsonIgnore
     private List<GameModel> gameModels;
 }
