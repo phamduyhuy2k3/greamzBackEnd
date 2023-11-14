@@ -28,10 +28,11 @@ public class AccountModel extends TimeStampEntity  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(unique = true)
     private String username;
-
     private String password;
     private String fullname;
+    @Column(unique = true)
     private String email;
     private String photo;
     private boolean isEnabled;

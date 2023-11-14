@@ -1,8 +1,11 @@
 package com.greamz.backend.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.greamz.backend.dto.GameFilter;
+import com.greamz.backend.enumeration.Devices;
 import com.greamz.backend.model.Category;
 import com.greamz.backend.model.GameModel;
+import com.greamz.backend.model.Platform;
 import com.greamz.backend.repository.IGameRepo;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
@@ -11,10 +14,10 @@ import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.hibernate.boot.model.source.spi.Sortable;
+import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,100 +38,20 @@ public class GameModelService {
 
     @Transactional
     public GameModel saveGameModel(GameModel gameModel) {
-
         return gameModelRepository.saveAndFlush(gameModel);
     }
 
-//    private record SteamRequest(String appid) {
-//    }
-//    public void saveGameModelsInBatch(List<GameModel> gameModels) {
-//        int batchSize = 1000;
-//        for (int i = 0; i < gameModels.size(); i += batchSize) {
-//            List<GameModel> batch = gameModels.subList(i, i + batchSize);
-//            gameModelRepository.saveAll(batch);
-//            gameModelRepository.flush();
-//        }
-//    }
-//
-//    @Async
-//    public CompletableFuture<Void> updateGameModels(List<GameModel> gameModels) {
-//        for (GameModel gameModel : gameModels) {
-//            try {
-//                URL url = new URL("http://store.steampowered.com/api/appdetails?appids=" + gameModel.getAppid());
-//                System.out.println(gameModel.getAppid());
-//                String response = restTemplate.getForObject(url.toURI(), String.class);
-//                JsonNode jsonNode = objectMapper.readTree(response);
-//                JsonNode dataNode = jsonNode.get(String.valueOf(gameModel.getAppid())).get("data");
-//                GameModel updatedData = objectMapper.readValue(dataNode.toString(), GameModel.class);
-//                // Update gameModel with the updatedData or apply your logic here
-//                updatedData.setAppid(gameModel.getAppid());
-//                {
-//                    if (updatedData.getScreenshots() != null) {
-//                        updatedData.getScreenshots().forEach(screenshot -> {
-//                            screenshot.setGameModel(updatedData);
-//                        });
-//                    }
-//                    if (updatedData.getMovies() != null) {
-//                        updatedData.getMovies().forEach(movie -> {
-//                            movie.setGameModel(updatedData);
-//                        });
-//                    }
-//
-//                    gameModelRepository.saveAndFlush(updatedData);
-//
-//                    log.info("Updated gameModel with appid: {}", gameModel.getAppid());
-//                }
-//                ;
-//            } catch (NullPointerException e) {
-//                continue;
-//            } catch (MalformedURLException e) {
-//                throw new RuntimeException(e);
-//            } catch (JsonMappingException e) {
-//                throw new RuntimeException(e);
-//            } catch (URISyntaxException e) {
-//                throw new RuntimeException(e);
-//            } catch (JsonProcessingException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//        return CompletableFuture.completedFuture(null);
-//    }
-//
-//    @Transactional
-//    public void getGameDetailAndUpdateIt() {
-//        List<GameModel> gameModels = gameModelRepository.findAll();
-//        int batchSize = 100;
-//        int totalModels = gameModels.size();
-//
-//        ExecutorService executorService = Executors.newFixedThreadPool(10); // Adjust the thread pool size as needed
-//
-//        for (int i = 0; i < totalModels; i += batchSize) {
-//            List<GameModel> batch = gameModels.subList(i, Math.min(i + batchSize, totalModels));
-//            CompletableFuture<Void> future = updateGameModels(batch);
-//            // Wait for the batch update to complete
-//            future.join();
-//        }
-//
-//        executorService.shutdown();
-//    }
-
-    //    @Transactional
-//    public List<GameModel> findAll() {
-//        return gameModelRepository.findAll();
-//    }
-
-
     @Transactional(readOnly = true)
-    public Page<GameModel> findAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<GameModel> findAll(Pageable pageable) {
+
         Page<GameModel> gameModelPage = gameModelRepository.findAll(pageable);
         gameModelPage.forEach(gameModel -> {
-            gameModel.setComments(null);
+            gameModel.setReviews(null);
             gameModel.setSupported_languages(null);
             gameModel.setMovies(null);
             gameModel.setImages(null);
             Hibernate.initialize(gameModel.getCategories());
-
+            Hibernate.initialize(gameModel.getPlatform());
         });
         return gameModelPage;
     }
@@ -138,10 +61,12 @@ public class GameModelService {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         List<Category> categories = categoryService.findAllByGameModelsAppid(appid);
         gameModel.setCategories(categories);
+        gameModel.setReviews(null);
         Hibernate.initialize(gameModel.getImages());
         Hibernate.initialize(gameModel.getMovies());
         Hibernate.initialize(gameModel.getSupported_languages());
         Hibernate.initialize(gameModel.getCategories());
+        Hibernate.initialize(gameModel.getPlatform());
         return gameModel;
     }
 
@@ -160,8 +85,9 @@ public class GameModelService {
             gameModel.setImages(null);
             gameModel.setMovies(null);
             gameModel.setSupported_languages(null);
+            gameModel.setReviews(null);
             Hibernate.initialize(gameModel.getCategories());
-
+            Hibernate.initialize(gameModel.getPlatform());
         });
         return gameModels;
     }
@@ -169,22 +95,114 @@ public class GameModelService {
     public void deleteGameByAppid(Long appid) {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         gameModelRepository.delete(gameModel);
-
     }
-
     @Transactional(readOnly = true)
-    public Page<GameModel> searchGame(String searchTerm, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
+    public Page<GameModel> searchGame(String searchTerm,Pageable pageable) {
         Page<GameModel> gameModelPage = gameModelRepository.searchGame(searchTerm, pageable);
-
         gameModelPage.forEach(gameModel -> {
-            Hibernate.initialize(gameModel.getImages());
-            Hibernate.initialize(gameModel.getMovies());
-//            Hibernate.initialize(gameModel.getCategories());
-            Hibernate.initialize(gameModel.getSupported_languages());
+            gameModel.setSupported_languages(null);
+            gameModel.setReviews(null);
+            Hibernate.initialize(gameModel.getCategories());
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            gameModel.setPlatform(null);
         });
 
+        return gameModelPage;
+    }
+    @Transactional(readOnly = true)
+    public Page<GameModel> filterGamesByCategoriesAndPlatform(
+            String q,
+            String categoriesId,
+            Long platformId,
+            int page,
+            int size,
+//            String devices,
+            Double minPrice,
+            Double maxPrice,
+            String sort,
+            Sort.Direction direction
+    ) {
+        List<Specification<GameModel>> gameModelSpecifications = new ArrayList<>();
+         if(categoriesId.isBlank() && platformId==-1  && minPrice==-1 && maxPrice==-1 &&q.isBlank() &&!sort.isBlank()){
+            Pageable pageable = PageRequest.of(page, size).withSort(Sort.by(direction,sort));
+            return findAll(pageable);
+        }else if(categoriesId.isBlank() && platformId==-1  && minPrice==-1 && maxPrice==-1 &&q.isBlank()){
+             Pageable pageable = PageRequest.of(page, size);
+             return findAll(pageable);
+         }
+        if(!categoriesId.isBlank()){
+            Specification<GameModel> categorySpecification = (root, query, criteriaBuilder) -> {
+                Join<GameModel, Category> categoryJoin = root.join("categories", JoinType.INNER);
+                return categoryJoin.get("id").in(parseIds(categoriesId));
+            };
+            gameModelSpecifications.add(categorySpecification);
+        }
+        if(platformId!=-1){
+            Specification<GameModel> platformSpecification = (root, query, criteriaBuilder) -> {
+                Predicate platformPredicate = criteriaBuilder.equal(root.get("platform").get("id"), platformId);
+                return platformPredicate;
+            };
+            gameModelSpecifications.add(platformSpecification);
+        }
+//        if(!devices.isBlank()){
+//            Specification<GameModel> devicesSpecification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("devices"), Devices.valueOf(devices));;
+//            gameModelSpecifications.add(devicesSpecification);
+//        }
+        if (!q.isBlank()) {
+            Specification<GameModel> searchSpecification = (root, query, criteriaBuilder) -> {
+                Predicate namePredicate = criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("name")), "%" + q.toLowerCase() + "%");
+                Predicate descriptionPredicate = criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("detailed_description")), "%" + q.toLowerCase() + "%");
+                Predicate shortDescriptionPredicate = criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("short_description")), "%" + q.toLowerCase() + "%");
+                Predicate categoryNamePredicate = criteriaBuilder.in(root.join("categories", JoinType.INNER).get("name"))
+                        .value(q.toLowerCase());
+                Predicate pricePredicate = criteriaBuilder.like(
+                        criteriaBuilder.lower(criteriaBuilder.function("CAST", String.class, root.get("price"))),
+                        "%" + q.toLowerCase() + "%");
+                return criteriaBuilder.or(
+                        namePredicate,
+                        descriptionPredicate,
+                        shortDescriptionPredicate,
+                        categoryNamePredicate,
+                        pricePredicate
+                );
+            };
+            gameModelSpecifications.add(searchSpecification);
+        }
+        if(minPrice!=-1 || maxPrice!=-1){
+            Specification<GameModel> priceSpecification = (root, query, criteriaBuilder) -> {
+                if (minPrice != null && maxPrice != null) {
+                    return criteriaBuilder.between(root.get("price"), minPrice, maxPrice);
+                } else if (minPrice != null) {
+                    return criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice);
+                } else if (maxPrice != null) {
+                    return criteriaBuilder.lessThanOrEqualTo(root.get("price"),  maxPrice);
+                }
+                return null;
+            };
+            gameModelSpecifications.add(priceSpecification);
+        }
+        Specification<GameModel> combinedSpecification= Specification.anyOf(gameModelSpecifications);
+
+        Pageable pageable;
+        if(sort==null ||sort.isBlank()){
+            pageable = PageRequest.of(page, size);
+        }else {
+            pageable=PageRequest.of(page, size).withSort(Sort.by(direction,sort));
+        }
+
+        Page<GameModel> gameModelPage = gameModelRepository.findAll(combinedSpecification, pageable);
+        gameModelPage.forEach(gameModel -> {
+            gameModel.setCategories(null);
+            gameModel.setImages(null);
+            gameModel.setReviews(null);
+            gameModel.setMovies(null);
+            gameModel.setSupported_languages(null);
+            gameModel.setPlatform(null);
+        });
         return gameModelPage;
     }
 
@@ -198,12 +216,9 @@ public class GameModelService {
         return gameModel.getSupported_languages();
     }
 
-    //    @Transactional
-//    public List<GameModel> findGameByCategory(Long categoryId) {
-//        return gameModelRepository.findByGameCategory_Id(categoryId);
-//    }
+
     private List<Long> parseIds(String idsParam) {
-        if (idsParam == null || idsParam.equals("null")) {
+        if (idsParam == null || idsParam.equals("null") || idsParam.isBlank()) {
             return Collections.emptyList();
         } else {
             List<String> idStrings = Arrays.asList(idsParam.split(","));
