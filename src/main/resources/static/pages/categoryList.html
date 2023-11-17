@@ -73,7 +73,8 @@
                                    data-bs-target="#multiCategoryModal"
                                    data-bs-toggle="modal"
                                    href="javascript:;"
-                                   ng-click="edit(category.id)">
+                                   ng-click="edit(category.id)"
+                                >
                                     View
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
@@ -144,13 +145,14 @@
 </div>
 
 <!--multiModal-->
-<div class="modal fade" id="multiCategoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="multiCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true" style="z-index: 11000">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title font-weight-bold" id="multiCategoryModalLabel">Overview form</h5>
-                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close"
+                ng-click="resetView()">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -163,7 +165,7 @@
                               <span class="material-icons align-middle mb-1">
                                 badge
                               </span>
-                                Details
+                                Detail
                             </a>
                         </li>
                         <li class="nav-item">
@@ -204,14 +206,16 @@
                         </div>
                         <div id="dashboard-tabs-icons" class="tab-pane fade ">
                             <div class="overflow-y-auto" style="height: 200px;">
-                                <table class="table align-items-center mb-0 " id="focusedInput">
+                                <div ng-show="isLoading" class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                                <table ng-hide="isLoading" class="table align-items-center mb-0 " id="focusedInput">
                                     <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             NAME
-                                        </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                           PLATFORM
                                         </th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             WEBSITE
@@ -220,7 +224,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="game in gamesDetail track by $index">
+                                    <tr ng-repeat="game in gamesDetail">
                                         <td>
                                             <div class="d-flex px-2 py-1">
                                                 <div>
@@ -233,28 +237,10 @@
                                                 </div>
                                             </div>
                                         </td>
-<!--                                        <td>-->
-<!--                                            <p class="text-xs font-weight-bold mb-0" ng-repeat="platform in game.platform">-->
-<!--                                                {{platform.name}}</p>-->
-<!--                                        </td>-->
                                         <td class="align-middle text-center text-sm">
                                             <p class="text-xs font-weight-bold mb-0"><a href="{{game.website}}" target="_blank">{{game.website}}</a>
                                             </p>
-
                                         </td>
-                                        <!--                                    <td class="align-middle">-->
-                                        <!--                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"-->
-                                        <!--                                           data-toggle="tooltip" data-original-title="Edit user"-->
-                                        <!--                                           data-bs-toggle="modal" data-bs-target="#exampleModal"-->
-                                        <!--                                           ng-click="edit(game.appid)">-->
-                                        <!--                                            Edit-->
-                                        <!--                                        </a>|-->
-                                        <!--                                        <a class="text-secondary font-weight-bold text-xs"-->
-                                        <!--                                           href="javascript:;"-->
-                                        <!--                                           ng-click="delete(game)">-->
-                                        <!--                                            Delete-->
-                                        <!--                                        </a>-->
-                                        <!--                                    </td>-->
                                     </tr>
                                     </tbody>
                                 </table>
@@ -265,8 +251,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn bg-gradient-primary">Save changes</button>
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal" ng-click="resetView()">Close</button>
             </div>
         </div>
     </div>

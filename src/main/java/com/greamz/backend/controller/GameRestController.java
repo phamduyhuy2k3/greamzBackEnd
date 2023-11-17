@@ -29,10 +29,7 @@ public class GameRestController {
 
         return ResponseEntity.ok(service.findAll(PageRequest.of(page, size)));
     }
-    @GetMapping("/findAll")
-    public ResponseEntity<?> findAll() {
-        return ResponseEntity.ok(service.findAllV1());
-    }
+
     @GetMapping("/search")
     public ResponseEntity<Page<GameModel>> searchGame(@RequestParam(defaultValue = "") String term,
                                                           @RequestParam(defaultValue = "0") int page,

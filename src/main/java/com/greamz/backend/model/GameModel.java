@@ -56,7 +56,6 @@ public class GameModel extends TimeStampEntity {
     )
     private List<Category> categories;
     @ElementCollection(fetch = FetchType.LAZY)
-
     private List<String> supported_languages;
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference

@@ -1,5 +1,6 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,5 +20,6 @@ public class Review extends TimeStampEntity {
     @ManyToOne
     private AccountModel account;
     @ManyToOne
+    @JsonIgnore
     private GameModel game;
 }

@@ -118,7 +118,6 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
         $http.get("/api/v1/review/findAllPagination", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
-
             }
         }).then(
             resp => {

@@ -3,6 +3,7 @@ package com.greamz.backend.controller;
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.model.Category;
 import com.greamz.backend.service.CategoryService;
+import com.greamz.backend.service.GameModelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService service;
+    private final GameModelService serviceGameModal;
 
     @GetMapping("/type/{type}")
     public ResponseEntity<Set<Category>> finAdllByType(@PathVariable CategoryTypes type) {
@@ -51,6 +53,10 @@ public class CategoryController {
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable("id") Long id) {
         service.deleteGameCategoryById(id);
+    }
+    @GetMapping("/findAllByCategory/{id}")
+    public ResponseEntity<?> findByCategory(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(serviceGameModal.findGameByCategory(id));
     }
     @GetMapping("/findAllPagination")
     public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,

@@ -27943,5 +27943,7 @@ pre[class*="language-"] {
   color: black;
   font-family: Google Sans,-apple-system,BlinkMacSystemFont,sans-serif;
 }
-
+.hiddenNav{
+  pointer-events: none;
+}
 /*# sourceMappingURL=dashboard-free.css.map */

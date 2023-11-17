@@ -1,5 +1,6 @@
-app.controller("categoryController", function ($scope, $http, $document, $cookies) {
+app.controller("categoryController", function ($scope, $http, $document, $cookies, $timeout) {
     $scope.categories = [];
+    $scope.isLoading = true;
     $scope.gamesDetail = {
         appid: '',
         name: '',
@@ -13,7 +14,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
         images: [],
         movies: [],
         categories: [],
-        platform:[],
+        platform: [],
 
     };
     $scope.searchCategory = '';
@@ -128,19 +129,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
 
 
     $scope.initialize = function () {
-        $http.get("/api/v1/game/findAll",
-            {
-                headers: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
-                }
-            }).then(
-            resp => {
-                $scope.gamesDetail = resp.data;
-            },
-            error => {
-                console.log("Error", error);
-            }
-        );
+
 
         $http.get("/api/v1/category/findAllPagination", {
             headers: {
@@ -197,7 +186,25 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             }
         }
     }
+    $scope.resetView = function () {
+        $scope.gamesDetail = {
+            appid: '',
+            name: '',
+            detailed_description: '',
+            about_the_game: '',
+            short_description: '',
+            supported_languages: [],
+            header_image: '',
+            website: '',
+            capsule_image: '',
+            images: [],
+            movies: [],
+            categories: [],
+            platform: [],
 
+        };
+        $scope.isLoading = true;
+    }
 
     $scope.reset = function () {
         $scope.form = {
@@ -228,7 +235,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             }
         )
     }
-    $scope.edit =async function (id) {
+    $scope.edit = async function (id) {
         await $http.get(`/api/v1/category/${id}`, {
             headers: {
                 'Authorization': 'Bearer ' + $cookies.get('accessToken')
@@ -238,6 +245,23 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
                 $scope.form = resp.data;
             }, error => {
                 return error;
+            }
+        )
+        $http.get(`/api/v1/category/findAllByCategory/${id}`,
+            {
+                headers: {
+                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                }
+            }).then(
+            resp => {
+               $timeout(function () {
+                   $scope.gamesDetail = resp.data;
+                   console.log($scope.gamesDetail);
+                   $scope.isLoading = false;
+               }, 1000);
+            },
+            error => {
+                console.log("Error", error);
             }
         )
     }
