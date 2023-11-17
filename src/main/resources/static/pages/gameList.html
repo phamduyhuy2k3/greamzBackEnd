@@ -508,14 +508,14 @@
                                 <tbody>
                                 <tr ng-repeat="review in reviews">
                                     <td>
-                                        <div class="d-flex px-2 py-1">
+                                        <div class="d-flex px-2 py-1" ng-repeat="g in games">
                                             <div>
-                                                <img src="{{review.account.photo}}"
+                                                <img src="{{g.header_image}}"
                                                      class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">{{review.account.username}}</h6>
-                                                <p class="text-xs text-secondary mb-0">GAMEID: {{review.game.appid}}</p>
+                                                <h6 class="mb-0 text-sm">{{g.name}}</h6>
+                                                <p class="text-xs text-secondary mb-0">GAMEID: {{g.appid}}</p>
                                             </div>
                                         </div>
                                     </td>

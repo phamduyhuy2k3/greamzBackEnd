@@ -1,5 +1,6 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.model.GameModel;
 import com.greamz.backend.model.Review;
 import com.greamz.backend.repository.IReviewRepo;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,15 @@ public class ReviewService {
 //            Hibernate.initialize(review.getAccount().getReviews());
 //        });
         return reviews;
+    }
+    @Transactional(readOnly = true)
+    public List<Review> findReviewByGame(Long gameAppId) {
+        List<Review> reviewsList = repo.findAllByGameAppid(gameAppId);
+        reviewsList.forEach(gameModel -> {
+            gameModel.setAccount(null);
+            gameModel.setGame(null);
+        });
+        return reviewsList;
     }
 
     @Transactional

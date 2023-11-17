@@ -98,6 +98,7 @@ public class GameModelService {
         return gameModelByCategory;
     }
 
+
     @Transactional(readOnly = true)
     public List<GameModel> findGameByGameIds(String ids) {
         List<Long> idList = parseIds(ids);

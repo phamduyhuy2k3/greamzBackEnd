@@ -44,6 +44,16 @@ public class ReviewController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/findByGame/{appid}")
+    public ResponseEntity<List<Review>> findByGame(@PathVariable("appid") Long id) {
+        try {
+            List<Review> reviews = service.findReviewByGame(id);
+            return ResponseEntity.ok(reviews);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody Review review) {

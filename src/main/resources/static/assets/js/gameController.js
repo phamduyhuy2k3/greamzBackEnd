@@ -407,23 +407,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                     console.log("Error", error);
                 }
             );
-            $http.get("/api/v1/review/findALl",
-                {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(
-                resp => {
-                    $timeout(function () {
-                            $scope.reviews = resp.data
-                            $scope.isLoading = false;
-                        }
-                    )
-                },
-                error => {
-                    console.log("Error", error);
-                }
-            );
+
 
             $http.get("/api/v1/platform/findAll", {
                 header: {
@@ -687,7 +671,33 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                 console.log(error);
             })
             $scope.action = 'update';
+
+            $http.get(`/api/v1/review/findByGame/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(
+                resp => {
+                    $scope.reviews = resp.data;
+                    $scope.isLoading = false;
+                    console.log($scope.reviews)
+                }
+            )
+            $http.get(`/api/user/findById/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(
+                resp => {
+                    $scope.games = resp.data;
+                    $scope.isLoading = false;
+                    console.log($scope.reviews)
+                }
+            )
+
         }
+
+
         $scope.initialize()
     }
 )

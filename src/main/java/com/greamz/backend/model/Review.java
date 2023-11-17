@@ -20,6 +20,5 @@ public class Review extends TimeStampEntity {
     @ManyToOne
     private AccountModel account;
     @ManyToOne
-    @JsonIgnore
     private GameModel game;
 }
