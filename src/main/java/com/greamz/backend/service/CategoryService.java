@@ -25,7 +25,20 @@ public class CategoryService {
     @Transactional
     public List<Category> findAll() {
         List<Category> gameCategories = repo.findAll();
-        gameCategories.forEach(category -> category.setGameModels(null));
+        for (Category category : gameCategories) {
+            // Initialize the collection to avoid LazyInitializationException
+            Hibernate.initialize(category.getGameModels());
+
+            // Count the number of games
+            long gameCount = category.getGameModels().size();
+            System.out.println(gameCount);
+
+            // Set the game count in the category
+            category.setGameCount(gameCount);
+
+            // Set the gameModels to null to prevent serialization issues
+            category.setGameModels(null);
+        }
         return gameCategories;
     }
 
@@ -68,9 +81,7 @@ public class CategoryService {
         Page<Category> categoryModelPage = repo.searchCategory(searchTerm, pageable);
         categoryModelPage.forEach(gameModel -> {
             Hibernate.initialize(gameModel.getGameModels());
-            Hibernate.initialize(gameModel.getCategoryTypes());
-            Hibernate.initialize(gameModel.getName());
-            Hibernate.initialize(gameModel.getId());
+
         });
 
         return categoryModelPage;

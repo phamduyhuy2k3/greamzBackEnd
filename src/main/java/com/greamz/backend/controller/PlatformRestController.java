@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.greamz.backend.service.PlatformService;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -52,8 +53,12 @@ public class PlatformRestController {
     }
 
     @PostMapping("/save")
-    public Platform save(@RequestBody Platform platform) {
-        return service.savePlatform(platform);
+    public ResponseEntity<?> save(@RequestBody Platform platform) {
+        try {
+            return ResponseEntity.ok(service.savePlatform(platform));
+        } catch (SQLIntegrityConstraintViolationException e) {
+            return ResponseEntity.badRequest().body("Platform with name: " + platform.getName() + " already exist");
+        }
     }
 
     @GetMapping("/findAllPagination")

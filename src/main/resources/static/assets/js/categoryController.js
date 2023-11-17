@@ -168,23 +168,45 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
     }
 
     $scope.delete = function (id) {
-        if (confirm("Do you want to delete this category?")) {
-            if (id) {
-                $http.delete(`/api/v1/category/delete/${id}`, {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(resp => {
-                    alert("Deleted successfully!");
-                    $scope.initialize();
-                }).catch(error => {
-                    alert("Error deleting category!");
+        Swal.fire({
+            title: "Do you want to delete this category?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (id) {
+                    $http.delete(`/api/v1/category/delete/${id}`, {
+                        headers: {
+                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                        }
+                    }).then(resp => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your category has been deleted.",
+                            icon: "success"
+                        });
+                        $scope.initialize();
+                    }).catch(error => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Error deleting category!",
+                        });
+                        console.log("Error", error);
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Error deleting category!",
+                    });
                     console.log("Error", error);
-                });
-            } else {
-                alert("Error deleting category!");
+                }
             }
-        }
+        });
     }
     $scope.resetView = function () {
         $scope.gamesDetail = {
@@ -227,10 +249,22 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
             },
         }).then(
             resp => {
-                alert("Saved successfully!");
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Saved successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 $scope.reset();
+                $scope.initialize();
             },
             error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error deleting category!",
+                });
                 console.log("Error", error);
             }
         )

@@ -11,7 +11,7 @@
                     <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
                             style="margin-left: 20px"
                             data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                            data-bs-target="#voucherModal" ng-click="reset()">
                         <span class="btn-inner--icon"><i
                                 class="material-icons material-symbols-outlined">library_add</i></span>
                         <span class="btn-inner--text" >Create</span>
@@ -75,12 +75,12 @@
                             </td>
                             <td class="align-middle">
                                 <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                   data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="edit(v)">
+                                   data-bs-toggle="modal" data-bs-target="#voucherModal" ng-click="edit(v.id)">
                                     Edit
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
                                    href="javascript:;"
-                                   ng-click="delete(v)">
+                                   ng-click="delete(v.id)">
                                     Delete
                                 </a>
                             </td>
@@ -135,7 +135,7 @@
         </div>
     </div>
 </div>
-<div class="modal fade modal-crud" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div class="modal fade modal-crud" id="voucherModal" tabindex="-1" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <div class="modal-content">

@@ -1,5 +1,6 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.model.Review;
 import com.greamz.backend.repository.IReviewRepo;
@@ -32,26 +33,34 @@ public class ReviewService {
         repo.save(reviewModel);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Review> findAll() {
         List<Review> reviews = repo.findAll();
-//        reviews.forEach(review ->{
-//            Hibernate.initialize(review.getGame());
-//            Hibernate.initialize(review.getAccount().getReviews());
-//        });
+        reviews.forEach(review -> {
+            review.setCreatedAt(null);
+            review.setUpdatedAt(null);
+
+//            review.setGame(null);
+//            review.setAccount(null);
+            Hibernate.initialize(review.getGame());
+            Hibernate.initialize(review.getAccount());
+        });
         return reviews;
     }
+
     @Transactional(readOnly = true)
     public List<Review> findReviewByGame(Long gameAppId) {
         List<Review> reviewsList = repo.findAllByGameAppid(gameAppId);
         reviewsList.forEach(gameModel -> {
-            gameModel.setAccount(null);
-            gameModel.setGame(null);
+//            gameModel.setAccount(null);
+//            gameModel.setGame(null);
+//            AccountModel account = Hibernate.initialize(gameModel.getAccount());
+            Hibernate.initialize(gameModel.getGame());
         });
         return reviewsList;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<Review> findAll(Pageable pageable) {
         Page<Review> reviewPage = repo.findAll(pageable);
         reviewPage.forEach(review ->

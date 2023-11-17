@@ -45,13 +45,13 @@ public class GameRestController {
             @RequestParam(defaultValue = "-1") Long platformId,
             @RequestParam int page,
             @RequestParam int size,
-            @RequestParam(defaultValue = "") String devices,
+//            @RequestParam(defaultValue = "") String devices,
             @RequestParam(defaultValue = "-1") Double minPrice,
             @RequestParam (defaultValue = "-1")Double maxPrice,
             @RequestParam(defaultValue = "") String sort,
             @RequestParam (defaultValue = "ASC")Sort.Direction direction){
 
-        Page<GameModel> gameModels = service.filterGamesByCategoriesAndPlatform(q,categoriesId,platformId,page,size,devices,minPrice,maxPrice,sort,direction);
+        Page<GameModel> gameModels = service.filterGamesByCategoriesAndPlatform(q,categoriesId,platformId,page,size,minPrice,maxPrice,sort,direction);
         return ResponseEntity.ok(gameModels);
     }
     @PostMapping("/create")

@@ -141,17 +141,17 @@ public class GameModelService {
             Long platformId,
             int page,
             int size,
-            String devices,
+//            String devices,
             Double minPrice,
             Double maxPrice,
             String sort,
             Sort.Direction direction
     ) {
         List<Specification<GameModel>> gameModelSpecifications = new ArrayList<>();
-         if(categoriesId.isBlank() && platformId==-1 && devices.isBlank() && minPrice==-1 && maxPrice==-1 &&q.isBlank() &&!sort.isBlank()){
+         if(categoriesId.isBlank() && platformId==-1  && minPrice==-1 && maxPrice==-1 &&q.isBlank() &&!sort.isBlank()){
             Pageable pageable = PageRequest.of(page, size).withSort(Sort.by(direction,sort));
             return findAll(pageable);
-        }else if(categoriesId.isBlank() && platformId==-1 && devices.isBlank() && minPrice==-1 && maxPrice==-1 &&q.isBlank()){
+        }else if(categoriesId.isBlank() && platformId==-1  && minPrice==-1 && maxPrice==-1 &&q.isBlank()){
              Pageable pageable = PageRequest.of(page, size);
              return findAll(pageable);
          }
@@ -169,10 +169,10 @@ public class GameModelService {
             };
             gameModelSpecifications.add(platformSpecification);
         }
-        if(!devices.isBlank()){
-            Specification<GameModel> devicesSpecification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("devices"), Devices.valueOf(devices));;
-            gameModelSpecifications.add(devicesSpecification);
-        }
+//        if(!devices.isBlank()){
+//            Specification<GameModel> devicesSpecification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("devices"), Devices.valueOf(devices));;
+//            gameModelSpecifications.add(devicesSpecification);
+//        }
         if (!q.isBlank()) {
             Specification<GameModel> searchSpecification = (root, query, criteriaBuilder) -> {
                 Predicate namePredicate = criteriaBuilder.like(

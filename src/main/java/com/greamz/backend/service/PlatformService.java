@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -25,6 +26,7 @@ public class PlatformService {
     @Transactional(readOnly = true)
     public List<Platform> findAll() {
         List<Platform> platforms = repo.findAll();
+        platforms.forEach(platform -> Hibernate.initialize(platform.getDevices()));
 
         return platforms;
     }
@@ -32,11 +34,12 @@ public class PlatformService {
     @Transactional
     public Platform findById(Integer id) throws NoSuchElementException {
         Platform platforms =repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game platform with id: " + id));
+        Hibernate.initialize(platforms.getDevices());
         return platforms;
     }
 
     @Transactional
-    public Platform savePlatform(Platform platform) {
+    public Platform savePlatform(Platform platform) throws SQLIntegrityConstraintViolationException {
         return repo.save(platform);
     }
 
@@ -50,7 +53,7 @@ public class PlatformService {
     public Page<Platform> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Platform> platforms =repo.findAll(pageable);
-
+        platforms.forEach(platform -> Hibernate.initialize(platform.getDevices()));
         return platforms;
     }
 

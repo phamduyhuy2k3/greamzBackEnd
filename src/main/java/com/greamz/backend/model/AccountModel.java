@@ -28,10 +28,11 @@ public class AccountModel extends TimeStampEntity  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(unique = true)
     private String username;
-
     private String password;
     private String fullname;
+    @Column(unique = true)
     private String email;
     private String photo;
     private boolean isEnabled;
@@ -45,7 +46,7 @@ public class AccountModel extends TimeStampEntity  {
     private List<Voucher> vouchers;
     @OneToMany(mappedBy = "account")
     private List<Orders> orders;
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
     @OneToMany(mappedBy = "account")
     private List<Disscusion> disscusions;
