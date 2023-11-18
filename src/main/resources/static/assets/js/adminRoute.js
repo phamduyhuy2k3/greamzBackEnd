@@ -78,8 +78,6 @@ app.run(function ($rootScope, $location, $http, $cookies, $route) {
                     if (resp.data) {
                         $rootScope.account = resp.data;
                         console.log($rootScope.account)
-
-
                     }
                     return true;
                 }, error => {

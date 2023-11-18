@@ -131,8 +131,10 @@
 
                     <div class="input-group input-group-static">
 <!--                        ng-if="action==='update'"-->
-                        <label>Authorities</label>
-                        <select id="authoritySelect" ng-model="form.role">
+                        <label class="mt-2" style="margin-right: 10px">Authorities</label>
+                        <select class="form-select" id="authoritySelect"
+                                style="border: solid black 1px; border-radius: 5px; width: 100%"
+                                ng-model="form.role">
                             <option value="" disabled selected>Chọn một quyền</option>
                             <option ng-repeat="role in roles" value="{{role}}">
                                 {{role}}

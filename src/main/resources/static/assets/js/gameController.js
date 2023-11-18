@@ -1,5 +1,11 @@
-app.controller("gameController", function ($scope, $http, $document, $cookies) {
+app.controller("gameController", function ($scope, $http, $document, $cookies, $timeout) {
         $scope.games = [];
+        $scope.reviews = [];
+        $scope.accountId = '';
+        $scope.disable = false;
+        $scope.tagA = false;
+        $scope.navHidden = true;
+        $scope.isLoading = true;
         $scope.searchGame = '';
         $scope.action = 'create';
         $scope.categories = [];
@@ -29,7 +35,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
             images: [],
             movies: [],
             categories: [],
-            platform:[],
+            platform: [],
         }
         $scope.imageUrls = [];
         $scope.movies = [];
@@ -289,10 +295,13 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                             'Authorization': 'Bearer ' + $cookies.get('accessToken')
                         }
                     }).then(resp => {
+
                         $scope.pager = {
                             ...$scope.pager,
                             ...resp.data
                         };
+                        $scope.isLoading = false;
+
                     })
                 } else {
                     $http.get(`/api/v1/game/search?term=${$scope.searchGame}&page=${this.number}&size=7`, {
@@ -304,6 +313,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                             ...$scope.pager,
                             ...resp.data
                         };
+                        $scope.isLoading = false;
                     })
                 }
             }
@@ -384,18 +394,23 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                     }
                 }).then(
                 resp => {
-                    $scope.pager = {
-                        ...$scope.pager,
-                        ...resp.data
-                    };
+                    $timeout(function () {
+                            $scope.pager = {
+                                ...$scope.pager,
+                                ...resp.data
+                            };
+                            $scope.isLoading = false;
+                        }
+                    )
                 },
                 error => {
                     console.log("Error", error);
                 }
             );
 
+
             $http.get("/api/v1/platform/findAll", {
-                header:{
+                header: {
                     "Authorization": "Bearer " + $cookies.get("accessToken")
                 }
             }).then(
@@ -518,48 +533,48 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
         //     }
         // }
 
-    $scope.delete = function (appid) {
-        Swal.fire({
-            title: "Do you want to delete this game?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                if (appid) {
-                    $http.delete(`/api/v1/game/delete/${appid}`, {
-                        headers: {
-                            "Authorization": "Bearer " + $cookies.get("accessToken")
-                        }
-                    }).then(resp => {
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: "Your game has been deleted.",
-                            icon: "success"
+        $scope.delete = function (appid) {
+            Swal.fire({
+                title: "Do you want to delete this game?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (appid) {
+                        $http.delete(`/api/v1/game/delete/${appid}`, {
+                            headers: {
+                                "Authorization": "Bearer " + $cookies.get("accessToken")
+                            }
+                        }).then(resp => {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your game has been deleted.",
+                                icon: "success"
+                            });
+                            $scope.reset();
+                            $scope.pager.fetchPage()
+                        }).catch(error => {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: "Error deleting game!",
+                            });
+                            console.log("Error", error);
                         });
-                        $scope.reset();
-                        $scope.pager.fetchPage()
-                    }).catch(error => {
+                    } else {
                         Swal.fire({
                             icon: "error",
                             title: "Oops...",
                             text: "Error deleting game!",
                         });
                         console.log("Error", error);
-                    });
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Error deleting game!",
-                    });
-                    console.log("Error", error);
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
 
         $scope.reset = function () {
             $scope.form = {
@@ -620,6 +635,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                     });
                     // alert("Cập nhật sản phẩm thành công!");
                 }
+                $scope.navHidden = false;
                 $scope.reset();
             })
                 .catch(error => {
@@ -660,14 +676,80 @@ app.controller("gameController", function ($scope, $http, $document, $cookies) {
                 let arr = $scope.form.categories.map(data => {
                     return data.name
                 });
+                $scope.disable = false;
+                $scope.tagA = false;
+                $scope.navHidden = true;
+                $scope.action = 'update';
                 console.log(arr)
                 $scope.select.val(arr);
                 $scope.select.trigger('change');
+
+
             }, error => {
                 console.log(error);
             })
             $scope.action = 'update';
         }
+        $scope.view = async function (appid) {
+            await $http.get(`/api/v1/game/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                    return resp.data;
+                }, error => {
+                    return error;
+                }
+            ).then(r => {
+                $scope.form = r;
+
+                if ($scope.form.about_the_game != null || $scope.form.about_the_game !== '' || $scope.form.about_the_game !== undefined) {
+                    $scope.quillAbout.setContents(JSON.parse($scope.form.about_the_game));
+                    $scope.quillAbout.enable(false);
+                }
+                if ($scope.form.short_description != null || $scope.form.short_description !== '' || $scope.form.short_description !== undefined) {
+                    $scope.quillShortDescription.setContents(JSON.parse($scope.form.short_description));
+                    $scope.quillShortDescription.enable(false);
+                }
+                if ($scope.form.detailed_description != null || $scope.form.detailed_description !== '' || $scope.form.detailed_description !== undefined) {
+                    $scope.quillDetailedDescription.setContents(JSON.parse($scope.form.detailed_description));
+                    $scope.quillDetailedDescription.enable(false);
+                }
+
+                $scope.selectCountry.val($scope.form.supported_languages);
+                $scope.selectCountry.trigger('change');
+                let arr = $scope.form.categories.map(data => {
+                    return data.name
+                });
+                $scope.disable = true;
+                $scope.tagA = true;
+                $scope.navHidden = false;
+                console.log(arr)
+                $scope.select.val(arr);
+                $scope.select.trigger('change');
+
+
+            }, error => {
+                console.log(error);
+            })
+            $scope.action = 'update';
+
+            await $http.get(`/api/v1/review/findByGame/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(
+                resp => {
+                    $scope.reviews = resp.data;
+                    $scope.isLoading = false;
+                    console.log($scope.reviews)
+                }
+            )
+
+
+        }
+
+
         $scope.initialize()
     }
 )
