@@ -2,13 +2,14 @@ package com.greamz.backend.service;
 
 import com.greamz.backend.model.Review;
 import com.greamz.backend.repository.IReviewRepo;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,7 +22,7 @@ public class ReviewService {
     private final IReviewRepo repo;
 
     public Review saveReviewModel(Review reviewModel) {
-        return repo.saveAndFlush(reviewModel);
+        return repo.save(reviewModel);
     }
 
     @Transactional
@@ -29,19 +30,37 @@ public class ReviewService {
         Review review = repo.findById(reviewModel.getId()).orElseThrow();
         repo.save(reviewModel);
     }
+
     @Transactional
     public List<Review> findAll() {
-        return repo.findAll();
-    }
-    @Transactional
-    public Page<Review> findAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return repo.findAll(pageable);
+        List<Review> reviews = repo.findAll();
+//        reviews.forEach(review ->{
+//            Hibernate.initialize(review.getGame());
+//            Hibernate.initialize(review.getAccount().getReviews());
+//        });
+        return reviews;
     }
 
     @Transactional
-    public void deleteReviewByAppid(Long id){
-        Review reviewModel = repo.findById(id).orElseThrow(()->new NoSuchElementException("Not found review with id: "+ id));
+    public Page<Review> findAll(Pageable pageable) {
+        Page<Review> reviewPage = repo.findAll(pageable);
+        reviewPage.forEach(review ->
+                {
+                    review.setCreatedAt(null);
+                    review.setUpdatedAt(null);
+                    review.setGame(null);
+                    review.setAccount(null);
+//                    Hibernate.initialize(review.getAccount());
+//                    Hibernate.initialize(review.getGame());
+                }
+
+        );
+        return reviewPage;
+    }
+
+    @Transactional
+    public void deleteReviewByAppid(Long id) {
+        Review reviewModel = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found review with id: " + id));
         repo.deleteById(id);
 
     }
@@ -52,7 +71,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review findByid(Long id){
-        return repo.findById(id).orElseThrow(()->new NoSuchElementException("Not found Review with id: "+ id));
+    public Review findByid(Long id) {
+        return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found Review with id: " + id));
     }
 }

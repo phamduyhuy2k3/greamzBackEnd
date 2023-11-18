@@ -13,15 +13,16 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
 
     $scope.create = function () {
         console.log($scope.review)
-        $http.post("/api/review/create", $scope.review,{
+        $http.post("/api/v1/review/create", $scope.review, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken"),
                 "Content-Type": "application/json"
             }
         }).then(
             resp => {
-            console.log($scope.review)
-                $scope.initialize()
+                console.log($scope.review)
+                alert("Saved successfully!");
+                // $scope.initialize()
             },
             error => {
 
@@ -30,54 +31,50 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
     }
 
     $scope.delete = function (id) {
-                if (confirm("Bạn muốn xóa sản phẩm này?")) {
-                    $http.delete(`/api/review/delete/${id}`, {
-                        headers: {
-                            "Authorization": "Bearer " + $cookies.get("accessToken")
-                        }
-                    }).then(resp => {
-                        $scope.initialize();
-                        // $scope.reset();
-                        alert("Xóa sản phẩm thành công!");
-                    }).catch(error => {
-                        alert("Lỗi xóa sản phẩm!");
-
-                        console.log("Error", error);
-                    })
-                }
-            }
-
-
-
-
-
-
-     $scope.edit =async function (id) {
-            await $http.get(`/api/v1/review/${id}`, {
+        if (confirm("Bạn muốn xóa sản phẩm này?")) {
+            $http.delete(`/api/v1/review/delete/${id}`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    "Authorization": "Bearer " + $cookies.get("accessToken")
                 }
             }).then(resp => {
-                    $scope.action = 'update';
-                    $scope.review = resp.data;
-                }, error => {
-                    return error;
-                }
-            )
-        }
-    $scope.reset = function () {
-            $scope.review = {
-                id: null,
-                text: '',
-                rating: '',
-                likes: '',
-                dislikes: ''
-        }
-                $scope.action = 'create';
                 $scope.initialize();
+                // $scope.reset();
+                alert("Xóa sản phẩm thành công!");
+            }).catch(error => {
+                alert("Lỗi xóa sản phẩm!");
 
-
+                console.log("Error", error);
+            })
         }
+    }
+
+
+    $scope.edit = async function (id) {
+        await $http.get(`/api/v1/review/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+            }
+        }).then(resp => {
+                $scope.action = 'update';
+                $scope.review = resp.data;
+            }, error => {
+                return error;
+            }
+        )
+    }
+    $scope.reset = function () {
+        $scope.review = {
+            id: null,
+            text: '',
+            rating: '',
+            likes: '',
+            dislikes: ''
+        }
+        $scope.action = 'create';
+        $scope.initialize();
+
+
+    }
     $scope.pager = {
         toFirst() {
             this.number = 0;
@@ -103,7 +100,7 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
             this.fetchPage();
         },
         fetchPage() {
-            $http.get(`/api/review/findAllPagination?page=${this.number}&size=7`, {
+            $http.get(`/api/v1/review/findAllPagination?page=${this.number}&size=7`, {
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
@@ -118,10 +115,9 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
     }
 
     $scope.initialize = function () {
-        $http.get("/api/review/findAllPagination", {
+        $http.get("/api/v1/review/findAllPagination", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
-
             }
         }).then(
             resp => {

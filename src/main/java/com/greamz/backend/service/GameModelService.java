@@ -40,6 +40,19 @@ public class GameModelService {
     public GameModel saveGameModel(GameModel gameModel) {
         return gameModelRepository.saveAndFlush(gameModel);
     }
+//    @Transactional(readOnly = true)
+//    public List<GameModel> findAll(Long id) {
+//        List<GameModel> gameModelByCategory = gameModelRepository.findAllByCategoriesId(id);
+//        gameModelByCategory.forEach(gameModel -> {
+//            gameModel.setReviews(null);
+//            gameModel.setSupported_languages(null);
+//            gameModel.setMovies(null);
+//            gameModel.setImages(null);
+//            Hibernate.initialize(gameModel.getCategories());
+//            Hibernate.initialize(gameModel.getPlatform());
+//        });
+//        return gameModelByCategory;
+//    }
 
     @Transactional(readOnly = true)
     public Page<GameModel> findAll(Pageable pageable) {
@@ -52,6 +65,7 @@ public class GameModelService {
             gameModel.setImages(null);
             Hibernate.initialize(gameModel.getCategories());
             Hibernate.initialize(gameModel.getPlatform());
+            Hibernate.initialize(gameModel.getReviews());
         });
         return gameModelPage;
     }
@@ -72,7 +86,16 @@ public class GameModelService {
 
     @Transactional(readOnly = true)
     public List<GameModel> findGameByCategory(Long categoryId) {
-        return gameModelRepository.findAllByCategoriesId(categoryId);
+        List<GameModel> gameModelByCategory = gameModelRepository.findAllByCategoriesId(categoryId);
+        gameModelByCategory.forEach(gameModel -> {
+            gameModel.setReviews(null);
+            gameModel.setSupported_languages(null);
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            Hibernate.initialize(gameModel.getCategories());
+            Hibernate.initialize(gameModel.getPlatform());
+        });
+        return gameModelByCategory;
     }
 
     @Transactional(readOnly = true)

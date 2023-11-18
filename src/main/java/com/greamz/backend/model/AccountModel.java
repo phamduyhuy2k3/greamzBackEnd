@@ -46,7 +46,7 @@ public class AccountModel extends TimeStampEntity  {
     private List<Voucher> vouchers;
     @OneToMany(mappedBy = "account")
     private List<Orders> orders;
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private List<Review> reviews;
     @OneToMany(mappedBy = "account")
     private List<Disscusion> disscusions;

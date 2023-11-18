@@ -29,6 +29,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         {
             cloud_name: "dtreuuola",
             api_key: "118212349948963",
+            username:"phamhuytrieu12092003@gmail.com",
             use_saml: false,
             remove_header: true,
             insert_caption: "Insert",

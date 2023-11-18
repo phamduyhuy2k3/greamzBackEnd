@@ -29,6 +29,7 @@ public class GameRestController {
 
         return ResponseEntity.ok(service.findAll(PageRequest.of(page, size)));
     }
+
     @GetMapping("/search")
     public ResponseEntity<Page<GameModel>> searchGame(@RequestParam(defaultValue = "") String term,
                                                           @RequestParam(defaultValue = "0") int page,

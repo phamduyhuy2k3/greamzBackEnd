@@ -1,180 +1,180 @@
 <div class="row">
-  <div class="col-12">
-    <div class="card my-4">
-      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-          <h6 class="text-white text-capitalize ps-3">Review List</h6>
-        </div>
-      </div>
-      <div class="card-body px-0 pb-2">
-        <div class="table-responsive p-0">
-          <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
-                  style="margin-left: 20px"
-                  data-bs-toggle="modal"
-                  data-bs-target="#reviewModal" ng-click="reset()">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                    <h6 class="text-white text-capitalize ps-3">Review List</h6>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive p-0">
+                    <button class="btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
+                            style="margin-left: 20px"
+                            data-bs-toggle="modal"
+                            data-bs-target="#reviewModal" ng-click="reset()">
                         <span class="btn-inner--icon"><i
                                 class="material-icons material-symbols-outlined">library_add</i></span>
-            <span class="btn-inner--text" >Create</span>
-          </button>
-          <table class="table align-items-center mb-0">
-            <thead>
-            <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                ID
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                TEXT
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-7">
-                RATING
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                LIKES
-              </th>
+                        <span class="btn-inner--text">Create</span>
+                    </button>
+                    <table class="table align-items-center mb-0">
+                        <thead>
+                        <tr>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                ID
+                            </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                TEXT
+                            </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-7">
+                                RATING
+                            </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                LIKES
+                            </th>
 
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                DISLIKES
-              </th>
-              <th class="text-secondary opacity-7"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="r in pager.content">
-              <td>
-                <span class="text-secondary text-xs font-weight-bold">{{r.id}}</span>
-              </td>
-              <td class="align-middle">
-                <span class="text-secondary text-xs font-weight-bold">{{r.text}}</span>
-              </td>
-              <td class="align-middle">
-                <span class="text-secondary text-xs font-weight-bold">{{r.rating}}</span>
-              </td>
-              <td class="align-middle">
-                <span  class="text-secondary text-xs font-weight-bold">{{r.likes}}</span>
-              </td>
-              <td class="align-middle">
-                <span class="text-secondary text-xs font-weight-bold">{{r.dislikes}}</span>
-              </td>
-              <td class="align-middle">
-                <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                   data-bs-toggle="modal" data-bs-target="#reviewModal" ng-click="edit(r.id)">
-                  Edit
-                </a>|
-                <a class="text-secondary font-weight-bold text-xs"
-                   href="javascript:;"
-                   ng-click="delete(r.id)">
-                  Delete
-                </a>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-          <nav aria-label="Page navigation example align-center">
-            <ul class="pagination justify-content-center">
-              <li class="page-item">
-                <a class="page-link" href="javascript:;" tabindex="-1"
-                   ng-click="pager.toFirst()">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                DISLIKES
+                            </th>
+                            <th class="text-secondary opacity-7"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="r in pager.content">
+                            <td>
+                                <span class="text-secondary text-xs font-weight-bold">{{r.id}}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold text-wrap">{{r.text}}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">{{r.rating}}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">{{r.likes}}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="text-secondary text-xs font-weight-bold">{{r.dislikes}}</span>
+                            </td>
+                            <td class="align-middle">
+                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
+                                   data-bs-toggle="modal" data-bs-target="#reviewModal" ng-click="edit(r.id)">
+                                    Edit
+                                </a>|
+                                <a class="text-secondary font-weight-bold text-xs"
+                                   href="javascript:;"
+                                   ng-click="delete(r.id)">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <nav aria-label="Page navigation example align-center">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toFirst()">
                                         <span class="material-icons">
                                             first_page
                                         </span>
-                  <span class="sr-only">First</span>
-                </a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="javascript:;" tabindex="-1"
-                   ng-click="pager.prev()">
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.prev()">
                                         <span class="material-icons">
                                           keyboard_arrow_left
                                         </span>
-                  <span class="sr-only">Previous</span>
-                </a>
-              </li>
-              <li class="page-item" style="margin:5px 8px 5px 5px">
-                {{pager.number + 1}} of {{pager.totalPages}}
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="javascript:;"
-                   ng-click="pager.next()">
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item" style="margin:5px 8px 5px 5px">
+                                {{pager.number + 1}} of {{pager.totalPages}}
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;"
+                                   ng-click="pager.next()">
                                         <span class="material-icons">
                                           keyboard_arrow_right
                                         </span>
-                  <span class="sr-only">Next</span>
-                </a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="javascript:;" tabindex="-1"
-                   ng-click="pager.toLast()">
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toLast()">
                                         <span class="material-icons">
                                             last_page
                                         </span>
-                  <span class="sr-only">First</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 <div class="modal fade modal-crud" id="reviewModal" tabindex="-1" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Review</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form class="row g-3">
-          <div class="col-md-12">
-            <div class="input-group input-group-static">
-              <label>ID</label>
-              <input type="text" class="form-control"
-                     ng-model="review.id" disabled>
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Review</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          </div>
+            <div class="modal-body">
+                <form class="row g-3">
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>ID</label>
+                            <input type="text" class="form-control"
+                                   ng-model="review.id" disabled>
+                        </div>
+                    </div>
 
-          <div class="col-md-12">
-            <div class="input-group input-group-static">
-              <label>TEXT</label>
-              <input type="text" class="form-control"
-                     ng-model="review.text">
-            </div>
-          </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>TEXT</label>
+                            <input type="text" class="form-control"
+                                   ng-model="review.text">
+                        </div>
+                    </div>
 
-          <div class="col-md-12">
-            <div class="input-group input-group-static">
-              <label>RATING</label>
-              <input type="text" class="form-control"
-                     ng-model="review.rating">
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="input-group input-group-static">
-              <label>LIKES</label>
-              <input type="number" class="form-control"
-                     ng-model="review.likes">
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="input-group input-group-static">
-              <label>DISLIKES</label>
-              <input type="number" class="form-control"
-                     ng-model="review.dislikes">
-            </div>
-          </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>RATING</label>
+                            <input type="text" class="form-control"
+                                   ng-model="review.rating">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>LIKES</label>
+                            <input type="number" class="form-control"
+                                   ng-model="review.likes">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-static">
+                            <label>DISLIKES</label>
+                            <input type="number" class="form-control"
+                                   ng-model="review.dislikes">
+                        </div>
+                    </div>
 
 
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <!--                                <button type="button" class="btn btn-primary"  ng-click="update()" ng-if="action==='update'">Save changes</button>-->
-        <button type="button" class="btn btn-primary" ng-click="create()">Save</button>
-      </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <!--                                <button type="button" class="btn btn-primary"  ng-click="update()" ng-if="action==='update'">Save changes</button>-->
+                <button type="button" class="btn btn-primary" ng-click="create()">Save</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script src="../assets/js/core/popper.min.js"></script>
