@@ -36,7 +36,6 @@ public class AccountModel extends TimeStampEntity  {
     private String email;
     private String photo;
     private boolean isEnabled;
-    @Column(nullable = false)
     private Boolean emailVerified = false;
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;

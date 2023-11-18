@@ -63,7 +63,7 @@ public class SecurityAdminConfig {
             "/component/**",
             "/pages/**",
             "/static/**",
-            "/sign-in"
+            "/sign-in",
     };
 
     @Bean
@@ -90,6 +90,7 @@ public class SecurityAdminConfig {
                                         return false;
                                 }
                             }).hasAnyAuthority("ADMIN")
+
                             .requestMatchers(request -> {
                                 switch (request.getMethod().toLowerCase()) {
                                     case "post":
@@ -102,9 +103,13 @@ public class SecurityAdminConfig {
                                 }
 
                             }).hasAnyAuthority("MANAGER")
-                            .requestMatchers(GET,"/api/v1/game/**").permitAll()
-                            .requestMatchers(GET,"/api/v1/category/**").permitAll()
-                            .requestMatchers(GET,"/api/v1/platform/**").permitAll()
+                            .requestMatchers(
+                                    GET,
+                                    "/api/v1/game/**",
+                                    "/api/v1/category/**",
+                                    "/api/v1/platform/**",
+                                    "/api/v1/checkout/**","/api/v1/payment/vnpay/**")
+                            .permitAll()
                             .requestMatchers(WHITE_LIST_URLS).permitAll()
                             .anyRequest().authenticated();
 
@@ -138,7 +143,12 @@ public class SecurityAdminConfig {
                                 )
                                 .successHandler(oAuth2AuthenticationSuccessHandler)
                                 .failureHandler(oAuth2AuthenticationFailureHandler)
-                );
+                )
+                .logout(httpSecurityLogoutConfigurer -> {
+                    httpSecurityLogoutConfigurer.logoutUrl("/api/v1/auth/logout");
+                    httpSecurityLogoutConfigurer.addLogoutHandler(logoutHandler);
+                })
+        ;
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

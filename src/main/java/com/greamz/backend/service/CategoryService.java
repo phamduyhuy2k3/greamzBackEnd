@@ -22,7 +22,7 @@ import java.util.Set;
 @Slf4j
 public class CategoryService {
     private final ICategoryRepo repo;
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Category> findAll() {
         List<Category> gameCategories = repo.findAll();
         for (Category category : gameCategories) {
@@ -59,14 +59,15 @@ public class CategoryService {
         repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
         repo.deleteById(id);
     }
-
+    @Transactional(readOnly = true)
     public Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes) {
         return repo.findAllByCategoryTypes(categoryTypes);
     }
+    @Transactional(readOnly = true)
     public List<Category> findAllByGameModelsAppid(Long gameId) {
         return repo.findAllByGameModelsAppid(gameId);
     }
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<Category> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Category> gameCategories = repo.findAll(pageable);

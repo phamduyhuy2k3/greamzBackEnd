@@ -49,11 +49,13 @@ application:
   payment:
     vnpay:
       payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-      returnUrl: http://localhost:3000/order/vnpay
+      returnUrl: http://localhost:8080/api/v1/payment/vnpay/call-back
       tmnCode: KAZQ6EDF
       secretKey: SFPMQNPZIKBZLXFEPKXQXSLOXMSHTQIB
       apiUrl: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
-
+    paypal:
+      client-id: Ac6OunOSZY2Kv9TCwJRad598Rsi_pmPmKjEsQzRcvAb2vAAixdEEIlH6m6QliVM1Glv393bh3Iw0SUbQ
+      client-sec: EIU5icm_85DbGCTey09703tMfxcjXRkXiOoameTTF2YpbFv3AQwWUqIjoyuo_9VEWXJ_PPKECsxi_hgi
 server:
   port: 8080
 
