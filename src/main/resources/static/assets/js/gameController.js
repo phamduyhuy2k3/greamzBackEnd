@@ -734,7 +734,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
             })
             $scope.action = 'update';
 
-            $http.get(`/api/v1/review/findByGame/${appid}`, {
+            await $http.get(`/api/v1/review/findByGame/${appid}`, {
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
@@ -742,11 +742,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                 resp => {
                     $scope.reviews = resp.data;
                     $scope.isLoading = false;
-                    // if (!$scope.reviews.account.id === null) {
-                    //     appid === $scope.reviews.account.id;
-                    //     console.log(appid)
-                    // }
-                    console.log(appid)
                     console.log($scope.reviews)
                 }
             )

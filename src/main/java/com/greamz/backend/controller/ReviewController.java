@@ -1,6 +1,7 @@
 package com.greamz.backend.controller;
 
 
+import com.greamz.backend.dto.ReviewsUserDTO;
 import com.greamz.backend.model.Review;
 import com.greamz.backend.model.Voucher;
 import com.greamz.backend.service.ReviewService;
@@ -45,9 +46,9 @@ public class ReviewController {
         }
     }
     @GetMapping("/findByGame/{appid}")
-    public ResponseEntity<List<Review>> findByGame(@PathVariable("appid") Long id) {
+    public ResponseEntity<List<ReviewsUserDTO>> findByGame(@PathVariable("appid") Long id) {
         try {
-            List<Review> reviews = service.findReviewByGame(id);
+            List<ReviewsUserDTO> reviews = service.findReviewByGame(id);
             return ResponseEntity.ok(reviews);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();

@@ -510,12 +510,12 @@
                                     <td>
                                         <div class="d-flex px-2 py-1">
                                             <div>
-                                                <img src="{{g.photo}}"
+                                                <img src="{{review.account.photo}}"
                                                      class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                                             </div>
                                             <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">{{g.name}}</h6>
-                                                <p class="text-xs text-secondary mb-0">USERID: {{g.appid}}</p>
+                                                <h6 class="mb-0 text-sm text-uppercase">{{review.account.username}}</h6>
+                                                <p class="text-xs text-secondary mb-0">USERID: {{review.account.id}}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -526,14 +526,14 @@
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-xs font-weight-bold mb-0">
                                             <a href="{{game.website}}" target="_blank">
-                                                {{review.likes}}
+                                                {{review.like}}
                                             </a>
                                         </p>
                                     </td>
                                     <td class="align-middle text-center text-sm">
                                         <p class="text-xs font-weight-bold mb-0">
                                             <a href="{{game.website}}" target="_blank">
-                                                {{review.dislikes}}
+                                                {{review.dislike}}
                                             </a>
                                         </p>
                                     </td>

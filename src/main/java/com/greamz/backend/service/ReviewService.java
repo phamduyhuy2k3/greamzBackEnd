@@ -1,5 +1,7 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.dto.AccountBasicDTO;
+import com.greamz.backend.dto.ReviewsUserDTO;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.model.Review;
@@ -49,15 +51,28 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<Review> findReviewByGame(Long gameAppId) {
+    public List<ReviewsUserDTO> findReviewByGame(Long gameAppId) {
         List<Review> reviewsList = repo.findAllByGameAppid(gameAppId);
-        reviewsList.forEach(gameModel -> {
-//            gameModel.setAccount(null);
-//            gameModel.setGame(null);
-//            AccountModel account = Hibernate.initialize(gameModel.getAccount());
-            Hibernate.initialize(gameModel.getGame());
-        });
-        return reviewsList;
+        List<ReviewsUserDTO> reviewsUserDTOList  = reviewsList.stream()
+                .map(review -> {
+                    Hibernate.initialize(review.getAccount());
+                    ReviewsUserDTO reviewsUserDTO = new ReviewsUserDTO();
+                    reviewsUserDTO.setAccount(
+                            AccountBasicDTO.builder()
+                                    .id(review.getAccount().getId())
+                                    .photo(review.getAccount().getPhoto())
+                                    .username(review.getAccount().getUsername())
+                                    .build()
+                    );
+                    reviewsUserDTO.setDislike(review.getDislikes());
+                    reviewsUserDTO.setLike(review.getLikes());
+                    reviewsUserDTO.setRating(review.getRating());
+                    reviewsUserDTO.setText(review.getText());
+                    return reviewsUserDTO;
+                }).toList();
+
+
+        return reviewsUserDTOList;
     }
 
     @Transactional(readOnly = true)
