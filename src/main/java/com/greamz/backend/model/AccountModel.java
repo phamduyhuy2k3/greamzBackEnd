@@ -36,7 +36,6 @@ public class AccountModel extends TimeStampEntity  {
     private String email;
     private String photo;
     private boolean isEnabled;
-    @Column(nullable = false)
     private Boolean emailVerified = false;
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
@@ -46,7 +45,7 @@ public class AccountModel extends TimeStampEntity  {
     private List<Voucher> vouchers;
     @OneToMany(mappedBy = "account")
     private List<Orders> orders;
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
     @OneToMany(mappedBy = "account")
     private List<Disscusion> disscusions;

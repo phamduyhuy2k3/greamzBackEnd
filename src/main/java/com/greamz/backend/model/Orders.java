@@ -1,16 +1,15 @@
 package com.greamz.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.enumeration.OrdersStatus;
+import com.greamz.backend.enumeration.PAYMENTMETHOD;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +26,7 @@ public class Orders extends TimeStampEntity {
     private AccountModel account;
     private Double totalPrice;
     @OneToMany(mappedBy = "orders",cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<OrdersDetail> ordersDetails;
     @Enumerated(EnumType.STRING)
     private PAYMENTMETHOD paymentmethod;

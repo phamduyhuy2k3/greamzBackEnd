@@ -13,6 +13,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.boot.model.source.spi.Sortable;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
@@ -98,6 +99,7 @@ public class GameModelService {
         return gameModelByCategory;
     }
 
+
     @Transactional(readOnly = true)
     public List<GameModel> findGameByGameIds(String ids) {
         List<Long> idList = parseIds(ids);
@@ -168,10 +170,7 @@ public class GameModelService {
             };
             gameModelSpecifications.add(platformSpecification);
         }
-//        if(!devices.isBlank()){
-//            Specification<GameModel> devicesSpecification = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("devices"), Devices.valueOf(devices));;
-//            gameModelSpecifications.add(devicesSpecification);
-//        }
+
         if (!q.isBlank()) {
             Specification<GameModel> searchSpecification = (root, query, criteriaBuilder) -> {
                 Predicate namePredicate = criteriaBuilder.like(
@@ -180,41 +179,42 @@ public class GameModelService {
                         criteriaBuilder.lower(root.get("detailed_description")), "%" + q.toLowerCase() + "%");
                 Predicate shortDescriptionPredicate = criteriaBuilder.like(
                         criteriaBuilder.lower(root.get("short_description")), "%" + q.toLowerCase() + "%");
-                Predicate categoryNamePredicate = criteriaBuilder.in(root.join("categories", JoinType.INNER).get("name"))
-                        .value(q.toLowerCase());
-                Predicate pricePredicate = criteriaBuilder.like(
-                        criteriaBuilder.lower(criteriaBuilder.function("CAST", String.class, root.get("price"))),
-                        "%" + q.toLowerCase() + "%");
+//                Predicate categoryNamePredicate = criteriaBuilder.in(root.join("categories", JoinType.INNER).get("name"))
+//                        .value(q.toLowerCase());
                 return criteriaBuilder.or(
                         namePredicate,
                         descriptionPredicate,
-                        shortDescriptionPredicate,
-                        categoryNamePredicate,
-                        pricePredicate
+                        shortDescriptionPredicate
+//                        categoryNamePredicate
                 );
             };
             gameModelSpecifications.add(searchSpecification);
+
         }
-        if(minPrice!=-1 || maxPrice!=-1){
-            Specification<GameModel> priceSpecification = (root, query, criteriaBuilder) -> {
-                if (minPrice != null && maxPrice != null) {
+        Specification<GameModel> priceSpecification=null;
+        if(minPrice > 0 && maxPrice > 0 && minPrice < maxPrice || (minPrice==0 &&maxPrice>0)){
+            priceSpecification= (root, query, criteriaBuilder) -> {
+                if (minPrice >0 && maxPrice >0) {
                     return criteriaBuilder.between(root.get("price"), minPrice, maxPrice);
-                } else if (minPrice != null) {
+                } else if (minPrice > 0) {
                     return criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice);
-                } else if (maxPrice != null) {
+                } else if (maxPrice >0 ) {
                     return criteriaBuilder.lessThanOrEqualTo(root.get("price"),  maxPrice);
                 }
                 return null;
             };
-            gameModelSpecifications.add(priceSpecification);
+
         }
-        Specification<GameModel> combinedSpecification= Specification.anyOf(gameModelSpecifications);
+        Specification<GameModel> combinedSpecification=
+                priceSpecification==null?Specification.anyOf(gameModelSpecifications):
+                Specification.anyOf(gameModelSpecifications).and(priceSpecification);
 
         Pageable pageable;
         if(sort==null ||sort.isBlank()){
             pageable = PageRequest.of(page, size);
         }else {
-            pageable=PageRequest.of(page, size).withSort(Sort.by(direction,sort));
+            System.out.println(direction);
+            pageable=PageRequest.of(page, size,Sort.by(direction,sort));
         }
 
         Page<GameModel> gameModelPage = gameModelRepository.findAll(combinedSpecification, pageable);
@@ -233,13 +233,10 @@ public class GameModelService {
         // Load the categories when needed
         return gameModel.getCategories();
     }
-
     public List<String> getSupportedLanguagesForGame(GameModel gameModel) {
         // Load the supported_languages when needed
         return gameModel.getSupported_languages();
     }
-
-
     private List<Long> parseIds(String idsParam) {
         if (idsParam == null || idsParam.equals("null") || idsParam.isBlank()) {
             return Collections.emptyList();

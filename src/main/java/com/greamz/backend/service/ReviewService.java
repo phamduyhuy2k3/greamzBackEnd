@@ -1,5 +1,9 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.dto.AccountBasicDTO;
+import com.greamz.backend.dto.ReviewsUserDTO;
+import com.greamz.backend.model.AccountModel;
+import com.greamz.backend.model.GameModel;
 import com.greamz.backend.model.Review;
 import com.greamz.backend.repository.IReviewRepo;
 import lombok.AllArgsConstructor;
@@ -31,17 +35,47 @@ public class ReviewService {
         repo.save(reviewModel);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Review> findAll() {
         List<Review> reviews = repo.findAll();
-//        reviews.forEach(review ->{
-//            Hibernate.initialize(review.getGame());
-//            Hibernate.initialize(review.getAccount().getReviews());
-//        });
+        reviews.forEach(review -> {
+            review.setCreatedAt(null);
+            review.setUpdatedAt(null);
+
+//            review.setGame(null);
+//            review.setAccount(null);
+            Hibernate.initialize(review.getGame());
+            Hibernate.initialize(review.getAccount());
+        });
         return reviews;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public List<ReviewsUserDTO> findReviewByGame(Long gameAppId) {
+        List<Review> reviewsList = repo.findAllByGameAppid(gameAppId);
+        List<ReviewsUserDTO> reviewsUserDTOList  = reviewsList.stream()
+                .map(review -> {
+                    Hibernate.initialize(review.getAccount());
+                    ReviewsUserDTO reviewsUserDTO = new ReviewsUserDTO();
+                    reviewsUserDTO.setAccount(
+                            AccountBasicDTO.builder()
+                                    .id(review.getAccount().getId())
+                                    .photo(review.getAccount().getPhoto())
+                                    .username(review.getAccount().getUsername())
+                                    .build()
+                    );
+                    reviewsUserDTO.setDislike(review.getDislikes());
+                    reviewsUserDTO.setLike(review.getLikes());
+                    reviewsUserDTO.setRating(review.getRating());
+                    reviewsUserDTO.setText(review.getText());
+                    return reviewsUserDTO;
+                }).toList();
+
+
+        return reviewsUserDTOList;
+    }
+
+    @Transactional(readOnly = true)
     public Page<Review> findAll(Pageable pageable) {
         Page<Review> reviewPage = repo.findAll(pageable);
         reviewPage.forEach(review ->

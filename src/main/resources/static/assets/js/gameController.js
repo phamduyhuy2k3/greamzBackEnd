@@ -1,6 +1,7 @@
 app.controller("gameController", function ($scope, $http, $document, $cookies, $timeout) {
         $scope.games = [];
-        // $scope.reviews = [];
+        $scope.reviews = [];
+        $scope.accountId = '';
         $scope.disable = false;
         $scope.tagA = false;
         $scope.navHidden = true;
@@ -406,23 +407,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                     console.log("Error", error);
                 }
             );
-            $http.get("/api/v1/review/findALl",
-                {
-                    headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
-                    }
-                }).then(
-                resp => {
-                    $timeout(function () {
-                            $scope.reviews = resp.data
-                            $scope.isLoading = false;
-                        }
-                    )
-                },
-                error => {
-                    console.log("Error", error);
-                }
-            );
+
 
             $http.get("/api/v1/platform/findAll", {
                 header: {
@@ -548,48 +533,48 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
         //     }
         // }
 
-    $scope.delete = function (appid) {
-        Swal.fire({
-            title: "Do you want to delete this game?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                if (appid) {
-                    $http.delete(`/api/v1/game/delete/${appid}`, {
-                        headers: {
-                            "Authorization": "Bearer " + $cookies.get("accessToken")
-                        }
-                    }).then(resp => {
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: "Your game has been deleted.",
-                            icon: "success"
+        $scope.delete = function (appid) {
+            Swal.fire({
+                title: "Do you want to delete this game?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (appid) {
+                        $http.delete(`/api/v1/game/delete/${appid}`, {
+                            headers: {
+                                "Authorization": "Bearer " + $cookies.get("accessToken")
+                            }
+                        }).then(resp => {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your game has been deleted.",
+                                icon: "success"
+                            });
+                            $scope.reset();
+                            $scope.pager.fetchPage()
+                        }).catch(error => {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: "Error deleting game!",
+                            });
+                            console.log("Error", error);
                         });
-                        $scope.reset();
-                        $scope.pager.fetchPage()
-                    }).catch(error => {
+                    } else {
                         Swal.fire({
                             icon: "error",
                             title: "Oops...",
                             text: "Error deleting game!",
                         });
                         console.log("Error", error);
-                    });
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Error deleting game!",
-                    });
-                    console.log("Error", error);
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
 
         $scope.reset = function () {
             $scope.form = {
@@ -748,7 +733,23 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                 console.log(error);
             })
             $scope.action = 'update';
+
+            await $http.get(`/api/v1/review/findByGame/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(
+                resp => {
+                    $scope.reviews = resp.data;
+                    $scope.isLoading = false;
+                    console.log($scope.reviews)
+                }
+            )
+
+
         }
+
+
         $scope.initialize()
     }
 )

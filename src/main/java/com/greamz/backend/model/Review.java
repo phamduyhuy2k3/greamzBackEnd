@@ -3,12 +3,16 @@ package com.greamz.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
 @Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Review extends TimeStampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +24,5 @@ public class Review extends TimeStampEntity {
     @ManyToOne
     private AccountModel account;
     @ManyToOne
-    @JsonIgnore
     private GameModel game;
 }

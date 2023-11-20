@@ -55,7 +55,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
 
     }
     $scope.initialize = function () {
-        $scope.reset();
+
         $http.get("/api/v1/platform/findAllPagination", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
@@ -141,6 +141,8 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
                 });
                 console.log($scope.form)
                 $scope.initialize();
+                $scope.reset()
+
             },
             error => {
                 Swal.fire({
@@ -175,6 +177,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
                             icon: "success"
                         });
                         $scope.initialize();
+
                     }).catch(error => {
                         Swal.fire({
                             icon: "error",
@@ -183,6 +186,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
                         });
                         console.log("Error", error);
                     });
+
                 } else {
                     Swal.fire({
                         icon: "error",
@@ -191,6 +195,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
                     });
                     console.log("Error", error);
                 }
+
             }
         });
     }
@@ -205,6 +210,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
             resp => {
                 $scope.form = resp.data
                 $scope.initialize();
+
             },
             error => {
                 console.log("Error", error);
@@ -212,16 +218,7 @@ app.controller("platformController", function ($scope, $http, $document, $cookie
         )
     }
 
-    $scope.reset = function () {
-        $scope.form = {
-            id: '',
-            name: '',
-            description: '',
-            devices: '',
-        };
-        $scope.action = 'create';
-        $scope.initialize();
-    }
+
 
     $scope.initialize();
 });

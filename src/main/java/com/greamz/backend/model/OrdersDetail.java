@@ -1,5 +1,6 @@
 package com.greamz.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,5 +23,6 @@ public class OrdersDetail implements Serializable {
     @ManyToOne
     private GameModel game;
     @ManyToOne
+    @JsonBackReference
     private Orders orders;
 }
