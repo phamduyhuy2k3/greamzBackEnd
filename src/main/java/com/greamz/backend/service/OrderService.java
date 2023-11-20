@@ -197,12 +197,16 @@ public class OrderService {
                     OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO();
                     orderDetailsDTO.setGame(
                             GameBasicDTO.builder()
+                                    .appid(ordersDetail.getGame().getAppid())
                                     .name(ordersDetail.getGame().getName())
+                                    .header_image(ordersDetail.getGame().getHeader_image())
                                     .build()
                     );
                     orderDetailsDTO.setAccount(
                             AccountBasicDTO.builder()
                                     .username(ordersDetail.getOrders().getAccount().getUsername())
+                                    .id(ordersDetail.getOrders().getAccount().getId())
+                                    .photo(ordersDetail.getOrders().getAccount().getPhoto())
                                     .build()
                     );
 //                    orderDetailsDTO.setVoucher(
@@ -211,6 +215,7 @@ public class OrderService {
 //                                    .build()
 //                    );
                     orderDetailsDTO.setQuantity(ordersDetail.getQuantity());
+                    orderDetailsDTO.setPrice(ordersDetail.getPrice());
                     orderDetailsDTO.setOrder(
                             OrderDTO.builder()
                                     .id(ordersDetail.getOrders().getId())

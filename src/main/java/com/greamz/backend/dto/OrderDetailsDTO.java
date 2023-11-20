@@ -18,4 +18,5 @@ public class OrderDetailsDTO {
     private AccountBasicDTO account;
     private VoucherOrderDTO voucher;
     private Integer quantity;
+    private Double price;
 }

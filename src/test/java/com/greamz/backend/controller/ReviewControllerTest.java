@@ -54,7 +54,7 @@ public class ReviewControllerTest {
     public void testFindAllPagination() {
         // Test for findAllPagination method
         Page<Review> page = new PageImpl<>(Collections.emptyList());
-        when(reviewService.findAll(anyInt(), anyInt())).thenReturn(page);
+        when(reviewService.findAll()).thenReturn((List<Review>) page);
         ResponseEntity<?> response = reviewController.findAllPagination(0, 5);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
