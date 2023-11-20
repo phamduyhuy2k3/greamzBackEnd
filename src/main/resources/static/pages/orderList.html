@@ -12,10 +12,13 @@
                         <thead>
                         <tr>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Name
+                                ID order
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Date
+                                ID Account
+                            </th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                Total Price
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 Status
@@ -27,50 +30,83 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr ng-repeat="order in orders">
                             <td>
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                        <img src="../assets/img/team-2.jpg"
-                                             class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0 text-sm">John Michael</h6>
-                                        <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-                            </td>
-                            <td class="align-middle">
-                                <span class="badge badge-sm bg-gradient-success">Online</span>
+                                <h6 class="text-xs text-secondary mb-0">{{order.id}}</h6>
                             </td>
                             <td>
-                                <p class="text-xs font-weight-bold mb-0">Manager</p>
-                                <p class="text-xs text-secondary mb-0">Organization</p>
+                                <h6 class="text-xs text-secondary mb-0">{{order.account}}</h6>
                             </td>
-
+                            <td>
+                                <p class="text-xs text-secondary mb-0">{{order.totalPrice}}</p>
+                            </td>
+                            <td>
+                                <p class="text-xs text-secondary mb-0">{{order.ordersStatus}}</p>
+                            </td>
+                            <td>
+                                <p class="text-xs text-secondary mb-0">{{order.paymentmethod}}</p>
+                            </td>
                             <td class="align-middle">
                                 <a class="text-secondary font-weight-bold text-xs"
                                    data-toggle="tooltip"
-                                   data-original-title="Edit user"
+                                   data-original-title="Edit category"
                                    data-bs-target="#orderModal"
                                    data-bs-toggle="modal"
-                                href="#">
-                                    Edit
+                                   href="#" ng-click="edit(order.id)">
+                                    View
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
-                                   data-toggle="tooltip" data-original-title="Edit user"
-                                   data-bs-target="#orderModal"
-                                   data-bs-toggle="modal"
-                                href="#">
+                                   href="javascript:;"
+                                   ng-click="delete(order.id)">
                                     Delete
                                 </a>
                             </td>
                         </tr>
                         </tbody>
                     </table>
+<!--                    <nav aria-label="Page navigation example align-center">-->
+<!--                        <ul class="pagination justify-content-center">-->
+<!--                            <li class="page-item">-->
+<!--                                <a class="page-link" href="javascript:;" tabindex="-1"-->
+<!--                                   ng-click="pager.toFirst()">-->
+<!--                                        <span class="material-icons">-->
+<!--                                            first_page-->
+<!--                                        </span>-->
+<!--                                    <span class="sr-only">First</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li class="page-item">-->
+<!--                                <a class="page-link" href="javascript:;" tabindex="-1"-->
+<!--                                   ng-click="pager.prev()">-->
+<!--                                        <span class="material-icons">-->
+<!--                                          keyboard_arrow_left-->
+<!--                                        </span>-->
+<!--                                    <span class="sr-only">Previous</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li class="page-item" style="margin:5px 8px 5px 5px">-->
+<!--                                {{pager.number + 1}} of {{pager.totalPages}}-->
+<!--                            </li>-->
+<!--                            <li class="page-item">-->
+<!--                                <a class="page-link" href="javascript:;"-->
+<!--                                   ng-click="pager.next()">-->
+<!--                                        <span class="material-icons">-->
+<!--                                          keyboard_arrow_right-->
+<!--                                        </span>-->
+<!--                                    <span class="sr-only">Next</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                            <li class="page-item">-->
+<!--                                <a class="page-link" href="javascript:;" tabindex="-1"-->
+<!--                                   ng-click="pager.toLast()">-->
+<!--                                        <span class="material-icons">-->
+<!--                                            last_page-->
+<!--                                        </span>-->
+<!--                                    <span class="sr-only">First</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </nav>-->
                 </div>
             </div>
         </div>
@@ -90,7 +126,7 @@
                 <form class="row g-3">
                     <div class="col-md-6">
                         <div class="input-group input-group-outline">
-                            <label class="form-label">Name</label>
+                            <label class="form-label">ID Order</label>
                             <input type="text" class="form-control">
                         </div>
                     </div>
@@ -102,7 +138,8 @@
                     </div>
                     <div class="col-12">
                         <div class="input-group input-group-dynamic">
-                            <textarea id="floatingTextarea2" class="form-control" rows="5" placeholder="Detailed Description"
+                            <textarea id="floatingTextarea2" class="form-control" rows="5"
+                                      placeholder="Detailed Description"
                                       spellcheck="true"></textarea>
                         </div>
                     </div>
@@ -164,9 +201,6 @@
         </div>
     </div>
 </div>
-
-
-
 
 
 <!--js-->
