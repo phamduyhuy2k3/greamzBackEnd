@@ -11,13 +11,13 @@
                     <table class="table align-items-center mb-0">
                         <thead>
                         <tr>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 ID order
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 Total Price
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 Status
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
@@ -29,10 +29,17 @@
                         <tbody>
                         <tr ng-repeat="order in pager.content">
                             <td>
-                                <h6 class="text-xs text-secondary mb-0">{{order.id}}</h6>
+                                <p class="text-xs font-weight-bold mb-0">
+                                    <a href="javascript:;"
+                                       data-bs-target="#orderModal"
+                                       data-bs-toggle="modal"
+                                       href="#" ng-click="view(order.id)">
+                                        {{order.id}}
+                                    </a>
+                                </p>
                             </td>
                             <td>
-                                <p class="text-xs text-secondary mb-0">{{order.totalPrice}}</p>
+                                <p class="text-xs text-secondary mb-0">{{ order.totalPrice | number:0 }}&nbsp;VND</p>
                             </td>
                             <td>
                                 <p class="text-xs text-secondary mb-0" ng-if="order.ordersStatus"
