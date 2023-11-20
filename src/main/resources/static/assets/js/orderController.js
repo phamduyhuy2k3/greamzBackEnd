@@ -2,66 +2,68 @@ app.controller("orderController", function ($scope, $http, $document, $cookies, 
     $scope.orders = [];
     $scope.form = {
         id: '',
-        account: '',
-        total: '',
-        status: '',
-        orderDate: '',
-        orderDetails: [],
+        createAt: '',
+        nameAccount: '',
+        nameGame: '',
+        quality: '',
+        totalPrice: '',
         payment: '',
-        voucher: '',
+        orderStatus: '',
+        voucher: [],
     }
 
-    // $scope.pager = {
-    //     toFirst() {
-    //         this.number = 0;
-    //         this.fetchPage();
-    //     },
-    //     toLast() {
-    //         this.number = this.totalPages - 1
-    //         this.fetchPage();
-    //
-    //     },
-    //     next() {
-    //         this.number++;
-    //         if (this.number >= this.totalPages) {
-    //             this.number = 0;
-    //         }
-    //         this.fetchPage();
-    //     },
-    //     prev() {
-    //         this.number--;
-    //         if (this.number < 0) {
-    //             this.number = this.totalPages - 1;
-    //         }
-    //         this.fetchPage();
-    //     },
-    //     fetchPage() {
-    //         $http.get(`/api/v1/order/findAllPagination?page=${this.number}&size=10`, {
-    //             headers: {
-    //                 'Authorization': 'Bearer ' + $cookies.get('accessToken')
-    //             }
-    //         }).then(resp => {
-    //             $scope.pager = {
-    //                 ...$scope.pager,
-    //                 ...resp.data
-    //             };
-    //         })
-    //     }
-    // }
+    $scope.orderDetails = [];
+    $scope.pager = {
+        toFirst() {
+            this.number = 0;
+            this.fetchPage();
+        },
+        toLast() {
+            this.number = this.totalPages - 1
+            this.fetchPage();
+
+        },
+        next() {
+            this.number++;
+            if (this.number >= this.totalPages) {
+                this.number = 0;
+            }
+            this.fetchPage();
+        },
+        prev() {
+            this.number--;
+            if (this.number < 0) {
+                this.number = this.totalPages - 1;
+            }
+            this.fetchPage();
+        },
+        fetchPage() {
+            $http.get(`/api/v1/order/findAllPagination?page=${this.number}&size=10`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
+            })
+        }
+    }
 
     $scope.initialize = function () {
-        $http.get(`/api/v1/order/findAll`, {
+        $http.get(`/api/v1/order/findAllPagination`, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
             }
         }).then(
             resp => {
-                $scope.orders = resp.data;
-                console.log($scope.orders)
-                // $scope.pager = {
-                //     ...$scope.pager,
-                //     ...resp.data
-                // };
+                // $scope.orders = resp.data;
+                // console.log($scope.orders)
+                $scope.pager = {
+                    ...$scope.pager,
+                    ...resp.data
+                };
             },
             error => {
                 console.log("Error",error);
@@ -111,14 +113,14 @@ app.controller("orderController", function ($scope, $http, $document, $cookies, 
         });
     }
 
-    $scope.edit = async function (id) {
-        await $http.get(`/api/v1/order/${id}`, {
+    $scope.view = async function (id) {
+        await $http.get(`/api/v1/order/findByOrder/${id}`, {
             headers: {
                 'Authorization': 'Bearer ' + $cookies.get('accessToken')
             }
         }).then(resp => {
-                $scope.action = 'update';
-                $scope.form = resp.data;
+                $scope.orderDetails = resp.data;
+                console.log($scope.orderDetails);
             }, error => {
                 return error;
             }

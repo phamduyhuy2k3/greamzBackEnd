@@ -1,5 +1,6 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.OrderDetailsDTO;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.service.OrderService;
@@ -39,14 +40,24 @@ public class OrderRestController {
         return service.findById(id);
     }
 
-    @PostMapping("/save")
-    public Orders save(@RequestBody Orders order) {
-        return service.saveOrder(order);
+    @GetMapping("/findByOrder/{id}")
+    public ResponseEntity<List<OrderDetailsDTO>> findByOrder(@PathVariable("id") UUID id) {
+        try {
+            List<OrderDetailsDTO> orders = service.findOrderDetailsById(id);
+            return ResponseEntity.ok(orders);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+//    @PostMapping("/save")
+//    public Orders save(@RequestBody Orders order) {
+//        return service.saveOrder(order);
+//    }
 
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable("id") UUID id) {
-        service.deleteById(id);
+        service.delete(id);
     }
 
     @GetMapping("/findAllPagination")

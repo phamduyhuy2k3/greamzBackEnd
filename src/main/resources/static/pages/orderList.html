@@ -15,9 +15,6 @@
                                 ID order
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                ID Account
-                            </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                 Total Price
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -30,19 +27,17 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="order in orders">
+                        <tr ng-repeat="order in pager.content">
                             <td>
                                 <h6 class="text-xs text-secondary mb-0">{{order.id}}</h6>
-                            </td>
-                            <td>
-                                <h6 class="text-xs text-secondary mb-0">{{order.account}}</h6>
                             </td>
                             <td>
                                 <p class="text-xs text-secondary mb-0">{{order.totalPrice}}</p>
                             </td>
                             <td>
-                                <p class="text-xs text-secondary mb-0">{{order.ordersStatus}}</p>
+                                <p class="text-xs text-secondary mb-0" ng-if="order.ordersStatus" ng-class="{'text-success': order.ordersStatus === 'SUCCESS', 'text-warning': order.ordersStatus === 'PROCESSING', 'text-danger': order.ordersStatus === 'FAILED'}">{{order.ordersStatus}}</p>
                             </td>
+
                             <td>
                                 <p class="text-xs text-secondary mb-0">{{order.paymentmethod}}</p>
                             </td>
@@ -52,7 +47,7 @@
                                    data-original-title="Edit category"
                                    data-bs-target="#orderModal"
                                    data-bs-toggle="modal"
-                                   href="#" ng-click="edit(order.id)">
+                                   href="#" ng-click="view(order.id)">
                                     View
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
@@ -64,49 +59,49 @@
                         </tr>
                         </tbody>
                     </table>
-<!--                    <nav aria-label="Page navigation example align-center">-->
-<!--                        <ul class="pagination justify-content-center">-->
-<!--                            <li class="page-item">-->
-<!--                                <a class="page-link" href="javascript:;" tabindex="-1"-->
-<!--                                   ng-click="pager.toFirst()">-->
-<!--                                        <span class="material-icons">-->
-<!--                                            first_page-->
-<!--                                        </span>-->
-<!--                                    <span class="sr-only">First</span>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li class="page-item">-->
-<!--                                <a class="page-link" href="javascript:;" tabindex="-1"-->
-<!--                                   ng-click="pager.prev()">-->
-<!--                                        <span class="material-icons">-->
-<!--                                          keyboard_arrow_left-->
-<!--                                        </span>-->
-<!--                                    <span class="sr-only">Previous</span>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li class="page-item" style="margin:5px 8px 5px 5px">-->
-<!--                                {{pager.number + 1}} of {{pager.totalPages}}-->
-<!--                            </li>-->
-<!--                            <li class="page-item">-->
-<!--                                <a class="page-link" href="javascript:;"-->
-<!--                                   ng-click="pager.next()">-->
-<!--                                        <span class="material-icons">-->
-<!--                                          keyboard_arrow_right-->
-<!--                                        </span>-->
-<!--                                    <span class="sr-only">Next</span>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                            <li class="page-item">-->
-<!--                                <a class="page-link" href="javascript:;" tabindex="-1"-->
-<!--                                   ng-click="pager.toLast()">-->
-<!--                                        <span class="material-icons">-->
-<!--                                            last_page-->
-<!--                                        </span>-->
-<!--                                    <span class="sr-only">First</span>-->
-<!--                                </a>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                    </nav>-->
+                    <nav aria-label="Page navigation example align-center">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toFirst()">
+                                        <span class="material-icons">
+                                            first_page
+                                        </span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.prev()">
+                                        <span class="material-icons">
+                                          keyboard_arrow_left
+                                        </span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item" style="margin:5px 8px 5px 5px">
+                                {{pager.number + 1}} of {{pager.totalPages}}
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;"
+                                   ng-click="pager.next()">
+                                        <span class="material-icons">
+                                          keyboard_arrow_right
+                                        </span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toLast()">
+                                        <span class="material-icons">
+                                            last_page
+                                        </span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -119,7 +114,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Order Details</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -127,76 +122,61 @@
                     <div class="col-md-6">
                         <div class="input-group input-group-outline">
                             <label class="form-label">ID Order</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" ng-model="orderDetails.order.id">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group input-group-outline">
+                            <label class="form-label">Create At</label>
+                            <input type="text" class="form-control" ng-model="orderDetails.order.createdAt">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="input-group input-group-outline mb-4">
-                            <label class="form-label">Genre</label>
-                            <input type="text" class="form-control">
+                            <label class="form-label">Name User</label>
+                            <input type="text" class="form-control" ng-model="orderDetails.account.username">
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="input-group input-group-dynamic">
-                            <textarea id="floatingTextarea2" class="form-control" rows="5"
-                                      placeholder="Detailed Description"
-                                      spellcheck="true"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="input-group input-group-dynamic">
-                        <textarea class="form-control" placeholder="About" rows="5"
-                                  id="textarea-about"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="input-group input-group-dynamic">
-                        <textarea class="form-control" placeholder="Short Description"
-                                  id="floatingTextarea3"
-                                  rows="5"></textarea>
+<!--                    <div class="col-md-6">-->
+<!--                        <div class="input-group input-group-outline mb-4">-->
+<!--                            <label class="form-label">Name Voucher</label>-->
+<!--                            <input type="text" class="form-control" ng-model="orderDetails.voucher">-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div class="col-md-6">
+                        <div class="input-group input-group-outline mb-4">
+                            <label class="form-label">Name Game</label>
+                            <input type="text" class="form-control" ng-model="orderDetails.game.name">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="input-group input-group-outline mb-4">
-                            <label class="form-label">Support Language</label>
-                            <input type="text" class="form-control">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-control" ng-model="orderDetails.quality">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="input-group input-group-outline mb-4">
-                            <label class="form-label">Website</label>
-                            <input type="text" class="form-control">
+                            <label class="form-label">Total Price</label>
+                            <input type="number" class="form-control" ng-model="orderDetails.order.totalPrice">
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="input-group input-group-outline my-3">
-                            <label for="capsual" class="form-label">Header Image</label>
-                            <input type="file" class="form-control" placeholder="Header Image">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-outline mb-4">
+                            <label class="form-label">Payment Method</label>
+                            <input type="text" class="form-control" ng-model="orderDetails.order.payment">
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <label for="capsual" class="form-label">Capsule Image</label>
-                        <input type="file" class="form-control" id="capsual">
-                    </div>
-
-                    <div class="col-md-12">
-                        <label for="images" class="form-label">Images</label>
-                        <input type="file" class="form-control" id="images">
-                    </div>
-                    <div class="col-md-12">
-                        <label for="movie" class="form-label">Movie</label>
-                        <input type="file" class="form-control" id="movie">
-                    </div>
-                    <div class="col-md-12">
-                        <label for="screenshot" class="form-label">Screenshots</label>
-                        <input type="file" class="form-control" id="screenshot">
+                    <div class="col-md-6">
+                        <div class="input-group input-group-outline mb-4">
+                            <label class="form-label">Order Status</label>
+                            <input type="text" class="form-control" ng-model="orderDetails.order.orderStatus">
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
