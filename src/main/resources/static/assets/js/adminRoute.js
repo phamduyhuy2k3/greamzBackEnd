@@ -23,7 +23,7 @@ app.config(function ($routeProvider) {
         //order management
         .when("/order", {
             templateUrl: "/pages/orderList.html",
-            controller: "oderController"
+            controller: "orderController"
         })
         .when("/user", {
             templateUrl: "/pages/userList.html",
