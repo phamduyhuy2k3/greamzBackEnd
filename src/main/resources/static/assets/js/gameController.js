@@ -734,7 +734,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
             })
             $scope.action = 'update';
 
-            await $http.get(`/api/v1/review/findByGame/${appid}`, {
+            $http.get(`/api/v1/review/findByGame/${appid}`, {
                 headers: {
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
