@@ -45,7 +45,6 @@ public class GameRestController {
             @RequestParam(defaultValue = "-1") Long platformId,
             @RequestParam int page,
             @RequestParam int size,
-//            @RequestParam(defaultValue = "") String devices,
             @RequestParam(defaultValue = "-1") Double minPrice,
             @RequestParam (defaultValue = "-1")Double maxPrice,
             @RequestParam(defaultValue = "") String sort,

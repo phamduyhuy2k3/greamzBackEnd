@@ -1,11 +1,16 @@
 package com.greamz.backend.security.oauth2;
 
+import com.greamz.backend.config.JwtService;
 import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.enumeration.Role;
+import com.greamz.backend.enumeration.TokenType;
 import com.greamz.backend.exception.OAuth2AuthenticationProcessingException;
 import com.greamz.backend.model.AccountModel;
+import com.greamz.backend.model.Token;
 import com.greamz.backend.repository.IAccountRepo;
+import com.greamz.backend.repository.ITokenRepo;
 import com.greamz.backend.security.UserPrincipal;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -19,10 +24,15 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     private IAccountRepo userRepository;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private ITokenRepo tokenRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -57,8 +67,26 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
         }
+        UserPrincipal userPrincipal = UserPrincipal.create(user, oAuth2User.getAttributes());
+        String refreshToken = jwtService.generateRefreshToken(userPrincipal);
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        if (!validUserTokens.isEmpty()){
+            validUserTokens.forEach(token -> {
+                token.setExpired(true);
+                token.setRevoked(true);
+            });
+            tokenRepository.saveAll(validUserTokens);
 
-        return UserPrincipal.create(user, oAuth2User.getAttributes());
+        }
+        var token = Token.builder()
+                .user(user)
+                .token(refreshToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenRepository.save(token);
+        return userPrincipal;
     }
 
     private AccountModel registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
@@ -76,6 +104,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         existingUser.setFullname(oAuth2UserInfo.getName());
         existingUser.setPhoto(oAuth2UserInfo.getImageUrl());
         existingUser.setProviderId(oAuth2UserInfo.getId());
+
         return userRepository.save(existingUser);
     }
 

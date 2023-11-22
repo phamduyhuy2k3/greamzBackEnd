@@ -1,7 +1,6 @@
 package com.greamz.backend.controller;
 
 import com.greamz.backend.dto.*;
-import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.security.UserPrincipal;
@@ -10,10 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;

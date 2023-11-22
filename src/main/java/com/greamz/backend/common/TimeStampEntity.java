@@ -16,6 +16,7 @@ public class TimeStampEntity {
 
     @PrePersist
     protected void onCreated() {
+
         createdAt = new Date();
     }
 

@@ -3,6 +3,7 @@ package com.greamz.backend.checkout.paypal;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.enumeration.OrdersStatus;
+import com.greamz.backend.service.GameModelService;
 import com.greamz.backend.service.OrderService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaypalService {
     private final OrderService orderService;
+    private final GameModelService gameModelService;
     private final String  BASE = "https://api-m.sandbox.paypal.com";
     @Value("${application.payment.paypal.client-id}")
     private String clientId ;
@@ -73,10 +75,14 @@ public class PaypalService {
                 Object.class
         );
         Orders orders1= orderService.getOrdersById(orders);
+        orders1.getOrdersDetails().forEach(ordersDetail -> {
+            ordersDetail.getGame().setStock(ordersDetail.getGame().getStock()-ordersDetail.getQuantity());
+        });
         if (response.getStatusCode() == HttpStatus.CREATED) {
             log.info("ORDER CAPTURED");
             orders1.setOrdersStatus(OrdersStatus.SUCCESS);
-            orderService.saveOrdersAndUpdateTheStockForGames(orders1);
+            orderService.saveOrder(orders1);
+            gameModelService.updateStockForGameFromOrder(orders1.getOrdersDetails());
             return "/order/success?orderId="+orders1.getId();
         } else {
             log.info("FAILED CREATING ORDER");
@@ -88,7 +94,6 @@ public class PaypalService {
     public Object createOrder(JsonNode paypalCreateOrderRequest) {
         String accessToken = generateAccessToken();
         RestTemplate restTemplate = new RestTemplate();
-//        PaypalCreateOrderRequest paypalOrder = paypalCreateOrderRequest.getPaypalOrder();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.add("Content-Type", "application/json");

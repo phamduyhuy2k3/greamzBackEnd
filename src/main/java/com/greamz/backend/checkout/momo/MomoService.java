@@ -5,20 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Orders;
-import com.greamz.backend.repository.IOrderRepo;
+import com.greamz.backend.service.GameModelService;
+import com.greamz.backend.service.OrderService;
 import com.greamz.backend.util.GlobalState;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,12 +25,14 @@ public class MomoService {
     @Autowired
     private Environment env;
     @Autowired
-    private IOrderRepo orderRepo;
+    private OrderService orderService;
+    @Autowired
+    private GameModelService gameModelService;
 
     @Autowired
     private RestTemplate restTemplate;
 
-    public MomoResponse createMomoPayment(Orders order, AccountModel accountModel)
+    public MomoResponse createMomoPayment(Orders order, String fullname)
             throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
 
         String endPoint = env.getProperty("payment.momo.endpoint");
@@ -46,8 +47,8 @@ public class MomoService {
 
         String redirectUrl = "http://localhost:8080/api/v1/payment/momo/momo-result";
 
-        String orderInfo = "Khách hàng: " + accountModel.getFullname() + " thanh toán";
-        if(order.getTotalPrice() >50000000d){
+        String orderInfo = "Khách hàng: " + fullname + " thanh toán";
+        if (order.getTotalPrice() > 50000000d) {
             order.setTotalPrice(50_000_000d);
         }
         String amount = String.valueOf(Math.round(order.getTotalPrice())).replaceAll("[^\\d]", ""); // Xóa dấu phẩy
@@ -58,7 +59,7 @@ public class MomoService {
         List<MomoItem> items =
                 order.getOrdersDetails().stream()
                         .map(
-                                x ->MomoItem.builder()
+                                x -> MomoItem.builder()
                                         .imageUrl(x.getGame().getHeader_image())
                                         .name(x.getGame().getName())
                                         .quantity(x.getQuantity())
@@ -106,21 +107,18 @@ public class MomoService {
 
         return objectMapper.readValue(result, MomoResponse.class);
     }
+
     public void momoResult(MomoResult response, HttpServletResponse httpServletResponse) throws IOException {
-        Optional<Orders> ordersOptional = orderRepo.findById(UUID.fromString(response.getOrderId()));
-        if(ordersOptional.isPresent()){
-            Orders order = ordersOptional.get();
-            if(response.getResultCode() == 0){
-                order.setOrdersStatus(OrdersStatus.SUCCESS);
-                Orders orders= orderRepo.save(order);
-                httpServletResponse.sendRedirect(GlobalState.FRONTEND_URL+"/order/success?orderId="+orders.getId());
-            }else {
-                order.setOrdersStatus(OrdersStatus.FAILED);
-                Orders orders= orderRepo.save(order);
-                httpServletResponse.sendRedirect("http://localhost:8080/api/v1/checkout/failed?orderId="+orders.getId());
-            }
-        }else {
-            httpServletResponse.sendRedirect(GlobalState.FRONTEND_URL+"/order/failed?message=Order not found");
+        Orders order = orderService.getOrdersById(UUID.fromString(response.getOrderId()));
+        if (response.getResultCode() == 0) {
+            order.setOrdersStatus(OrdersStatus.SUCCESS);
+            orderService.saveOrder(order);
+            gameModelService.updateStockForGameFromOrder(order.getOrdersDetails());
+            httpServletResponse.sendRedirect(GlobalState.FRONTEND_URL + "/order/success?orderId=" + order.getId());
+        } else {
+            order.setOrdersStatus(OrdersStatus.FAILED);
+            orderService.saveOrder(order);
+            httpServletResponse.sendRedirect("http://localhost:8080/api/v1/checkout/failed?orderId=" + order.getId());
         }
 
 

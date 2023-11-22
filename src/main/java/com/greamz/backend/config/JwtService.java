@@ -53,6 +53,9 @@ public class JwtService {
     public String generateToken(UserPrincipal userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
+    public String generateTokenForResetPassword(UserPrincipal userDetails) {
+        return generateToken(new HashMap<>(), userDetails, 1000*60*60*24);
+    }
 
     public String generateToken(
             Map<String, Object> extraClaims,
@@ -60,7 +63,12 @@ public class JwtService {
     ) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
-
+    public String generateToken(
+            Map<String, Object> extraClaims,
+            UserPrincipal userDetails,long expiration
+    ) {
+        return buildToken(extraClaims, userDetails, expiration);
+    }
     public String generateRefreshToken(
             UserPrincipal userDetails
     ) {
