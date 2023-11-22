@@ -13,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 @RestController
@@ -24,8 +26,9 @@ public class CheckoutController {
     @PostMapping("/placeorder")
     public ResponseEntity<?> checkout(
             @RequestBody Orders orders,
-            HttpServletRequest request) throws IOException {
+            HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         Object data= checkoutService.placeOrder(orders, request );
+
         return ResponseEntity.ok(data);
     }
     @PostMapping("/saveOrder")

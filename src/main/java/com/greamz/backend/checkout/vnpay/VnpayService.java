@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.greamz.backend.checkout.CheckOutResponse;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.enumeration.OrdersStatus;
+import com.greamz.backend.service.GameModelService;
 import com.greamz.backend.service.OrderService;
 import com.greamz.backend.util.GlobalState;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import java.util.*;
 public class VnpayService {
     private final ConfigVnpay ConfigVnpay;
     private final OrderService orderService;
-
+    private final GameModelService gameModelService;
     public CheckOutResponse createPaymentUrl(Orders orders, HttpServletRequest req) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
@@ -229,7 +230,8 @@ public class VnpayService {
                 // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
                 Orders orders = orderService.getOrdersById(UUID.fromString(queryParams.get("orderId")));
                 orders.setOrdersStatus(OrdersStatus.SUCCESS);
-                orderService.saveOrdersAndUpdateTheStockForGames(orders);
+                orderService.saveOrder(orders);
+                gameModelService.updateStockForGameFromOrder(orders.getOrdersDetails());
                 response.sendRedirect(GlobalState.FRONTEND_URL+"/order/success?orderId="+queryParams.get("orderId") );
             } else {
                 // Giao dịch thất bại

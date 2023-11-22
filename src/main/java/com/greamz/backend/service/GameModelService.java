@@ -5,6 +5,7 @@ import com.greamz.backend.dto.GameFilter;
 import com.greamz.backend.enumeration.Devices;
 import com.greamz.backend.model.Category;
 import com.greamz.backend.model.GameModel;
+import com.greamz.backend.model.OrdersDetail;
 import com.greamz.backend.model.Platform;
 import com.greamz.backend.repository.IGameRepo;
 import jakarta.annotation.PostConstruct;
@@ -41,19 +42,15 @@ public class GameModelService {
     public GameModel saveGameModel(GameModel gameModel) {
         return gameModelRepository.saveAndFlush(gameModel);
     }
-//    @Transactional(readOnly = true)
-//    public List<GameModel> findAll(Long id) {
-//        List<GameModel> gameModelByCategory = gameModelRepository.findAllByCategoriesId(id);
-//        gameModelByCategory.forEach(gameModel -> {
-//            gameModel.setReviews(null);
-//            gameModel.setSupported_languages(null);
-//            gameModel.setMovies(null);
-//            gameModel.setImages(null);
-//            Hibernate.initialize(gameModel.getCategories());
-//            Hibernate.initialize(gameModel.getPlatform());
-//        });
-//        return gameModelByCategory;
-//    }
+
+    @Transactional(rollbackFor = NoSuchElementException.class)
+    public void updateStockForGameFromOrder(List<OrdersDetail> ordersDetail) {
+        ordersDetail.forEach(ordersDetail1 -> {
+            ordersDetail1.getGame().setStock(ordersDetail1.getGame().getStock() - ordersDetail1.getQuantity());
+        });
+
+        gameModelRepository.saveAllAndFlush(ordersDetail.stream().map(OrdersDetail::getGame).collect(Collectors.toList()));
+    }
 
     @Transactional(readOnly = true)
     public Page<GameModel> findAll(Pageable pageable) {

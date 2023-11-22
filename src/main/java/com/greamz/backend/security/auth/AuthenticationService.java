@@ -2,6 +2,7 @@ package com.greamz.backend.security.auth;
 
 
 import com.greamz.backend.config.JwtService;
+import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.enumeration.TokenType;
 import com.greamz.backend.model.AccountModel;
@@ -41,6 +42,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .role(Role.USER)
                 .isEnabled(true)
+                .provider(AuthProvider.local)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
@@ -77,7 +79,13 @@ public class AuthenticationService {
                 .accessToken(jwtToken)
                 .build();
     }
-
+    public void authenticateOauth2(UserPrincipal authentication){
+        var refreshToken = jwtService.generateRefreshToken(authentication);
+        var savedUser = repository.findByUserNameOrEmail(authentication.getEmail())
+                .orElseThrow();
+        revokeAllUserTokens(savedUser);
+        saveUserToken(savedUser, refreshToken);
+    }
     public void saveUserToken(AccountModel user, String jwtToken) {
         var token = Token.builder()
                 .user(user)

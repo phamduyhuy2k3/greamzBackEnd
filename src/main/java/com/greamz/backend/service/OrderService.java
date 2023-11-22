@@ -31,6 +31,7 @@ public class OrderService {
     private final IOrderRepo orderRepo;
     private final IOrderDetail orderDetailRepo;
     private final IGameRepo gameRepo;
+    private final GameModelService gameModelService;
     @PersistenceContext
     private EntityManager entityManager;
     @Transactional(readOnly = true)
@@ -101,16 +102,40 @@ public class OrderService {
     @Transactional
     public Orders saveOrdersAndUpdateTheStockForGames(Orders orders){
         Orders orders1= orderRepo.saveAndFlush(orders);
-        Set<OrdersDetail> ordersDetailSet = (Set<OrdersDetail>) getAllOrdersDetailByOrderId(orders1.getId()).get("orderDetail");
-        ordersDetailSet.forEach(ordersDetail -> {
-            ordersDetail.getGame().setStock(ordersDetail.getGame().getStock()-ordersDetail.getQuantity());
-        });
-        gameRepo.saveAll(orders1.getOrdersDetails().stream().map(OrdersDetail::getGame).toList());
+        Set<OrdersDetail> ordersDetails = this.findOrdersDetailsByOrderId(orders.getId());
+        gameModelService.updateStockForGameFromOrder(ordersDetails.stream().toList());
         return orders1;
     }
     @Transactional(readOnly = true)
     public Orders getOrdersById(UUID orderId){
-        return orderRepo.findById(orderId).orElseThrow();
+        Orders orders=orderRepo.findById(orderId).orElseThrow();
+        Hibernate.initialize(orders.getOrdersDetails());
+        orders.getOrdersDetails().forEach(ordersDetail -> {
+            Hibernate.initialize(ordersDetail.getGame());
+            ordersDetail.getGame().setPlatform(null);
+            ordersDetail.getGame().setSupported_languages(null);
+            ordersDetail.getGame().setReviews(null);
+            ordersDetail.getGame().setCategories(null);
+            ordersDetail.getGame().setMovies(null);
+            ordersDetail.getGame().setImages(null);
+        });
+        return orders;
+    }
+    @Transactional(readOnly = true)
+    public Set<OrdersDetail> findOrdersDetailsByOrderId(UUID orderId){
+        Set<OrdersDetail> ordersDetails = orderDetailRepo.findAllByOrders_Id(orderId);
+        ordersDetails.forEach(ordersDetail -> {
+            ordersDetail.setOrders(null);
+            Hibernate.initialize(ordersDetail.getGame());
+            ordersDetail.getGame().setPlatform(null);
+            ordersDetail.getGame().setSupported_languages(null);
+            ordersDetail.getGame().setReviews(null);
+            ordersDetail.getGame().setCategories(null);
+            ordersDetail.getGame().setMovies(null);
+            ordersDetail.getGame().setImages(null);
+
+        });
+        return ordersDetails;
     }
     @Transactional(readOnly = true)
     public Map<String,Object> getAllOrdersDetailByOrderId(UUID orderId) {

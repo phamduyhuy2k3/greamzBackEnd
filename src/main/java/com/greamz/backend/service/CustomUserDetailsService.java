@@ -1,5 +1,6 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.exception.ResourceNotFoundException;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.repository.IAccountRepo;
