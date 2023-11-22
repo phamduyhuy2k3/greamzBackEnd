@@ -26,14 +26,16 @@ public class PlatformService {
     @Transactional(readOnly = true)
     public List<Platform> findAll() {
         List<Platform> platforms = repo.findAll();
-        platforms.forEach(platform -> Hibernate.initialize(platform.getDevices()));
-
+        platforms.forEach(platform -> {
+            Hibernate.initialize(platform.getDevices());
+            platform.setCodeActives(null);
+        });
         return platforms;
     }
 
     @Transactional
     public Platform findById(Integer id) throws NoSuchElementException {
-        Platform platforms =repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game platform with id: " + id));
+        Platform platforms = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game platform with id: " + id));
         Hibernate.initialize(platforms.getDevices());
         return platforms;
     }
@@ -52,8 +54,11 @@ public class PlatformService {
     @Transactional(readOnly = true)
     public Page<Platform> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Platform> platforms =repo.findAll(pageable);
-        platforms.forEach(platform -> Hibernate.initialize(platform.getDevices()));
+        Page<Platform> platforms = repo.findAll(pageable);
+        platforms.forEach(platform -> {
+            Hibernate.initialize(platform.getDevices());
+            platform.setCodeActives(null);
+        });
         return platforms;
     }
 

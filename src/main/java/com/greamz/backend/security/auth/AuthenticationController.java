@@ -53,9 +53,10 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request,HttpServletResponse response
+            @RequestBody AuthenticationRequest request,HttpServletResponse response,HttpServletRequest servletRequest
     ) {
-        AuthenticationResponse authenticationResponse = service.authenticate(request);
+
+        AuthenticationResponse authenticationResponse = service.authenticate(request,servletRequest);
         authenticationResponse.setAccessToken(EncryptionUtil.encrypt(authenticationResponse.getAccessToken()));
         CookieUtils.addCookie(response, "accessToken", authenticationResponse.getAccessToken());
 

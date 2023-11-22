@@ -129,7 +129,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (authenticationResponse.getBody() != null) {
                 String newAccessToken = authenticationResponse.getBody().getAccessToken();
                 if (newAccessToken != null) {
-                    CookieUtils.addCookie(response, "accessToken", newAccessToken);
+                    CookieUtils.addCookie(response, "accessToken", EncryptionUtil.encrypt(newAccessToken));
                     isValid(newAccessToken, request, response, filterChain);
                 }
             }

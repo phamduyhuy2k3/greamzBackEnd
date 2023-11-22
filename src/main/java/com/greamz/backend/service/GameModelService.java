@@ -61,6 +61,7 @@ public class GameModelService {
             gameModel.setSupported_languages(null);
             gameModel.setMovies(null);
             gameModel.setImages(null);
+            gameModel.setCodeActives(null);
             Hibernate.initialize(gameModel.getCategories());
             Hibernate.initialize(gameModel.getPlatform());
             Hibernate.initialize(gameModel.getReviews());
@@ -74,6 +75,7 @@ public class GameModelService {
         List<Category> categories = categoryService.findAllByGameModelsAppid(appid);
         gameModel.setCategories(categories);
         gameModel.setReviews(null);
+        gameModel.setCodeActives(null);
         Hibernate.initialize(gameModel.getImages());
         Hibernate.initialize(gameModel.getMovies());
         Hibernate.initialize(gameModel.getSupported_languages());
@@ -81,6 +83,7 @@ public class GameModelService {
         Hibernate.initialize(gameModel.getPlatform());
         return gameModel;
     }
+
 
     @Transactional(readOnly = true)
     public List<GameModel> findGameByCategory(Long categoryId) {
@@ -90,6 +93,7 @@ public class GameModelService {
             gameModel.setSupported_languages(null);
             gameModel.setMovies(null);
             gameModel.setImages(null);
+            gameModel.setCodeActives(null);
             Hibernate.initialize(gameModel.getCategories());
             Hibernate.initialize(gameModel.getPlatform());
         });
@@ -101,7 +105,7 @@ public class GameModelService {
     public List<GameModel> findGameByGameIds(String ids) {
         List<Long> idList = parseIds(ids);
         System.out.println(idList);
-        List<GameModel> gameModels=gameModelRepository.findAllById(idList);
+        List<GameModel> gameModels = gameModelRepository.findAllById(idList);
         System.out.println(gameModels.size());
         gameModels.forEach(gameModel -> {
             gameModel.setImages(null);
@@ -113,13 +117,15 @@ public class GameModelService {
         });
         return gameModels;
     }
+
     @Transactional
     public void deleteGameByAppid(Long appid) {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         gameModelRepository.delete(gameModel);
     }
+
     @Transactional(readOnly = true)
-    public Page<GameModel> searchGame(String searchTerm,Pageable pageable) {
+    public Page<GameModel> searchGame(String searchTerm, Pageable pageable) {
         Page<GameModel> gameModelPage = gameModelRepository.searchGame(searchTerm, pageable);
         gameModelPage.forEach(gameModel -> {
             gameModel.setSupported_languages(null);
@@ -132,6 +138,7 @@ public class GameModelService {
 
         return gameModelPage;
     }
+
     @Transactional(readOnly = true)
     public Page<GameModel> filterGamesByCategoriesAndPlatform(
             String q,
@@ -146,21 +153,21 @@ public class GameModelService {
             Sort.Direction direction
     ) {
         List<Specification<GameModel>> gameModelSpecifications = new ArrayList<>();
-         if(categoriesId.isBlank() && platformId==-1  && minPrice==-1 && maxPrice==-1 &&q.isBlank() &&!sort.isBlank()){
-            Pageable pageable = PageRequest.of(page, size).withSort(Sort.by(direction,sort));
+        if (categoriesId.isBlank() && platformId == -1 && minPrice == -1 && maxPrice == -1 && q.isBlank() && !sort.isBlank()) {
+            Pageable pageable = PageRequest.of(page, size).withSort(Sort.by(direction, sort));
             return findAll(pageable);
-        }else if(categoriesId.isBlank() && platformId==-1  && minPrice==-1 && maxPrice==-1 &&q.isBlank()){
-             Pageable pageable = PageRequest.of(page, size);
-             return findAll(pageable);
-         }
-        if(!categoriesId.isBlank()){
+        } else if (categoriesId.isBlank() && platformId == -1 && minPrice == -1 && maxPrice == -1 && q.isBlank()) {
+            Pageable pageable = PageRequest.of(page, size);
+            return findAll(pageable);
+        }
+        if (!categoriesId.isBlank()) {
             Specification<GameModel> categorySpecification = (root, query, criteriaBuilder) -> {
                 Join<GameModel, Category> categoryJoin = root.join("categories", JoinType.INNER);
                 return categoryJoin.get("id").in(parseIds(categoriesId));
             };
             gameModelSpecifications.add(categorySpecification);
         }
-        if(platformId!=-1){
+        if (platformId != -1) {
             Specification<GameModel> platformSpecification = (root, query, criteriaBuilder) -> {
                 Predicate platformPredicate = criteriaBuilder.equal(root.get("platform").get("id"), platformId);
                 return platformPredicate;
@@ -188,30 +195,30 @@ public class GameModelService {
             gameModelSpecifications.add(searchSpecification);
 
         }
-        Specification<GameModel> priceSpecification=null;
-        if(minPrice > 0 && maxPrice > 0 && minPrice < maxPrice || (minPrice==0 &&maxPrice>0)){
-            priceSpecification= (root, query, criteriaBuilder) -> {
-                if (minPrice >0 && maxPrice >0) {
+        Specification<GameModel> priceSpecification = null;
+        if (minPrice > 0 && maxPrice > 0 && minPrice < maxPrice || (minPrice == 0 && maxPrice > 0)) {
+            priceSpecification = (root, query, criteriaBuilder) -> {
+                if (minPrice > 0 && maxPrice > 0) {
                     return criteriaBuilder.between(root.get("price"), minPrice, maxPrice);
                 } else if (minPrice > 0) {
                     return criteriaBuilder.greaterThanOrEqualTo(root.get("price"), minPrice);
-                } else if (maxPrice >0 ) {
-                    return criteriaBuilder.lessThanOrEqualTo(root.get("price"),  maxPrice);
+                } else if (maxPrice > 0) {
+                    return criteriaBuilder.lessThanOrEqualTo(root.get("price"), maxPrice);
                 }
                 return null;
             };
 
         }
-        Specification<GameModel> combinedSpecification=
-                priceSpecification==null?Specification.anyOf(gameModelSpecifications):
-                Specification.anyOf(gameModelSpecifications).and(priceSpecification);
+        Specification<GameModel> combinedSpecification =
+                priceSpecification == null ? Specification.anyOf(gameModelSpecifications) :
+                        Specification.anyOf(gameModelSpecifications).and(priceSpecification);
 
         Pageable pageable;
-        if(sort==null ||sort.isBlank()){
+        if (sort == null || sort.isBlank()) {
             pageable = PageRequest.of(page, size);
-        }else {
+        } else {
             System.out.println(direction);
-            pageable=PageRequest.of(page, size,Sort.by(direction,sort));
+            pageable = PageRequest.of(page, size, Sort.by(direction, sort));
         }
 
         Page<GameModel> gameModelPage = gameModelRepository.findAll(combinedSpecification, pageable);
@@ -230,10 +237,12 @@ public class GameModelService {
         // Load the categories when needed
         return gameModel.getCategories();
     }
+
     public List<String> getSupportedLanguagesForGame(GameModel gameModel) {
         // Load the supported_languages when needed
         return gameModel.getSupported_languages();
     }
+
     private List<Long> parseIds(String idsParam) {
         if (idsParam == null || idsParam.equals("null") || idsParam.isBlank()) {
             return Collections.emptyList();

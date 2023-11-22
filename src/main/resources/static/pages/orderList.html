@@ -11,13 +11,13 @@
                     <table class="table align-items-center mb-0">
                         <thead>
                         <tr>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Name
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                ID order
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                Date
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                Total Price
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 Status
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
@@ -27,50 +27,90 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr ng-repeat="order in pager.content">
                             <td>
-                                <div class="d-flex px-2 py-1">
-                                    <div>
-                                        <img src="../assets/img/team-2.jpg"
-                                             class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0 text-sm">John Michael</h6>
-                                        <p class="text-xs text-secondary mb-0">john@creative-tim.com</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
-                            </td>
-                            <td class="align-middle">
-                                <span class="badge badge-sm bg-gradient-success">Online</span>
+                                <p class="text-xs font-weight-bold mb-0">
+                                    <a href="javascript:;"
+                                       data-bs-target="#orderModal"
+                                       data-bs-toggle="modal"
+                                       href="#" ng-click="view(order.id)">
+                                        {{order.id}}
+                                    </a>
+                                </p>
                             </td>
                             <td>
-                                <p class="text-xs font-weight-bold mb-0">Manager</p>
-                                <p class="text-xs text-secondary mb-0">Organization</p>
+                                <p class="text-xs text-secondary mb-0">{{ order.totalPrice | number:0 }}&nbsp;VND</p>
+                            </td>
+                            <td>
+                                <p class="text-xs text-secondary mb-0" ng-if="order.ordersStatus"
+                                   ng-class="{'text-success': order.ordersStatus === 'SUCCESS', 'text-warning': order.ordersStatus === 'PROCESSING', 'text-danger': order.ordersStatus === 'FAILED'}">
+                                    {{order.ordersStatus}}</p>
                             </td>
 
+                            <td>
+                                <p class="text-xs text-secondary mb-0">{{order.paymentmethod}}</p>
+                            </td>
                             <td class="align-middle">
                                 <a class="text-secondary font-weight-bold text-xs"
                                    data-toggle="tooltip"
-                                   data-original-title="Edit user"
+                                   data-original-title="Edit category"
                                    data-bs-target="#orderModal"
                                    data-bs-toggle="modal"
-                                href="#">
-                                    Edit
+                                   href="#" ng-click="view(order.id)">
+                                    View
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
-                                   data-toggle="tooltip" data-original-title="Edit user"
-                                   data-bs-target="#orderModal"
-                                   data-bs-toggle="modal"
-                                href="#">
+                                   href="javascript:;"
+                                   ng-click="delete(order.id)">
                                     Delete
                                 </a>
                             </td>
                         </tr>
                         </tbody>
                     </table>
+                    <nav aria-label="Page navigation example align-center">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toFirst()">
+                                        <span class="material-icons">
+                                            first_page
+                                        </span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.prev()">
+                                        <span class="material-icons">
+                                          keyboard_arrow_left
+                                        </span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item" style="margin:5px 8px 5px 5px">
+                                {{pager.number + 1}} of {{pager.totalPages}}
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;"
+                                   ng-click="pager.next()">
+                                        <span class="material-icons">
+                                          keyboard_arrow_right
+                                        </span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:;" tabindex="-1"
+                                   ng-click="pager.toLast()">
+                                        <span class="material-icons">
+                                            last_page
+                                        </span>
+                                    <span class="sr-only">First</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -83,90 +123,127 @@
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Order Details</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <div class="input-group input-group-outline">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="input-group input-group-outline mb-4">
-                            <label class="form-label">Genre</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="input-group input-group-dynamic">
-                            <textarea id="floatingTextarea2" class="form-control" rows="5" placeholder="Detailed Description"
-                                      spellcheck="true"></textarea>
-                        </div>
-                    </div>
+                <table class="table align-items-center mb-0 ">
+                    <thead>
+                    <tr>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">
+                            USERNAME
+                        </th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">
+                            GAMES
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-1">
+                            QUANTITY
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            PRICE
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            CREATE AT
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            PAYMENT METHOD
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            VOUCHER USED
+                        </th>
+                        <th class="text-secondary opacity-7"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="ods in orderDetails">
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div>
+                                    <img src="{{ods.account.photo}}"
+                                         class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm text-uppercase">{{ods.account.username}}</h6>
+                                    <p class="text-xs text-secondary mb-0">USERID: {{ods.account.id}}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div>
+                                    <img src="{{ods.game.header_image}}"
+                                         class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm text-uppercase">{{ods.game.name}}</h6>
+                                    <p class="text-xs text-secondary mb-0">GAMEID: {{ods.game.appid}}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="text-xs font-weight-bold mb-0 text-wrap">
+                                {{ods.quantity}}</p>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs font-weight-bold mb-0">
+                                <a href="{{game.website}}" target="_blank">
+                                    {{ ods.price | number:0 }}&nbsp;VND
+                                </a>
+                            </p>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs font-weight-bold mb-0">
+                                <a href="{{game.website}}" target="_blank">
+                                    {{ ods.order.createdAt | date:'yyyy-MM-dd HH:mm' }}
+                                </a>
+                            </p>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs font-weight-bold mb-0">
+                                <a href="{{game.website}}" target="_blank">
+                                    {{ods.order.paymentmethod}}
+                                </a>
+                            </p>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs font-weight-bold mb-0">
+                                <a href="{{game.website}}" target="_blank">
+                                    {{ods.voucher}}
+                                </a>
+                            </p>
+                        </td>
+                        <!--                                    <td class="align-middle">-->
+                        <!--                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"-->
+                        <!--                                           data-toggle="tooltip" data-original-title="View"-->
+                        <!--                                           data-bs-toggle="modal" data-bs-target="#exampleModal"-->
+                        <!--                                           ng-click="view(game.appid)">-->
+                        <!--                                            View-->
+                        <!--                                        </a>|-->
+                        <!--                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs"-->
+                        <!--                                           data-toggle="tooltip" data-original-title="Edit user"-->
+                        <!--                                           data-bs-toggle="modal" data-bs-target="#exampleModal"-->
+                        <!--                                           ng-click="edit(game.appid)">-->
+                        <!--                                            Edit-->
+                        <!--                                        </a>|-->
+                        <!--                                        <a class="text-secondary font-weight-bold text-xs"-->
+                        <!--                                           href="javascript:;"-->
+                        <!--                                           ng-click="delete(game)">-->
+                        <!--                                            Delete-->
+                        <!--                                        </a>-->
+                        <!--                                    </td>-->
+                    </tr>
+                    <tr>
 
-                    <div class="col-12">
-                        <div class="input-group input-group-dynamic">
-                        <textarea class="form-control" placeholder="About" rows="5"
-                                  id="textarea-about"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="input-group input-group-dynamic">
-                        <textarea class="form-control" placeholder="Short Description"
-                                  id="floatingTextarea3"
-                                  rows="5"></textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="input-group input-group-outline mb-4">
-                            <label class="form-label">Support Language</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="input-group input-group-outline mb-4">
-                            <label class="form-label">Website</label>
-                            <input type="text" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="input-group input-group-outline my-3">
-                            <label for="capsual" class="form-label">Header Image</label>
-                            <input type="file" class="form-control" placeholder="Header Image">
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <label for="capsual" class="form-label">Capsule Image</label>
-                        <input type="file" class="form-control" id="capsual">
-                    </div>
-
-                    <div class="col-md-12">
-                        <label for="images" class="form-label">Images</label>
-                        <input type="file" class="form-control" id="images">
-                    </div>
-                    <div class="col-md-12">
-                        <label for="movie" class="form-label">Movie</label>
-                        <input type="file" class="form-control" id="movie">
-                    </div>
-                    <div class="col-md-12">
-                        <label for="screenshot" class="form-label">Screenshots</label>
-                        <input type="file" class="form-control" id="screenshot">
-                    </div>
-                </form>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
 </div>
-
-
-
 
 
 <!--js-->
