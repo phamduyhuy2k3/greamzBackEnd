@@ -1,7 +1,6 @@
 package com.greamz.backend.service;
 
-import com.greamz.backend.dto.GameLibrary;
-import com.greamz.backend.dto.OrderDTO;
+import com.greamz.backend.dto.*;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.OrdersDetail;
@@ -34,24 +33,27 @@ public class OrderService {
     private final GameModelService gameModelService;
     @PersistenceContext
     private EntityManager entityManager;
+
     @Transactional(readOnly = true)
     public Page<Orders> getAllOrdersByAccountId(Integer accountId, int page, int size) {
-        Page<Orders> ordersPage = orderRepo.findAllByAccount_Id(accountId,PageRequest.of(page, size, Sort.by("createdAt").descending()));
+        Page<Orders> ordersPage = orderRepo.findAllByAccount_Id(accountId, PageRequest.of(page, size, Sort.by("createdAt").descending()));
         ordersPage.forEach(orders -> {
             orders.setAccount(null);
             orders.setOrdersDetails(null);
         });
         return ordersPage;
     }
+
     @Transactional(readOnly = true)
-    public Page<Orders> getAllOrdersByOrdersStatus(String ordersStatus,Integer accountId, int page, int size) {
-        Page<Orders> ordersPage = orderRepo.findAllByOrdersStatusAndAccount_Id(OrdersStatus.valueOf(ordersStatus),accountId,PageRequest.of(page, size, Sort.by("createdAt").descending()));
+    public Page<Orders> getAllOrdersByOrdersStatus(String ordersStatus, Integer accountId, int page, int size) {
+        Page<Orders> ordersPage = orderRepo.findAllByOrdersStatusAndAccount_Id(OrdersStatus.valueOf(ordersStatus), accountId, PageRequest.of(page, size, Sort.by("createdAt").descending()));
         ordersPage.forEach(orders -> {
             orders.setAccount(null);
             orders.setOrdersDetails(null);
         });
         return ordersPage;
     }
+
     @Transactional(readOnly = false)
     public Page<GameLibrary> getGamesThatUserBought(Integer accountId, Pageable pageable) {
         StoredProcedureQuery query = entityManager.createStoredProcedureQuery("GameLibraryOfUser");
@@ -94,19 +96,24 @@ public class OrderService {
 
         return gameLibrary;
     }
+
     @Transactional
     public UUID saveOrder(Orders orders) {
-        Orders orders1= orderRepo.saveAndFlush(orders);
+        Orders orders1 = orderRepo.saveAndFlush(orders);
         return orders1.getId();
     }
+
     @Transactional
+
     public Orders saveOrdersAndUpdateTheStockForGames(Orders orders){
         Orders orders1= orderRepo.saveAndFlush(orders);
         Set<OrdersDetail> ordersDetails = this.findOrdersDetailsByOrderId(orders.getId());
         gameModelService.updateStockForGameFromOrder(ordersDetails.stream().toList());
         return orders1;
     }
+
     @Transactional(readOnly = true)
+
     public Orders getOrdersById(UUID orderId){
         Orders orders=orderRepo.findById(orderId).orElseThrow();
         Hibernate.initialize(orders.getOrdersDetails());
@@ -137,8 +144,9 @@ public class OrderService {
         });
         return ordersDetails;
     }
+
     @Transactional(readOnly = true)
-    public Map<String,Object> getAllOrdersDetailByOrderId(UUID orderId) {
+    public Map<String, Object> getAllOrdersDetailByOrderId(UUID orderId) {
         Set<OrdersDetail> ordersDetailPage = orderDetailRepo.findAllByOrders_Id(orderId);
         ordersDetailPage.forEach(ordersDetail -> {
             Hibernate.initialize(ordersDetail.getGame());
@@ -159,7 +167,93 @@ public class OrderService {
                 .paymentmethod(orders.getPaymentmethod())
                 .totalPrice(orders.getTotalPrice())
                 .build();
-        Map<String,Object> map = Map.of("order",orderDTO,"orderDetail",ordersDetailPage);
+        Map<String, Object> map = Map.of("order", orderDTO, "orderDetail", ordersDetailPage);
         return map;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Orders> findAll() {
+        List<Orders> orders = orderRepo.findAll();
+        orders.forEach(orders1 -> {
+            orders1.setAccount(null);
+            orders1.setOrdersDetails(null);
+            orders1.setVoucher(null);
+        });
+        return orders;
+    }
+
+    @Transactional(readOnly = true)
+    public Orders findById(UUID id) {
+        Orders orders = orderRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        Hibernate.initialize(orders.getAccount());
+        orders.setOrdersDetails(null);
+        orders.setVoucher(null);
+        return orders;
+    }
+
+    //    @Transactional(readOnly = false)
+//    public Orders save(Orders order) {
+//        return orderRepo.save(order);
+//    }
+    @Transactional
+    public void delete(UUID id) {
+        Orders orders = orderRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found order with id: " + id));
+        orderRepo.delete(orders);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Orders> findAllPagination(Pageable pageable) {
+        Page<Orders> ordersPage = orderRepo.findAll(pageable);
+        ordersPage.forEach(orders -> {
+            orders.setAccount(null);
+            orders.setOrdersDetails(null);
+            orders.setVoucher(null);
+        });
+        return ordersPage;
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderDetailsDTO> findOrderDetailsById(UUID id) {
+        List<OrdersDetail> ordersDetails = orderDetailRepo.findAllByOrdersId(id);
+        List<OrderDetailsDTO> orderDetailsDTOList = ordersDetails.stream()
+                .map(ordersDetail -> {
+                    Hibernate.initialize(ordersDetail.getGame());
+                    Hibernate.initialize(ordersDetail.getOrders().getAccount());
+//                    Hibernate.initialize(ordersDetail.getOrders().getVoucher());
+                    Hibernate.initialize(ordersDetail.getOrders());
+                    OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO();
+                    orderDetailsDTO.setGame(
+                            GameBasicDTO.builder()
+                                    .appid(ordersDetail.getGame().getAppid())
+                                    .name(ordersDetail.getGame().getName())
+                                    .header_image(ordersDetail.getGame().getHeader_image())
+                                    .build()
+                    );
+                    orderDetailsDTO.setAccount(
+                            AccountBasicDTO.builder()
+                                    .username(ordersDetail.getOrders().getAccount().getUsername())
+                                    .id(ordersDetail.getOrders().getAccount().getId())
+                                    .photo(ordersDetail.getOrders().getAccount().getPhoto())
+                                    .build()
+                    );
+//                    orderDetailsDTO.setVoucher(
+//                            VoucherOrderDTO.builder()
+//                                    .name(ordersDetail.getOrders().getVoucher().getName())
+//                                    .build()
+//                    );
+                    orderDetailsDTO.setQuantity(ordersDetail.getQuantity());
+                    orderDetailsDTO.setPrice(ordersDetail.getPrice());
+                    orderDetailsDTO.setOrder(
+                            OrderDTO.builder()
+                                    .id(ordersDetail.getOrders().getId())
+                                    .createdAt(ordersDetail.getOrders().getCreatedAt())
+                                    .paymentmethod(ordersDetail.getOrders().getPaymentmethod())
+                                    .totalPrice(ordersDetail.getOrders().getTotalPrice())
+                                    .ordersStatus(ordersDetail.getOrders().getOrdersStatus())
+                                    .build()
+                    );
+                    return orderDetailsDTO;
+                }).toList();
+        return orderDetailsDTOList;
     }
 }

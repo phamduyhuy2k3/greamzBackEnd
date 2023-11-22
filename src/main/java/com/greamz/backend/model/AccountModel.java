@@ -51,6 +51,8 @@ public class AccountModel extends TimeStampEntity  {
     private List<Disscusion> disscusions;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(mappedBy = "account")
+    private List<CodeActive> codeActives;
 
 
 }

@@ -64,6 +64,7 @@ public class GameModel extends TimeStampEntity {
     private Platform platform;
     @OneToMany(mappedBy = "game")
     private List<Review> reviews;
-
+    @OneToMany(mappedBy = "game")
+    private List<CodeActive> codeActives;
 
 }
