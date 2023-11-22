@@ -31,4 +31,6 @@ public class Platform extends TimeStampEntity {
     @JsonManagedReference
     @JsonIgnore
     private List<GameModel> gameModels;
+    @OneToMany(mappedBy = "platform", fetch = FetchType.LAZY)
+    private List<CodeActive> codeActives;
 }

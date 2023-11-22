@@ -30,6 +30,7 @@ public class AccountModelService {
             accountModel.setOrders(null);
             accountModel.setReviews(null);
             accountModel.setVouchers(null);
+            accountModel.setCodeActives(null);
         }
         return accountModels;
     }
@@ -41,6 +42,7 @@ public class AccountModelService {
         accountModel.setOrders(null);
         accountModel.setReviews(null);
         accountModel.setVouchers(null);
+        accountModel.setCodeActives(null);
         return accountModel;
     }
 

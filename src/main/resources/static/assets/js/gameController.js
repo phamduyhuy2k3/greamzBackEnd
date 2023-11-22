@@ -1,6 +1,7 @@
 app.controller("gameController", function ($scope, $http, $document, $cookies, $timeout) {
         $scope.games = [];
         $scope.reviews = [];
+        $scope.keys = [];
         $scope.accountId = '';
         $scope.disable = false;
         $scope.tagA = false;
@@ -37,6 +38,16 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
             categories: [],
             platform: [],
         }
+        $scope.key = {
+            code: "",
+            active: false,
+            platform: {
+                id: null
+            },
+            game: {
+                appid: null
+            }
+        };
         $scope.imageUrls = [];
         $scope.movies = [];
 
@@ -409,54 +420,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
             );
 
 
-            $http.get("/api/v1/platform/findAll", {
-                header: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
-                }
-            }).then(
-                resp => {
-                    $scope.platforms = resp.data;
-                    console.log($scope.platforms)
-                    $scope.platforms.forEach(function (platform) {
-                        platform.platformId = platform.id;
-                        platform.id = platform.name;
-                        platform.text = platform.name;
-                    });
-                }
-            ).then(
-                () => {
-                    $scope.selectPlatform = $('#platformSelect').select2({
-                        // Use the modified 'data' object
-                        data: $scope.platforms,
-                        placeholder: "Select Platforms",
-                        templateResult: function (data) {
-                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                            let $result = $('<span>' + data.text + '</span>');
-                            return $result;
-                        },
-                        templateSelection: function (data) {
-                            if (!data.id) return data.text; // Option is not an object (e.g., the "Select a country" option)
-                            let $selection = $('<span>' + data.text + '</span>');
-                            return $selection;
-                        }
-                    });
-                    $scope.selectPlatform.on('select2:select', function (e) {
-                        console.log(e.params.data.platformId)
-                        $scope.form.platform.push({id: parseInt(e.params.data.platformId)});
-
-                    });
-                    $scope.selectPlatform.on('select2:unselect', function (e) {
-                        const id = e.params.data.platformId;
-                        const removedIndex = $scope.form.platform.findIndex(data => data.id === parseInt(id));
-                        console.log(removedIndex)
-                        $scope.$apply(() => {
-                            $scope.form.platformId.splice(removedIndex, 1);
-                        })
-                    });
-                }
-            )
-
-
             $http.get("/api/v1/category/findAll", {
                 headers: {
                     "Authorization": "Bearer " + $cookies.get("accessToken")
@@ -603,7 +566,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
 
         }
         $scope.create = function () {
-
+            $scope.form.platform = null;
             $scope.form.about_the_game = JSON.stringify($scope.quillAbout.getContents());
             $scope.form.short_description = JSON.stringify($scope.quillShortDescription.getContents());
             $scope.form.detailed_description = JSON.stringify($scope.quillDetailedDescription.getContents());
@@ -635,17 +598,15 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                     });
                     // alert("Cập nhật sản phẩm thành công!");
                 }
-                $scope.navHidden = false;
                 $scope.reset();
-            })
-                .catch(error => {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Error deleting category!",
-                    });
-                    console.log("Error", error);
+            }).catch(error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error deleting category!",
                 });
+                console.log("Error", error);
+            });
 
         }
         $scope.edit = async function (appid) {
@@ -654,7 +615,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
             }).then(resp => {
-                    return resp.data;
+                    return $scope.form = resp.data;
                 }, error => {
                     return error;
                 }
@@ -673,18 +634,15 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
 
                 $scope.selectCountry.val($scope.form.supported_languages);
                 $scope.selectCountry.trigger('change');
+                $scope.selectPlatform.val($scope.form.platform)
+                $scope.selectPlatform.val($scope.form.platform);
                 let arr = $scope.form.categories.map(data => {
                     return data.name
                 });
-                $scope.disable = false;
-                $scope.tagA = false;
-                $scope.navHidden = true;
-                $scope.action = 'update';
-                console.log(arr)
                 $scope.select.val(arr);
                 $scope.select.trigger('change');
-
-
+                $scope.action = 'update';
+                console.log(arr)
             }, error => {
                 console.log(error);
             })
@@ -702,31 +660,57 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                 }
             ).then(r => {
                 $scope.form = r;
-
                 if ($scope.form.about_the_game != null || $scope.form.about_the_game !== '' || $scope.form.about_the_game !== undefined) {
-                    $scope.quillAbout.setContents(JSON.parse($scope.form.about_the_game));
-                    $scope.quillAbout.enable(false);
+                    const jsonData = $scope.form.about_the_game;
+                    // Parse JSON
+                    const parsedData = JSON.parse(jsonData);
+                    // Extract text from the "insert" field
+                    const plainText = parsedData.ops[0].insert;
+                    $scope.form.about_the_game = plainText;
                 }
                 if ($scope.form.short_description != null || $scope.form.short_description !== '' || $scope.form.short_description !== undefined) {
-                    $scope.quillShortDescription.setContents(JSON.parse($scope.form.short_description));
-                    $scope.quillShortDescription.enable(false);
+                    const jsonData = $scope.form.short_description;
+                    // Parse JSON
+                    const parsedData = JSON.parse(jsonData);
+                    // Extract text from the "insert" field
+                    const plainText = parsedData.ops[0].insert;
+                    $scope.form.short_description = plainText;
                 }
                 if ($scope.form.detailed_description != null || $scope.form.detailed_description !== '' || $scope.form.detailed_description !== undefined) {
-                    $scope.quillDetailedDescription.setContents(JSON.parse($scope.form.detailed_description));
-                    $scope.quillDetailedDescription.enable(false);
+                    const jsonData = $scope.form.detailed_description;
+                    const parsedData = JSON.parse(jsonData);
+                    const plainText = parsedData.ops[0].insert;
+                    $scope.form.detailed_description = plainText;
                 }
 
-                $scope.selectCountry.val($scope.form.supported_languages);
-                $scope.selectCountry.trigger('change');
+                const displayStringCountries = $scope.form.supported_languages.join(', ');
+                $scope.form.supported_languages = displayStringCountries;
                 let arr = $scope.form.categories.map(data => {
                     return data.name
                 });
-                $scope.disable = true;
-                $scope.tagA = true;
-                $scope.navHidden = false;
+                // Xây dựng chuỗi
+                const displayString = arr.join(', ');
+                $scope.form.categories = displayString;
                 console.log(arr)
-                $scope.select.val(arr);
-                $scope.select.trigger('change');
+                const movie = $scope.form.movies.map(data => {
+                    return data.get(0);
+                });
+                console.log(movie)
+                $scope.form.movies = movie
+
+                // // Wait for the document to be ready
+                // $(document).ready(function () {
+                //     // Hide the video initially
+                //     $('#video-background').hide();
+                //
+                //     // Set a timeout to show the video after 3 seconds
+                //     setTimeout(function () {
+                //         // Hide the image
+                //         $('#image_background').hide();
+                //         // Show the video
+                //         $('#video-background').show();
+                //     }, 3000); // 3000 milliseconds = 3 seconds
+                // });
 
 
             }, error => {
@@ -747,6 +731,83 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
             )
 
 
+        }
+        $scope.openFormKey = function (appid) {
+            $http.get("/api/v1/platform/findAll", {
+                header: {
+                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                }
+            }).then(
+                resp => {
+                    $scope.platforms = resp.data;
+                    console.log($scope.platforms)
+
+                }
+            )
+
+            $http.get(`/api/v1/game/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                return $scope.key.game.appid = resp.data.appid;
+            }, error => {
+                return error;
+            })
+            $http.get(`/api/v1/codeActive/findByIdGame/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                    $scope.keys = resp.data;
+                    console.log($scope.keys)
+                }, error => {
+                    return error;
+                }
+            )
+        }
+        $scope.addKey = function () {
+            $scope.action = 'addKey';
+            console.log($scope.key.game)
+            $scope.key.active = false;
+            // $scope.key.game
+            console.log($scope.key)
+            $http.post("/api/v1/codeActive/create", $scope.key,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + $cookies.get("accessToken"),
+                        "Content-Type": "application/json"
+                    }
+                }).then(resp => {
+                $scope.pager.fetchPage()
+                if ($scope.action === 'addKey') {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Saved successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    // alert("Thêm sản phẩm thành công!");
+                } else {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Updated successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    // alert("Cập nhật sản phẩm thành công!");
+                }
+                $scope.reset();
+            }).catch(error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error deleting category!",
+                });
+                console.log("Error", error);
+            });
         }
 
 
