@@ -634,8 +634,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
 
                 $scope.selectCountry.val($scope.form.supported_languages);
                 $scope.selectCountry.trigger('change');
-                $scope.selectPlatform.val($scope.form.platform)
-                $scope.selectPlatform.val($scope.form.platform);
                 let arr = $scope.form.categories.map(data => {
                     return data.name
                 });
