@@ -134,6 +134,22 @@ public class GameModelService {
             gameModel.setMovies(null);
             gameModel.setImages(null);
             gameModel.setPlatform(null);
+            gameModel.setCodeActives(null);
+        });
+
+        return gameModelPage;
+    }
+    @Transactional(readOnly = true)
+    public Page<GameModel> searchGameByName(String searchTerm, Pageable pageable) {
+        Page<GameModel> gameModelPage = gameModelRepository.searchGameByName(searchTerm, pageable);
+        gameModelPage.forEach(gameModel -> {
+            gameModel.setSupported_languages(null);
+            gameModel.setReviews(null);
+            Hibernate.initialize(gameModel.getCategories());
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            gameModel.setPlatform(null);
+            gameModel.setCodeActives(null);
         });
 
         return gameModelPage;
