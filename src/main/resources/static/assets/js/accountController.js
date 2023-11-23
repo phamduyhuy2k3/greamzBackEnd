@@ -1,6 +1,7 @@
 app.controller("userController", function ($scope, $http, $document, $cookies) {
 
     $scope.accounts = [];
+    $scope.accountView = [];
     $scope.roles = ["USER", "ADMIN", "MANAGER", "EMPLOYEE"];
     $scope.action = 'create'
     $scope.photoCloudinary;
@@ -211,6 +212,19 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         $scope.action = 'update';
 
     }
+    $scope.view = async function (id) {
+            await $http.get(`/api/user/findById/${id}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                }
+            }).then(resp => {
+                    $scope.accountView = resp.data
+                    console.log($scope.accountView);
+                }, error => {
+                    return error;
+                }
+            )
+        }
     $scope.initialize();
 
 })
