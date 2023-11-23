@@ -211,6 +211,17 @@ public class OrderService {
         });
         return ordersPage;
     }
+    @Transactional(readOnly = true)
+    public List<Orders> findAllOrdersByAccountId(Integer accountId) {
+        List<Orders> orders = orderRepo.findAllByAccountId(accountId);
+        orders.forEach(orders1 -> {
+            Hibernate.initialize(orders1.getPaymentmethod());
+            orders1.setAccount(null);
+            orders1.setOrdersDetails(null);
+            orders1.setVoucher(null);
+        });
+        return orders;
+    }
 
     @Transactional(readOnly = true)
     public List<OrderDetailsDTO> findOrderDetailsById(UUID id) {
