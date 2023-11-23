@@ -19,7 +19,11 @@ public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificat
 
 
     List<GameModel> findAllByCategoriesId(Long categoryId);
-
+    @Query("""
+            select distinct g from GameModel g
+            where g.appid in ?1
+            """)
+    List<GameModel> findAllByOrdersDetail(List<Long> ordersDetailId);
     @Override
     @EntityGraph(attributePaths = {"categories"})
     Optional<GameModel> findById(Long aLong);

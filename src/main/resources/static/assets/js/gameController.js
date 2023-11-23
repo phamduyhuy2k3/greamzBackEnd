@@ -634,6 +634,7 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
 
                 $scope.selectCountry.val($scope.form.supported_languages);
                 $scope.selectCountry.trigger('change');
+
                 let arr = $scope.form.categories.map(data => {
                     return data.name
                 });
@@ -680,13 +681,11 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                     const plainText = parsedData.ops[0].insert;
                     $scope.form.detailed_description = plainText;
                 }
-
                 const displayStringCountries = $scope.form.supported_languages.join(', ');
                 $scope.form.supported_languages = displayStringCountries;
                 let arr = $scope.form.categories.map(data => {
                     return data.name
                 });
-                // Xây dựng chuỗi
                 const displayString = arr.join(', ');
                 $scope.form.categories = displayString;
                 console.log(arr)
@@ -695,21 +694,6 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                 });
                 console.log(movie)
                 $scope.form.movies = movie
-
-                // // Wait for the document to be ready
-                // $(document).ready(function () {
-                //     // Hide the video initially
-                //     $('#video-background').hide();
-                //
-                //     // Set a timeout to show the video after 3 seconds
-                //     setTimeout(function () {
-                //         // Hide the image
-                //         $('#image_background').hide();
-                //         // Show the video
-                //         $('#video-background').show();
-                //     }, 3000); // 3000 milliseconds = 3 seconds
-                // });
-
 
             }, error => {
                 console.log(error);

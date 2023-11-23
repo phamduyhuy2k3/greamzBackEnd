@@ -43,9 +43,9 @@ application:
   security:
     jwt:
       secret-key: d63c169a95a1f1dbaa6fefa225bbee99189cd07374d56bd0cf7e9f6be712cc92
-      expiration: 600000
+      expiration: 3600000
       refresh-token:
-        expiration: 864000000
+        expiration: 6048000000
   payment:
     vnpay:
       payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html

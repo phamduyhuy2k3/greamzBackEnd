@@ -1,6 +1,5 @@
 package com.greamz.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,15 +8,16 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor@Table( uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"game_appid", "platform_id", "code"})
+})
+
 public class CodeActive extends TimeStampEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String code;
     private Boolean active;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private AccountModel account;
     @ManyToOne(fetch = FetchType.LAZY)
     private Platform platform;
     @ManyToOne(fetch = FetchType.LAZY)

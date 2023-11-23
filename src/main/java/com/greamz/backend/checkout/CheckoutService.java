@@ -3,6 +3,7 @@ package com.greamz.backend.checkout;
 import com.greamz.backend.checkout.momo.MomoService;
 import com.greamz.backend.checkout.paypal.PaypalService;
 import com.greamz.backend.checkout.vnpay.VnpayService;
+import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.repository.IAccountRepo;
@@ -17,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 
@@ -29,10 +32,11 @@ public class CheckoutService {
     private final MomoService momoService;
     private final IAccountRepo accountRepo;
     @Transactional
-    public Object placeOrder(Orders orders, HttpServletRequest request) throws IOException {
+    public Object placeOrder(Orders orders, HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
 
         orders.setOrdersStatus(OrdersStatus.PROCESSING);
         Orders orderSaved= orderRepo.saveAndFlush(orders);
+        AccountModel accountModel= accountRepo.findById(orders.getAccount().getId()).orElseThrow();
         switch (orders.getPaymentmethod()) {
             case VNPAY:
                 try {
@@ -46,13 +50,12 @@ public class CheckoutService {
                         .orderId(orderSaved.getId())
                         .build();
             case MOMO:
+                return momoService.createMomoPayment(orderSaved,accountModel.getFullname() ).getPayUrl();
 
-                break;
             default:
                 throw new IllegalStateException("Please select a payment method: " + orders.getPaymentmethod());
         }
 
-        return "https://greamz.games";
     }
 
 

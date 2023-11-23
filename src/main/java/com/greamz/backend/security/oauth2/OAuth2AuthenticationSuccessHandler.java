@@ -1,8 +1,16 @@
 package com.greamz.backend.security.oauth2;
 
 import com.greamz.backend.config.JwtService;
+import com.greamz.backend.enumeration.TokenType;
+import com.greamz.backend.model.AccountModel;
+import com.greamz.backend.model.Token;
+import com.greamz.backend.repository.IAccountRepo;
+import com.greamz.backend.repository.ITokenRepo;
 import com.greamz.backend.security.UserPrincipal;
+import com.greamz.backend.security.auth.AuthenticationService;
+import com.greamz.backend.service.AccountService;
 import com.greamz.backend.util.CookieUtils;
+import com.greamz.backend.util.EncryptionUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,13 +32,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private JwtService tokenProvider;
 
+
     private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Autowired
     OAuth2AuthenticationSuccessHandler(JwtService tokenProvider,
+
                                        HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) {
         this.tokenProvider = tokenProvider;
         this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
+
     }
 
     @Override
@@ -41,8 +52,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
+        CookieUtils.addCookie(response,"accessToken", EncryptionUtil.encrypt(targetUrl.substring(targetUrl.indexOf("token=")+6)));
 
-        CookieUtils.addCookie(response,"accessToken",targetUrl.substring(targetUrl.indexOf("token=")+6));
         clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
@@ -55,6 +66,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
         String token = tokenProvider.generateToken(authentication);
+
+
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", token)

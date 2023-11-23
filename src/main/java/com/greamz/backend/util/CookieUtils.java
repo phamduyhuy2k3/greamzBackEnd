@@ -14,7 +14,7 @@ public class CookieUtils {
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
 
-        if (cookies != null && cookies.length > 0) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) {
                     System.out.println("cookie.getValue() = " + cookie.getValue());
@@ -31,7 +31,6 @@ public class CookieUtils {
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
-
         response.addCookie(cookie);
     }
     public static void addCookie(HttpServletResponse httpServletResponse,
@@ -43,7 +42,7 @@ public class CookieUtils {
     }
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie[] cookies = request.getCookies();
-        if (cookies != null && cookies.length > 0) {
+        if (cookies != null) {
             for (Cookie cookie: cookies) {
                 if (cookie.getName().equals(name)) {
                     cookie.setValue("");
@@ -60,8 +59,8 @@ public class CookieUtils {
                 .encodeToString(SerializationUtils.serialize(object));
     }
 
-    public static <T> T deserialize(Cookie cookie, Class<T> cls) {
+    public static <T> T deserialize(String cookieValue, Class<T> cls) {
         return cls.cast(SerializationUtils.deserialize(
-                Base64.getUrlDecoder().decode(cookie.getValue())));
+                Base64.getUrlDecoder().decode(cookieValue)));
     }
 }

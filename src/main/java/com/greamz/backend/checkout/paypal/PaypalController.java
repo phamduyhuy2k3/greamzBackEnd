@@ -19,9 +19,7 @@ public class PaypalController {
 
     @PostMapping(value = "/init")
     public ResponseEntity<?> createPayment(@RequestBody JsonNode order) {
-
          return   ResponseEntity.ok(paypalService.createOrder(order));
-
 
     }
     @SneakyThrows

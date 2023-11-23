@@ -16,7 +16,6 @@ import java.util.Properties;
 @Configuration
 public class PasswordValidationConfig {
 
-
     @Bean
     public PasswordValidator passwordValidator(){
         Properties props = new Properties();

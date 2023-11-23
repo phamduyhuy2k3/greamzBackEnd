@@ -147,6 +147,11 @@ public class SecurityAdminConfig {
                 .logout(httpSecurityLogoutConfigurer -> {
                     httpSecurityLogoutConfigurer.logoutUrl("/api/v1/auth/logout");
                     httpSecurityLogoutConfigurer.addLogoutHandler(logoutHandler);
+                    httpSecurityLogoutConfigurer.deleteCookies("accessToken");
+                    httpSecurityLogoutConfigurer.logoutSuccessHandler((request, response, authentication) -> {
+                        response.setStatus(200);
+                    });
+
                 })
         ;
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -158,6 +163,7 @@ public class SecurityAdminConfig {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
+
         config.setAllowedOrigins(List.of("http://localhost:3000", "http://127.0.0.1:3000", "https://greamz.games", "https://www.greamz.games", "https://admin.greamz.games", "https://main.dlqgfk9hgo94w.amplifyapp.com"));
         config.setAllowedHeaders(Arrays.asList(
                 ORIGIN,

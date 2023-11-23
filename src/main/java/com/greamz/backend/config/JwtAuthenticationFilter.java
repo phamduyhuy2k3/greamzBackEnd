@@ -7,6 +7,7 @@ import com.greamz.backend.security.auth.AuthenticationResponse;
 import com.greamz.backend.security.auth.AuthenticationService;
 import com.greamz.backend.service.CustomUserDetailsService;
 import com.greamz.backend.util.CookieUtils;
+import com.greamz.backend.util.EncryptionUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -68,12 +69,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
     private void isValid(
-            String jwtAccessToken,
+            String token,
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        final String jwtAccessToken= EncryptionUtil.decrypt(token);
+
         try {
+
             final String userName;
             userName = jwtService.extractUsername(jwtAccessToken);
             logger.info("userName = " + userName);
@@ -125,7 +129,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (authenticationResponse.getBody() != null) {
                 String newAccessToken = authenticationResponse.getBody().getAccessToken();
                 if (newAccessToken != null) {
-                    CookieUtils.addCookie(response, "accessToken", newAccessToken);
+                    CookieUtils.addCookie(response, "accessToken", EncryptionUtil.encrypt(newAccessToken));
                     isValid(newAccessToken, request, response, filterChain);
                 }
             }

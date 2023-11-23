@@ -2,6 +2,7 @@ package com.greamz.backend.service;
 
 
 import com.greamz.backend.dto.UserProfileDTO;
+import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.repository.IAccountRepo;
 import com.greamz.backend.util.Mapper;
@@ -24,5 +25,8 @@ public class UserService {
     }
     public Boolean isEmailExists(String email){
         return accountRepository.existsByEmail(email);
+    }
+    public Boolean isEmailExistsProviderLocal(String email){
+        return accountRepository.existsByEmailAndProvider(email, AuthProvider.local);
     }
 }
