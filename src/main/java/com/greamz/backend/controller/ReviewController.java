@@ -1,13 +1,10 @@
 package com.greamz.backend.controller;
 
 
-import com.greamz.backend.dto.ReviewsUserDTO;
+import com.greamz.backend.dto.review.ReviewsUserDTO;
 import com.greamz.backend.model.Review;
-import com.greamz.backend.model.Voucher;
 import com.greamz.backend.service.ReviewService;
-import com.greamz.backend.service.VoucherModelService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;

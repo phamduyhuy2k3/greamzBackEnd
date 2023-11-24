@@ -27,10 +27,7 @@ public class Platform extends TimeStampEntity {
     private String description;
     @ElementCollection(fetch = FetchType.LAZY)
     private Set<String> devices;
-    @OneToMany(mappedBy = "platform", fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @ManyToMany(mappedBy = "platforms", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<GameModel> gameModels;
-    @OneToMany(mappedBy = "platform", fetch = FetchType.LAZY)
-    private List<CodeActive> codeActives;
 }

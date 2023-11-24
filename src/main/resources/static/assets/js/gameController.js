@@ -4,7 +4,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
         $scope.keys = [];
         $scope.accountId = '';
         $scope.isLoading = true;
-        $scope.searchGame = ''
+        $scope.searchGame = '';
         $scope.search = '';
         $scope.action = 'create';
         $scope.categories = [];
@@ -271,8 +271,30 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                         ...resp.data
                     };
                 })
-            }else if ($scope.search === 'name'){
+            } else if ($scope.search === 'name') {
                 $http.get(`/api/v1/game/searchFilterByName?term=${$scope.searchGame}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    }
+                }).then(resp => {
+                    $scope.pager = {
+                        ...$scope.pager,
+                        ...resp.data
+                    };
+                })
+            } else if ($scope.search === 'category') {
+                $http.get(`/api/v1/game/searchFilterByCategory?term=${$scope.searchGame}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    }
+                }).then(resp => {
+                    $scope.pager = {
+                        ...$scope.pager,
+                        ...resp.data
+                    };
+                })
+            } else {
+                $http.get(`/api/v1/game/search?term=${$scope.searchGame}`, {
                     headers: {
                         'Authorization': 'Bearer ' + $cookies.get('accessToken')
                     }

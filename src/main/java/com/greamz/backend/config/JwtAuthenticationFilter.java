@@ -55,14 +55,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (request.getServletPath().contains("/api")|| request.getServletPath().equals("/") ) {
             if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
                 jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
-                isValid(jwt, request, response, filterChain);
+                isValid(jwt, request, response, filterChain,true);
                 return;
             }
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
             } else {
                 jwt = authHeader.substring(7);
-                isValid(jwt, request, response, filterChain);
+                isValid(jwt, request, response, filterChain,false);
             }
         } else {
             filterChain.doFilter(request, response);
@@ -72,9 +72,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token,
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain
+            FilterChain filterChain,
+            boolean isFromCookie
     ) throws ServletException, IOException {
-        final String jwtAccessToken= EncryptionUtil.decrypt(token);
+        final String jwtAccessToken=EncryptionUtil.decrypt(token);
 
         try {
 
@@ -130,7 +131,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String newAccessToken = authenticationResponse.getBody().getAccessToken();
                 if (newAccessToken != null) {
                     CookieUtils.addCookie(response, "accessToken", EncryptionUtil.encrypt(newAccessToken));
-                    isValid(newAccessToken, request, response, filterChain);
+                    isValid(newAccessToken, request, response, filterChain,false);
                 }
             }
         } catch (ServletException e) {

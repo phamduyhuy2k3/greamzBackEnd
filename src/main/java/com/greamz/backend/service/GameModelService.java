@@ -1,29 +1,23 @@
 package com.greamz.backend.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.greamz.backend.dto.GameFilter;
-import com.greamz.backend.enumeration.Devices;
+import com.greamz.backend.dto.platform.PlatformDTO;
+import com.greamz.backend.dto.game.GameDetailClientDTO;
+import com.greamz.backend.dto.game.GenreDTO;
 import com.greamz.backend.model.Category;
+import com.greamz.backend.model.CodeActive;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.model.OrdersDetail;
-import com.greamz.backend.model.Platform;
 import com.greamz.backend.repository.IGameRepo;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.Hibernate;
-import org.hibernate.boot.model.source.spi.Sortable;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +31,7 @@ public class GameModelService {
     private EntityManager entityManager;
     private final IGameRepo gameModelRepository;
     private final CategoryService categoryService;
-
+    private final CodeActiveService codeActiveService;
     @Transactional
     public GameModel saveGameModel(GameModel gameModel) {
         return gameModelRepository.saveAndFlush(gameModel);
@@ -46,7 +40,13 @@ public class GameModelService {
     @Transactional(rollbackFor = NoSuchElementException.class)
     public void updateStockForGameFromOrder(List<OrdersDetail> ordersDetail) {
         ordersDetail.forEach(ordersDetail1 -> {
-            ordersDetail1.getGame().setStock(ordersDetail1.getGame().getStock() - ordersDetail1.getQuantity());
+           List<CodeActive> codeActiveList= codeActiveService.findByIdGameAndPlatform(ordersDetail1.getGame().getAppid(), ordersDetail1.getPlatform().getId());
+            if(ordersDetail1.getQuantity()<=codeActiveList.size()){
+                codeActiveList.stream().limit(ordersDetail1.getQuantity()).forEach(codeActive -> {
+                    codeActive.setAccount(ordersDetail1.getOrders().getAccount());
+                    codeActiveService.save(codeActive);
+                });
+            }
         });
 
         gameModelRepository.saveAllAndFlush(ordersDetail.stream().map(OrdersDetail::getGame).collect(Collectors.toList()));
@@ -63,7 +63,7 @@ public class GameModelService {
             gameModel.setImages(null);
             gameModel.setCodeActives(null);
             Hibernate.initialize(gameModel.getCategories());
-            Hibernate.initialize(gameModel.getPlatform());
+            Hibernate.initialize(gameModel.getPlatforms());
             Hibernate.initialize(gameModel.getReviews());
         });
         return gameModelPage;
@@ -75,13 +75,40 @@ public class GameModelService {
         List<Category> categories = categoryService.findAllByGameModelsAppid(appid);
         gameModel.setCategories(categories);
         gameModel.setReviews(null);
+        gameModel.setCategories(null);
         gameModel.setCodeActives(null);
         Hibernate.initialize(gameModel.getImages());
         Hibernate.initialize(gameModel.getMovies());
         Hibernate.initialize(gameModel.getSupported_languages());
         Hibernate.initialize(gameModel.getCategories());
-        Hibernate.initialize(gameModel.getPlatform());
+        Hibernate.initialize(gameModel.getPlatforms());
         return gameModel;
+    }
+    @Transactional(readOnly = true)
+    public GameDetailClientDTO findGameByIdFromClientRequest(Long appid){
+        GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
+        Hibernate.initialize(gameModel.getImages());
+        Hibernate.initialize(gameModel.getMovies());
+        Hibernate.initialize(gameModel.getSupported_languages());
+        Hibernate.initialize(gameModel.getCategories());
+        List<PlatformDTO> platforms =codeActiveService.findAllPlatform(appid);
+
+        return GameDetailClientDTO
+                .builder()
+                .appid(gameModel.getAppid())
+                .name(gameModel.getName())
+                .detailed_description(gameModel.getDetailed_description())
+                .about_the_game(gameModel.getAbout_the_game())
+                .short_description(gameModel.getShort_description())
+                .header_image(gameModel.getHeader_image())
+                .website(gameModel.getWebsite())
+                .capsule_image(gameModel.getCapsule_image())
+                .images(gameModel.getImages())
+                .movies(gameModel.getMovies())
+                .price(gameModel.getPrice())
+                .platforms(platforms)
+                .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
+                .build();
     }
 
 
@@ -95,7 +122,7 @@ public class GameModelService {
             gameModel.setImages(null);
             gameModel.setCodeActives(null);
             Hibernate.initialize(gameModel.getCategories());
-            Hibernate.initialize(gameModel.getPlatform());
+            Hibernate.initialize(gameModel.getPlatforms());
         });
         return gameModelByCategory;
     }
@@ -112,8 +139,9 @@ public class GameModelService {
             gameModel.setMovies(null);
             gameModel.setSupported_languages(null);
             gameModel.setReviews(null);
+            gameModel.setCodeActives(null);
             Hibernate.initialize(gameModel.getCategories());
-            Hibernate.initialize(gameModel.getPlatform());
+            Hibernate.initialize(gameModel.getPlatforms());
         });
         return gameModels;
     }
@@ -123,7 +151,6 @@ public class GameModelService {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         gameModelRepository.delete(gameModel);
     }
-
     @Transactional(readOnly = true)
     public Page<GameModel> searchGame(String searchTerm, Pageable pageable) {
         Page<GameModel> gameModelPage = gameModelRepository.searchGame(searchTerm, pageable);
@@ -133,12 +160,42 @@ public class GameModelService {
             Hibernate.initialize(gameModel.getCategories());
             gameModel.setMovies(null);
             gameModel.setImages(null);
-            gameModel.setPlatform(null);
+            gameModel.setPlatforms(null);
             gameModel.setCodeActives(null);
         });
 
         return gameModelPage;
     }
+
+//    @Transactional(readOnly = true)
+//    public Page<GameDetailClientDTO> searchGame(String searchTerm, Pageable pageable) {
+//        Page<GameModel> gameModelPage = gameModelRepository.searchGame(searchTerm, pageable);
+//        Page<GameDetailClientDTO> gameDetailClientDTOPage = gameModelPage.map(gameModel -> {
+//            Hibernate.initialize(gameModel.getImages());
+//            Hibernate.initialize(gameModel.getMovies());
+//            Hibernate.initialize(gameModel.getSupported_languages());
+//            Hibernate.initialize(gameModel.getCategories());
+//            List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
+//            return GameDetailClientDTO
+//                    .builder()
+//                    .appid(gameModel.getAppid())
+//                    .name(gameModel.getName())
+//                    .detailed_description(gameModel.getDetailed_description())
+//                    .about_the_game(gameModel.getAbout_the_game())
+//                    .short_description(gameModel.getShort_description())
+//                    .header_image(gameModel.getHeader_image())
+//                    .website(gameModel.getWebsite())
+//                    .capsule_image(gameModel.getCapsule_image())
+//                    .images(gameModel.getImages())
+//                    .movies(gameModel.getMovies())
+//                    .price(gameModel.getPrice())
+//                    .platforms(platforms)
+//                    .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
+//                    .build();
+//        });
+//
+//        return gameDetailClientDTOPage;
+//    }
     @Transactional(readOnly = true)
     public Page<GameModel> searchGameByName(String searchTerm, Pageable pageable) {
         Page<GameModel> gameModelPage = gameModelRepository.searchGameByName(searchTerm, pageable);
@@ -148,7 +205,22 @@ public class GameModelService {
             Hibernate.initialize(gameModel.getCategories());
             gameModel.setMovies(null);
             gameModel.setImages(null);
-            gameModel.setPlatform(null);
+            gameModel.setPlatforms(null);
+            gameModel.setCodeActives(null);
+        });
+
+        return gameModelPage;
+    }
+    @Transactional(readOnly = true)
+    public Page<GameModel> searchGameByCategory(String searchTerm, Pageable pageable) {
+        Page<GameModel> gameModelPage = gameModelRepository.searchGameByCategory(searchTerm, pageable);
+        gameModelPage.forEach(gameModel -> {
+            gameModel.setSupported_languages(null);
+            gameModel.setReviews(null);
+            Hibernate.initialize(gameModel.getCategories());
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            gameModel.setPlatforms(null);
             gameModel.setCodeActives(null);
         });
 
@@ -156,7 +228,7 @@ public class GameModelService {
     }
 
     @Transactional(readOnly = true)
-    public Page<GameModel> filterGamesByCategoriesAndPlatform(
+    public Page<GameDetailClientDTO> filterGamesByCategoriesAndPlatform(
             String q,
             String categoriesId,
             Long platformId,
@@ -171,10 +243,54 @@ public class GameModelService {
         List<Specification<GameModel>> gameModelSpecifications = new ArrayList<>();
         if (categoriesId.isBlank() && platformId == -1 && minPrice == -1 && maxPrice == -1 && q.isBlank() && !sort.isBlank()) {
             Pageable pageable = PageRequest.of(page, size).withSort(Sort.by(direction, sort));
-            return findAll(pageable);
+            return findAll(pageable).map(gameModel -> {
+                Hibernate.initialize(gameModel.getImages());
+                Hibernate.initialize(gameModel.getMovies());
+                Hibernate.initialize(gameModel.getSupported_languages());
+                Hibernate.initialize(gameModel.getCategories());
+                List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
+                return GameDetailClientDTO
+                        .builder()
+                        .appid(gameModel.getAppid())
+                        .name(gameModel.getName())
+                        .detailed_description(gameModel.getDetailed_description())
+                        .about_the_game(gameModel.getAbout_the_game())
+                        .short_description(gameModel.getShort_description())
+                        .header_image(gameModel.getHeader_image())
+                        .website(gameModel.getWebsite())
+                        .capsule_image(gameModel.getCapsule_image())
+                        .images(gameModel.getImages())
+                        .movies(gameModel.getMovies())
+                        .price(gameModel.getPrice())
+                        .platforms(platforms)
+                        .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
+                        .build();
+            });
         } else if (categoriesId.isBlank() && platformId == -1 && minPrice == -1 && maxPrice == -1 && q.isBlank()) {
             Pageable pageable = PageRequest.of(page, size);
-            return findAll(pageable);
+            return findAll(pageable).map(gameModel -> {
+                Hibernate.initialize(gameModel.getImages());
+                Hibernate.initialize(gameModel.getMovies());
+                Hibernate.initialize(gameModel.getSupported_languages());
+                Hibernate.initialize(gameModel.getCategories());
+                List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
+                return GameDetailClientDTO
+                        .builder()
+                        .appid(gameModel.getAppid())
+                        .name(gameModel.getName())
+                        .detailed_description(gameModel.getDetailed_description())
+                        .about_the_game(gameModel.getAbout_the_game())
+                        .short_description(gameModel.getShort_description())
+                        .header_image(gameModel.getHeader_image())
+                        .website(gameModel.getWebsite())
+                        .capsule_image(gameModel.getCapsule_image())
+                        .images(gameModel.getImages())
+                        .movies(gameModel.getMovies())
+                        .price(gameModel.getPrice())
+                        .platforms(platforms)
+                        .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
+                        .build();
+            });
         }
         if (!categoriesId.isBlank()) {
             Specification<GameModel> categorySpecification = (root, query, criteriaBuilder) -> {
@@ -238,15 +354,30 @@ public class GameModelService {
         }
 
         Page<GameModel> gameModelPage = gameModelRepository.findAll(combinedSpecification, pageable);
-        gameModelPage.forEach(gameModel -> {
-            gameModel.setCategories(null);
-            gameModel.setImages(null);
-            gameModel.setReviews(null);
-            gameModel.setMovies(null);
-            gameModel.setSupported_languages(null);
-            gameModel.setPlatform(null);
+        Page<GameDetailClientDTO> gameDetailClientDTOPage = gameModelPage.map(gameModel -> {
+            Hibernate.initialize(gameModel.getImages());
+            Hibernate.initialize(gameModel.getMovies());
+            Hibernate.initialize(gameModel.getSupported_languages());
+            Hibernate.initialize(gameModel.getCategories());
+            List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
+            return GameDetailClientDTO
+                    .builder()
+                    .appid(gameModel.getAppid())
+                    .name(gameModel.getName())
+                    .detailed_description(gameModel.getDetailed_description())
+                    .about_the_game(gameModel.getAbout_the_game())
+                    .short_description(gameModel.getShort_description())
+                    .header_image(gameModel.getHeader_image())
+                    .website(gameModel.getWebsite())
+                    .capsule_image(gameModel.getCapsule_image())
+                    .images(gameModel.getImages())
+                    .movies(gameModel.getMovies())
+                    .price(gameModel.getPrice())
+                    .platforms(platforms)
+                    .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
+                    .build();
         });
-        return gameModelPage;
+        return gameDetailClientDTOPage;
     }
 
     public List<Category> getCategoriesForGame(GameModel gameModel) {

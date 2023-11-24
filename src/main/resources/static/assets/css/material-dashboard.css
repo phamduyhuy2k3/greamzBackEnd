@@ -3613,12 +3613,12 @@ textarea.form-control.is-invalid {
   font-size: var(--bs-btn-font-size);
   font-weight: var(--bs-btn-font-weight);
   line-height: var(--bs-btn-line-height);
-  color: var(--bs-btn-color);
+  /*color: var(--bs-btn-color);*/
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
   user-select: none;
-  border: var(--bs-btn-border-width) solid var(--bs-btn-border-color);
+  border: var(--bs-btn-border-width) solid rgb(2,49,106);
   border-radius: var(--bs-btn-border-radius);
   background-color: var(--bs-btn-bg);
   transition: all 0.15s ease-in;
@@ -3633,7 +3633,7 @@ textarea.form-control.is-invalid {
 .btn:hover {
   color: var(--bs-btn-hover-color);
   background-color: var(--bs-btn-hover-bg);
-  border-color: var(--bs-btn-hover-border-color);
+  border-color: rgb(2, 86, 186);
 }
 
 .btn-check+.btn:hover {
@@ -3661,9 +3661,9 @@ textarea.form-control.is-invalid {
 .btn:first-child:active,
 .btn.active,
 .btn.show {
-  color: var(--bs-btn-active-color);
-  background-color: var(--bs-btn-active-bg);
-  border-color: var(--bs-btn-active-border-color);
+  color: white;
+  background-image: linear-gradient(195deg, #7d7b7b 0%, #03325b 100%);
+  border-color: rgb(2,49,106);
 }
 
 .btn-check:checked+.btn:focus-visible,
@@ -3863,7 +3863,7 @@ fieldset:disabled .btn {
   --bs-btn-focus-shadow-rgb: 233, 30, 99;
   --bs-btn-active-color: #000;
   --bs-btn-active-bg: #e91e63;
-  --bs-btn-active-border-color: #e91e63;
+  --bs-btn-active-border-color: rgba(0, 157, 255, 0.4);
   --bs-btn-active-shadow: none;
   --bs-btn-disabled-color: #e91e63;
   --bs-btn-disabled-bg: transparent;
