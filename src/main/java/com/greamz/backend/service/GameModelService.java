@@ -151,35 +151,80 @@ public class GameModelService {
         GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
         gameModelRepository.delete(gameModel);
     }
-
     @Transactional(readOnly = true)
-    public Page<GameDetailClientDTO> searchGame(String searchTerm, Pageable pageable) {
+    public Page<GameModel> searchGame(String searchTerm, Pageable pageable) {
         Page<GameModel> gameModelPage = gameModelRepository.searchGame(searchTerm, pageable);
-        Page<GameDetailClientDTO> gameDetailClientDTOPage = gameModelPage.map(gameModel -> {
-            Hibernate.initialize(gameModel.getImages());
-            Hibernate.initialize(gameModel.getMovies());
-            Hibernate.initialize(gameModel.getSupported_languages());
+        gameModelPage.forEach(gameModel -> {
+            gameModel.setSupported_languages(null);
+            gameModel.setReviews(null);
             Hibernate.initialize(gameModel.getCategories());
-            List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
-            return GameDetailClientDTO
-                    .builder()
-                    .appid(gameModel.getAppid())
-                    .name(gameModel.getName())
-                    .detailed_description(gameModel.getDetailed_description())
-                    .about_the_game(gameModel.getAbout_the_game())
-                    .short_description(gameModel.getShort_description())
-                    .header_image(gameModel.getHeader_image())
-                    .website(gameModel.getWebsite())
-                    .capsule_image(gameModel.getCapsule_image())
-                    .images(gameModel.getImages())
-                    .movies(gameModel.getMovies())
-                    .price(gameModel.getPrice())
-                    .platforms(platforms)
-                    .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
-                    .build();
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            gameModel.setPlatforms(null);
+            gameModel.setCodeActives(null);
         });
 
-        return gameDetailClientDTOPage;
+        return gameModelPage;
+    }
+
+//    @Transactional(readOnly = true)
+//    public Page<GameDetailClientDTO> searchGame(String searchTerm, Pageable pageable) {
+//        Page<GameModel> gameModelPage = gameModelRepository.searchGame(searchTerm, pageable);
+//        Page<GameDetailClientDTO> gameDetailClientDTOPage = gameModelPage.map(gameModel -> {
+//            Hibernate.initialize(gameModel.getImages());
+//            Hibernate.initialize(gameModel.getMovies());
+//            Hibernate.initialize(gameModel.getSupported_languages());
+//            Hibernate.initialize(gameModel.getCategories());
+//            List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
+//            return GameDetailClientDTO
+//                    .builder()
+//                    .appid(gameModel.getAppid())
+//                    .name(gameModel.getName())
+//                    .detailed_description(gameModel.getDetailed_description())
+//                    .about_the_game(gameModel.getAbout_the_game())
+//                    .short_description(gameModel.getShort_description())
+//                    .header_image(gameModel.getHeader_image())
+//                    .website(gameModel.getWebsite())
+//                    .capsule_image(gameModel.getCapsule_image())
+//                    .images(gameModel.getImages())
+//                    .movies(gameModel.getMovies())
+//                    .price(gameModel.getPrice())
+//                    .platforms(platforms)
+//                    .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
+//                    .build();
+//        });
+//
+//        return gameDetailClientDTOPage;
+//    }
+    @Transactional(readOnly = true)
+    public Page<GameModel> searchGameByName(String searchTerm, Pageable pageable) {
+        Page<GameModel> gameModelPage = gameModelRepository.searchGameByName(searchTerm, pageable);
+        gameModelPage.forEach(gameModel -> {
+            gameModel.setSupported_languages(null);
+            gameModel.setReviews(null);
+            Hibernate.initialize(gameModel.getCategories());
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            gameModel.setPlatforms(null);
+            gameModel.setCodeActives(null);
+        });
+
+        return gameModelPage;
+    }
+    @Transactional(readOnly = true)
+    public Page<GameModel> searchGameByCategory(String searchTerm, Pageable pageable) {
+        Page<GameModel> gameModelPage = gameModelRepository.searchGameByCategory(searchTerm, pageable);
+        gameModelPage.forEach(gameModel -> {
+            gameModel.setSupported_languages(null);
+            gameModel.setReviews(null);
+            Hibernate.initialize(gameModel.getCategories());
+            gameModel.setMovies(null);
+            gameModel.setImages(null);
+            gameModel.setPlatforms(null);
+            gameModel.setCodeActives(null);
+        });
+
+        return gameModelPage;
     }
 
     @Transactional(readOnly = true)

@@ -28,29 +28,30 @@ public class GameRestController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<GameDetailClientDTO>> searchGame(@RequestParam(defaultValue = "") String term,
+    public ResponseEntity<Page<GameModel>> searchGame(@RequestParam(defaultValue = "") String term,
                                                           @RequestParam(defaultValue = "0") int page,
                                                           @RequestParam(defaultValue = "7") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<GameDetailClientDTO> gameModels = service.searchGame(term, pageable);
+        Page<GameModel> gameModels = service.searchGame(term, pageable);
         return ResponseEntity.ok(gameModels);
     }
     @GetMapping("/searchFilterByName")
     public ResponseEntity<Page<GameModel>> searchGameFilterByName(@RequestParam(defaultValue = "") String term,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "7") int size) {
+                                                                  @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "7") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<GameModel> gameModels = service.searchGameByName(term, pageable);
         return ResponseEntity.ok(gameModels);
     }
     @GetMapping("/searchFilterByCategory")
     public ResponseEntity<Page<GameModel>> searchGameFilterByCategory(@RequestParam(defaultValue = "") String term,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "7") int size) {
+                                                                      @RequestParam(defaultValue = "0") int page,
+                                                                      @RequestParam(defaultValue = "7") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<GameModel> gameModels = service.searchGameByCategory(term, pageable);
         return ResponseEntity.ok(gameModels);
     }
+
     @GetMapping("/filter")
     public ResponseEntity<Page<GameDetailClientDTO>> filter(
             @RequestParam(defaultValue = "") String q,
