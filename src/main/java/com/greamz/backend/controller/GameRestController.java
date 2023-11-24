@@ -46,6 +46,14 @@ public class GameRestController {
         Page<GameModel> gameModels = service.searchGameByName(term, pageable);
         return ResponseEntity.ok(gameModels);
     }
+    @GetMapping("/searchFilterByCategory")
+    public ResponseEntity<Page<GameModel>> searchGameFilterByCategory(@RequestParam(defaultValue = "") String term,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "7") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<GameModel> gameModels = service.searchGameByCategory(term, pageable);
+        return ResponseEntity.ok(gameModels);
+    }
     @GetMapping("/filter")
     public ResponseEntity<Page<GameModel>> filter(
             @RequestParam(defaultValue = "") String q,
