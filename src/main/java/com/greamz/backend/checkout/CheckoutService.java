@@ -36,6 +36,9 @@ public class CheckoutService {
     public Object placeOrder(Orders orders, HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
 
         orders.setOrdersStatus(OrdersStatus.PROCESSING);
+        orders.getOrdersDetails().forEach(ordersDetail -> {
+            ordersDetail.setGame(gameModelService.findGameByAppid(ordersDetail.getGame().getAppid()));
+        });
         Orders orderSaved= orderRepo.save(orders);
         AccountModel accountModel= accountRepo.findById(orders.getAccount().getId()).orElseThrow();
         switch (orders.getPaymentmethod()) {

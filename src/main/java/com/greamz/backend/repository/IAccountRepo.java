@@ -20,6 +20,7 @@ public interface IAccountRepo extends JpaRepository<AccountModel, Integer> {
     Optional<AccountModel> findByUsername(String username);
     @Query("select a.vouchers from AccountModel a where a.id=?1")
     List<Voucher> findVoucherById(Integer id);
+
     Boolean existsByEmail(String email);
     Boolean existsByEmailAndProvider(String email, AuthProvider provider);
     Boolean existsByUsername(String username);

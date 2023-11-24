@@ -9,6 +9,7 @@ import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.OrdersDetail;
 import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.model.Review;
+import com.greamz.backend.repository.ICodeActiveRepo;
 import com.greamz.backend.repository.IGameRepo;
 import com.greamz.backend.repository.IOrderDetail;
 import com.greamz.backend.repository.IOrderRepo;
@@ -35,6 +36,7 @@ public class OrderService {
     private final IOrderRepo orderRepo;
 
     private final IOrderDetail orderDetailRepo;
+    private final ICodeActiveRepo codeActiveRepo;
     private final GameModelService gameModelService;
     @PersistenceContext
     private EntityManager entityManager;
@@ -59,48 +61,21 @@ public class OrderService {
         return ordersPage;
     }
 
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true)
     public Page<GameLibrary> getGamesThatUserBought(Integer accountId, Pageable pageable) {
-        StoredProcedureQuery query = entityManager.createStoredProcedureQuery("GameLibraryOfUser");
-        query.registerStoredProcedureParameter("accountID", Integer.class, ParameterMode.IN);
-        query.registerStoredProcedureParameter("orderStatus", String.class, ParameterMode.IN);
-        query.setParameter("accountID", accountId);
-        query.setParameter("orderStatus", "FAILED");
-        query.execute();
-
-        // Lấy danh sách kết quả từ stored procedure
-        List<Object[]> resultList = query.getResultList();
-
-        // Ánh xạ kết quả vào đối tượng GameLibrary
-        List<GameLibrary> games = resultList.stream()
-                .map(this::mapToGameLibrary)
-                .collect(Collectors.toList());
-
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-
-        List<GameLibrary> paginatedGames;
-        if (games.size() < startItem) {
-            paginatedGames = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, games.size());
-            paginatedGames = games.subList(startItem, toIndex);
-        }
-
-        return new PageImpl<>(paginatedGames, PageRequest.of(currentPage, pageSize), games.size());
+        return codeActiveRepo.findGameLibraryByAccountId(accountId, pageable);
     }
 
-    private GameLibrary mapToGameLibrary(Object[] row) {
-        GameLibrary gameLibrary = new GameLibrary();
-        gameLibrary.setAppid((Long) row[0]);
-        gameLibrary.setName((String) row[2]);
-        gameLibrary.setHeader_image((String) row[1]);
-        gameLibrary.setTotalQuantity((BigDecimal) row[3]); // Suppose totalQuantity is at index 1 in Object[]
-
-
-        return gameLibrary;
-    }
+//    private GameLibrary mapToGameLibrary(Object[] row) {
+//        GameLibrary gameLibrary = new GameLibrary();
+//        gameLibrary.setAppid((Long) row[0]);
+//        gameLibrary.setName((String) row[2]);
+//        gameLibrary.setHeader_image((String) row[1]);
+//        gameLibrary.setTotalQuantity((BigDecimal) row[3]); // Suppose totalQuantity is at index 1 in Object[]
+//
+//
+//        return gameLibrary;
+//    }
 
     @Transactional
     public UUID saveOrder(Orders orders) {

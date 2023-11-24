@@ -1,11 +1,14 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.code.CodeActiveBasicDTO;
 import com.greamz.backend.dto.code.CodeActiveDTO;
 import com.greamz.backend.model.CodeActive;
+import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.CodeActiveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -39,5 +42,9 @@ public class CodeActiveRestController {
     @GetMapping("/findByIdGame/{appid}")
     public List<CodeActiveDTO> findByIdGame(@PathVariable Long appid) {
         return codeActiveService.findByIdGame(appid);
+    }
+    @GetMapping("/findAllByAccount_Id/{appid}")
+    public ResponseEntity<Map<String,Object>> findAllByAccount_IdAndGame_id(@PathVariable("appid") Long appid, @AuthenticationPrincipal UserPrincipal account) {
+        return ResponseEntity.ok(codeActiveService.findByAccountId(account.getId(),appid));
     }
 }

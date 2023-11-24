@@ -40,7 +40,7 @@ public class GameModelService {
     @Transactional(rollbackFor = NoSuchElementException.class)
     public void updateStockForGameFromOrder(List<OrdersDetail> ordersDetail) {
         ordersDetail.forEach(ordersDetail1 -> {
-           List<CodeActive> codeActiveList= codeActiveService.findByIdGameAndPlatform(ordersDetail1.getGame().getAppid(), ordersDetail1.getPlatform().getId());
+           List<CodeActive> codeActiveList= codeActiveService.findByIdGameAndPlatformNotActiveAndAccountnull(ordersDetail1.getGame().getAppid(), ordersDetail1.getPlatform().getId());
             if(ordersDetail1.getQuantity()<=codeActiveList.size()){
                 codeActiveList.stream().limit(ordersDetail1.getQuantity()).forEach(codeActive -> {
                     codeActive.setAccount(ordersDetail1.getOrders().getAccount());
