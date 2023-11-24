@@ -5,9 +5,11 @@ import com.greamz.backend.model.GameModel;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.OrdersDetail;
 import com.greamz.backend.enumeration.OrdersStatus;
+import com.greamz.backend.model.Review;
 import com.greamz.backend.repository.IGameRepo;
 import com.greamz.backend.repository.IOrderDetail;
 import com.greamz.backend.repository.IOrderRepo;
+import com.greamz.backend.repository.IReviewRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.PersistenceContext;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
     private final IOrderRepo orderRepo;
+
     private final IOrderDetail orderDetailRepo;
     private final IGameRepo gameRepo;
     private final GameModelService gameModelService;
@@ -222,6 +225,7 @@ public class OrderService {
         });
         return orders;
     }
+
 
     @Transactional(readOnly = true)
     public List<OrderDetailsDTO> findOrderDetailsById(UUID id) {

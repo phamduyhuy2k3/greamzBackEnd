@@ -2,6 +2,8 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
 
     $scope.accounts = [];
     $scope.orders = [];
+    $scope.reviews = [];
+    $scope.vouchers = [];
     $scope.accountView = '';
     $scope.roles = ["USER", "ADMIN", "MANAGER", "EMPLOYEE"];
     $scope.action = 'create'
@@ -225,18 +227,16 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             $scope.orders = resp.data;
             console.log($scope.orders)
         })
-        // $http.get(`/api/user/${id}`, {
-        //     headers: {
-        //         'Authorization': 'Bearer ' + $cookies.get('accessToken')
-        //     }
-        // }).then(resp => {
-        //         console.log(resp.data);
-        //         $scope.accountView = resp.data;
-        //
-        //     }, error => {
-        //         return error;
-        //     }
-        // )
+        $http.get(`/api/user/findReviewsByAccountId/${id}`,{
+                    headers:{
+                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    }
+
+                }).then(resp =>{
+                    $scope.reviews = resp.data;
+                    console.log($scope.reviews)
+
+                })
     }
     $scope.initialize();
 
