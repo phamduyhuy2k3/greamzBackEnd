@@ -227,7 +227,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             $scope.orders = resp.data;
             console.log($scope.orders)
         })
-        $http.get(`/api/user/findReviewsByAccountId/${id}`,{
+        $http.get(`/api/user/findReviewByAccountId/${id}`,{
                     headers:{
                         'Authorization': 'Bearer ' + $cookies.get('accessToken')
                     }
@@ -235,8 +235,16 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                 }).then(resp =>{
                     $scope.reviews = resp.data;
                     console.log($scope.reviews)
-
                 })
+        $http.get(`/api/user/findVoucherByAccountId/${id}`,{
+                            headers:{
+                                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                            }
+
+                        }).then(resp =>{
+                            $scope.vouchers = resp.data;
+                            console.log($scope.vouchers)
+                        })
     }
     $scope.initialize();
 

@@ -5,10 +5,12 @@ import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.Review;
+import com.greamz.backend.model.Voucher;
 import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.AccountModelService;
 import com.greamz.backend.service.OrderService;
 import com.greamz.backend.service.ReviewService;
+import com.greamz.backend.service.VoucherModelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,7 @@ public class AccountRestController {
     private final AccountModelService service;
     private final OrderService orderService;
     private final ReviewService reviewService;
+    private final VoucherModelService voucherService;
 
     @GetMapping("/currentUser")
     public ResponseEntity<UserProfileDTO> currentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
@@ -99,6 +102,11 @@ public class AccountRestController {
     public ResponseEntity<List<Review>> findReviewByAccountId(@PathVariable("id") Integer id) {
         List<Review> reviewsDTOS = reviewService.findAllReviewsByAccountId(id);
         return ResponseEntity.ok(reviewsDTOS);
+    }
+    @GetMapping("/findVoucherByAccountId/{id}")
+    public ResponseEntity<List<Voucher>> findVoucherByAccountId(@PathVariable("id") Integer id) {
+        List<Voucher> voucherDTOS = service.findAllVouchersByAccountId(id);
+        return ResponseEntity.ok(voucherDTOS);
     }
 
     @PostMapping("/save")
