@@ -35,12 +35,12 @@ public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificat
             or c.name like %?1% or cast(c.categoryTypes as string) like %?1%
             """)
     Page<GameModel> searchGame(String search, Pageable pageable);
-    @Query("""
-            select distinct g from GameModel g
-            join fetch g.categories c
-            where c.id in :categoriesId and g.platform.id = :platformId and g.price >= :minPrice and g.price <= :maxPrice
-            """)
-    Page<GameModel> searchGameFilterByCategoriesIdsPlatformPrice(@Param("categoriesId ") List<Long> categoriesId, @Param("platformId") Long platformId, @Param("minPrice") Double minPrice,@Param("maxPrice") Double maxPrice, Pageable pageable);
-
-    Page<GameModel> findAllByCategoriesIdAndPlatformIdAndPriceBetween(Long categoryId, Long platformId, Double minPrice, Double maxPrice, Pageable pageable);
+//    @Query("""
+//            select distinct g from GameModel g
+//            join fetch g.categories c
+//            where c.id in :categoriesId and g.platform.id = :platformId and g.price >= :minPrice and g.price <= :maxPrice
+//            """)
+//    Page<GameModel> searchGameFilterByCategoriesIdsPlatformPrice(@Param("categoriesId ") List<Long> categoriesId, @Param("platformId") Long platformId, @Param("minPrice") Double minPrice,@Param("maxPrice") Double maxPrice, Pageable pageable);
+//
+//    Page<GameModel> findAllByCategoriesIdAndPlatformIdAndPriceBetween(Long categoryId, Long platformId, Double minPrice, Double maxPrice, Pageable pageable);
 }

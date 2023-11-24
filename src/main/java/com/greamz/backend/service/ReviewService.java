@@ -1,23 +1,19 @@
 package com.greamz.backend.service;
 
-import com.greamz.backend.dto.AccountBasicDTO;
-import com.greamz.backend.dto.ReviewsUserDTO;
-import com.greamz.backend.model.AccountModel;
-import com.greamz.backend.model.GameModel;
+import com.greamz.backend.dto.account.AccountBasicDTO;
+import com.greamz.backend.dto.review.ReviewsUserDTO;
 import com.greamz.backend.model.Review;
 import com.greamz.backend.repository.IReviewRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor

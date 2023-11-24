@@ -761,28 +761,39 @@ app.controller("gameController", function ($scope, $http, $document, $cookies, $
                         "Content-Type": "application/json"
                     }
                 }).then(resp => {
-                $scope.pager.fetchPage()
-                if ($scope.action === 'addKey') {
-                    Swal.fire({
-                        position: "center",
-                        icon: "success",
-                        title: "Saved successfully!",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    // alert("Thêm sản phẩm thành công!");
-                } else {
-                    Swal.fire({
-                        position: "center",
-                        icon: "success",
-                        title: "Updated successfully!",
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    // alert("Cập nhật sản phẩm thành công!");
+                    $scope.pager.fetchPage()
+                    if ($scope.action === 'addKey') {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Saved successfully!",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        // alert("Thêm sản phẩm thành công!");
+                    } else {
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Updated successfully!",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        // alert("Cập nhật sản phẩm thành công!");
+                    }
+                    $scope.reset();
+                },
+                (error)=>{
+                    console.log(error)
+                    if(error.data.code ==='Mã code đã tồn tại'){
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Code đã tồn tại!",
+                        });
+                    }
                 }
-                $scope.reset();
-            }).catch(error => {
+            ).catch(error => {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",

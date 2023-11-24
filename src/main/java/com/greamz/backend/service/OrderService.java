@@ -1,7 +1,10 @@
 package com.greamz.backend.service;
 
-import com.greamz.backend.dto.*;
-import com.greamz.backend.model.GameModel;
+import com.greamz.backend.dto.account.AccountBasicDTO;
+import com.greamz.backend.dto.game.GameBasicDTO;
+import com.greamz.backend.dto.game.GameLibrary;
+import com.greamz.backend.dto.order.OrderDTO;
+import com.greamz.backend.dto.order_detail.OrderDetailsDTO;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.OrdersDetail;
 import com.greamz.backend.enumeration.OrdersStatus;
@@ -29,7 +32,6 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final IOrderRepo orderRepo;
     private final IOrderDetail orderDetailRepo;
-    private final IGameRepo gameRepo;
     private final GameModelService gameModelService;
     @PersistenceContext
     private EntityManager entityManager;
@@ -119,7 +121,7 @@ public class OrderService {
         Hibernate.initialize(orders.getOrdersDetails());
         orders.getOrdersDetails().forEach(ordersDetail -> {
             Hibernate.initialize(ordersDetail.getGame());
-            ordersDetail.getGame().setPlatform(null);
+            ordersDetail.getGame().setPlatforms(null);
             ordersDetail.getGame().setSupported_languages(null);
             ordersDetail.getGame().setReviews(null);
             ordersDetail.getGame().setCategories(null);
@@ -134,7 +136,7 @@ public class OrderService {
         ordersDetails.forEach(ordersDetail -> {
             ordersDetail.setOrders(null);
             Hibernate.initialize(ordersDetail.getGame());
-            ordersDetail.getGame().setPlatform(null);
+            ordersDetail.getGame().setPlatforms(null);
             ordersDetail.getGame().setSupported_languages(null);
             ordersDetail.getGame().setReviews(null);
             ordersDetail.getGame().setCategories(null);
@@ -150,7 +152,7 @@ public class OrderService {
         Set<OrdersDetail> ordersDetailPage = orderDetailRepo.findAllByOrders_Id(orderId);
         ordersDetailPage.forEach(ordersDetail -> {
             Hibernate.initialize(ordersDetail.getGame());
-            ordersDetail.getGame().setPlatform(null);
+            ordersDetail.getGame().setPlatforms(null);
             ordersDetail.getGame().setSupported_languages(null);
             ordersDetail.getGame().setReviews(null);
             ordersDetail.getGame().setCategories(null);

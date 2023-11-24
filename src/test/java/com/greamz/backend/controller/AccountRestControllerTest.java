@@ -1,7 +1,7 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.dto.AccountRequest;
-import com.greamz.backend.dto.UserProfileDTO;
+import com.greamz.backend.dto.account.AccountRequest;
+import com.greamz.backend.dto.account.UserProfileDTO;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.security.UserPrincipal;
@@ -22,7 +22,6 @@ import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

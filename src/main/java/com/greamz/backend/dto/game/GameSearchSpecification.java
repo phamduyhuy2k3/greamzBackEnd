@@ -1,5 +1,6 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.game;
 
+import com.greamz.backend.dto.SearchCriteria;
 import com.greamz.backend.model.GameModel;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
