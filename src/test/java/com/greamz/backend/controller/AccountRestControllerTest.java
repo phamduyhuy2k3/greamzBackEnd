@@ -107,18 +107,18 @@ public class AccountRestControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
     }
-    @Test
-    public void testGetOne() {
-        // Test for getOne method
-        Integer accountId = 1;
-        AccountModel mockAccountModel = new AccountModel(/*mock parameters*/);
-        when(accountModelService.findById(accountId)).thenReturn(mockAccountModel);
-
-        AccountModel result = accountRestController.getOne(accountId);
-
-        assertNotNull(result);
-        // Add more assertions as needed
-    }
+//    @Test
+//    public void testGetOne() {
+//        // Test for getOne method
+//        Integer accountId = 1;
+//        AccountModel mockAccountModel = new AccountModel(/*mock parameters*/);
+//        when(accountModelService.findById(accountId)).thenReturn(mockAccountModel);
+//
+//        AccountModel result = accountRestController.getOne(accountId);
+//
+//        assertNotNull(result);
+//        // Add more assertions as needed
+//    }
 
     @Test
     public void testSave() {

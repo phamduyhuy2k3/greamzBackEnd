@@ -46,10 +46,10 @@ public class GameRestControllerTest {
 
     @Test
     public void testSearchGame() {
-        Page<GameDetailClientDTO> page = new PageImpl<>(Collections.emptyList());
+        Page<GameModel> page = new PageImpl<>(Collections.emptyList());
         when(gameModelService.searchGame(anyString(), any())).thenReturn(page);
 
-        ResponseEntity<Page<GameDetailClientDTO>> response = gameRestController.searchGame("", 0, 7);
+        ResponseEntity<Page<GameModel>> response = gameRestController.searchGame("", 0, 7);
 
         assertEquals(page, response.getBody());
     }

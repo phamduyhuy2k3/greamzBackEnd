@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface IReviewRepo extends JpaRepository<Review, Long> {
     List<Review> findAllByGameAppid(Long appid);
+    List<Review> findAllByAccount_Id(Integer id);
 }

@@ -28,7 +28,6 @@ public class PlatformService {
         List<Platform> platforms = repo.findAll();
         platforms.forEach(platform -> {
             Hibernate.initialize(platform.getDevices());
-
         });
         return platforms;
     }
@@ -57,7 +56,6 @@ public class PlatformService {
         Page<Platform> platforms = repo.findAll(pageable);
         platforms.forEach(platform -> {
             Hibernate.initialize(platform.getDevices());
-
         });
         return platforms;
     }

@@ -1,6 +1,10 @@
 app.controller("userController", function ($scope, $http, $document, $cookies) {
 
     $scope.accounts = [];
+    $scope.orders = [];
+    $scope.reviews = [];
+    $scope.vouchers = [];
+    $scope.accountView = '';
     $scope.roles = ["USER", "ADMIN", "MANAGER", "EMPLOYEE"];
     $scope.action = 'create'
     $scope.photoCloudinary;
@@ -13,7 +17,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         email: '',
         photo: '',
         isEnabled: false,
-
         role: '',
     }
     $scope.errors = {
@@ -29,7 +32,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         {
             cloud_name: "dtreuuola",
             api_key: "118212349948963",
-            username:"phamhuytrieu12092003@gmail.com",
+            username: "phamhuytrieu12092003@gmail.com",
             use_saml: false,
             remove_header: true,
             insert_caption: "Insert",
@@ -210,6 +213,38 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         $scope.form.password = '';
         $scope.action = 'update';
 
+    }
+    $scope.view = function (id) {
+        $scope.form = $scope.accounts.find(value => value.id === id)
+        $scope.form.password = '';
+        $scope.action = 'view';
+        $http.get(`/api/user/findOrdersByAccountId/${id}`,{
+            headers:{
+                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+            }
+
+        }).then(resp =>{
+            $scope.orders = resp.data;
+            console.log($scope.orders)
+        })
+        $http.get(`/api/user/findReviewByAccountId/${id}`,{
+                    headers:{
+                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    }
+
+                }).then(resp =>{
+                    $scope.reviews = resp.data;
+                    console.log($scope.reviews)
+                })
+        $http.get(`/api/user/findVoucherByAccountId/${id}`,{
+                            headers:{
+                                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                            }
+
+                        }).then(resp =>{
+                            $scope.vouchers = resp.data;
+                            console.log($scope.vouchers)
+                        })
     }
     $scope.initialize();
 
