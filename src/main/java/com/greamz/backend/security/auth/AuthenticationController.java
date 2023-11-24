@@ -114,11 +114,12 @@ public class AuthenticationController {
     }
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequest resetPasswordRequest, HttpServletRequest request){
-        if(resetPasswordService.checkResetPasswordTokenIsValid(resetPasswordRequest.getToken())){
-            resetPasswordService.resetPassword(resetPasswordRequest.getToken(),resetPasswordRequest.getPassword(),request);
+        try {
+            resetPasswordService.resetPassword(resetPasswordRequest.getToken(),resetPasswordRequest.getConfirmPassword(),request);
             return ResponseEntity.ok().body("Reset password success");
-        }else {
+        }catch (NoSuchElementException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token is invalid");
         }
+
     }
 }

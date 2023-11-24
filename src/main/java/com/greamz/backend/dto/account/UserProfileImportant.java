@@ -1,4 +1,4 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.account;
 
 import com.greamz.backend.validation.annotations.PasswordValueMatch;
 import com.greamz.backend.validation.annotations.UniqueEmail;

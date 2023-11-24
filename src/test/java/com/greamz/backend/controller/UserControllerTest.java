@@ -1,6 +1,6 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.dto.UserProfileDTO;
+import com.greamz.backend.dto.account.UserProfileDTO;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.service.UserService;
 import org.junit.Test;

@@ -1,5 +1,6 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.game.GameDetailClientDTO;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.service.GameModelService;
 import org.junit.Test;
@@ -45,20 +46,20 @@ public class GameRestControllerTest {
 
     @Test
     public void testSearchGame() {
-        Page<GameModel> page = new PageImpl<>(Collections.emptyList());
+        Page<GameDetailClientDTO> page = new PageImpl<>(Collections.emptyList());
         when(gameModelService.searchGame(anyString(), any())).thenReturn(page);
 
-        ResponseEntity<Page<GameModel>> response = gameRestController.searchGame("", 0, 7);
+        ResponseEntity<Page<GameDetailClientDTO>> response = gameRestController.searchGame("", 0, 7);
 
         assertEquals(page, response.getBody());
     }
 
     @Test
     public void testFilter() {
-        Page<GameModel> page = new PageImpl<>(Collections.emptyList());
+        Page<GameDetailClientDTO> page = new PageImpl<>(Collections.emptyList());
         when(gameModelService.filterGamesByCategoriesAndPlatform(anyString(), anyString(), anyLong(), anyInt(), anyInt(), anyDouble(), anyDouble(), anyString(), any())).thenReturn(page);
 
-        ResponseEntity<Page<GameModel>> response = gameRestController.filter("", "", -1L, 0, 7, -1.0, -1.0, "", null);
+        ResponseEntity<Page<GameDetailClientDTO>> response = gameRestController.filter("", "", -1L, 0, 7, -1.0, -1.0, "", null);
 
         assertEquals(page, response.getBody());
     }

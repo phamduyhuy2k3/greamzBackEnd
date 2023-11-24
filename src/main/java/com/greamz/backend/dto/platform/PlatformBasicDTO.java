@@ -1,4 +1,4 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.platform;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class VoucherOrderDTO {
-    private Long id;
+@NoArgsConstructor
+@AllArgsConstructor
+public class PlatformBasicDTO {
+    private Integer id;
     private String name;
 
 }

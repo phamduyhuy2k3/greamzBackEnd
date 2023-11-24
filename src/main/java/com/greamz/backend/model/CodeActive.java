@@ -22,5 +22,6 @@ public class CodeActive extends TimeStampEntity {
     private Platform platform;
     @ManyToOne(fetch = FetchType.LAZY)
     private GameModel game;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    private AccountModel account;
 }

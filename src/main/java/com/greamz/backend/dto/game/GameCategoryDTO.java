@@ -1,5 +1,6 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.game;
 
+import com.greamz.backend.dto.category.CategoryBasicDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

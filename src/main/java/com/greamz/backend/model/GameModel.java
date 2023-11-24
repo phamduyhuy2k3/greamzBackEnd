@@ -39,11 +39,9 @@ public class GameModel extends TimeStampEntity {
     private String website;
     @Column(length = 1000)
     private String capsule_image;
-    private Integer stock;
+
     private Double price;
     private Integer discount;
-    @Transient
-    private Integer quantity;
     @ElementCollection()
     private Set<String> images;
     @ElementCollection()
@@ -59,9 +57,14 @@ public class GameModel extends TimeStampEntity {
     private List<Category> categories;
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> supported_languages;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonBackReference
-    private Platform platform;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @JoinTable(name = "game_platform",
+            joinColumns = @JoinColumn(name = "game_id"),
+            inverseJoinColumns = @JoinColumn(name = "platform_id")
+    )
+    private List<Platform> platforms;
     @OneToMany(mappedBy = "game")
     private List<Review> reviews;
     @OneToMany(mappedBy = "game")

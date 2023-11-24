@@ -1,17 +1,17 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.account;
 
 import com.greamz.backend.validation.annotations.UsernameUnique;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class EditUsername {
+@NoArgsConstructor
+public class UserProfileBasic {
     private Integer id;
+    private String photo;
     @UsernameUnique
-    @NotBlank(message = "Username are mandatory")
     private String username;
+    private String fullname;
 }

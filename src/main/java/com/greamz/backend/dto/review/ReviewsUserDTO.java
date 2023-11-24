@@ -1,5 +1,6 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.review;
 
+import com.greamz.backend.dto.account.AccountBasicDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

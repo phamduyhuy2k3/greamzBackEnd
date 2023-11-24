@@ -1,7 +1,8 @@
 package com.greamz.backend.service;
 
-import com.greamz.backend.dto.*;
+import com.greamz.backend.dto.account.*;
 import com.greamz.backend.model.AccountModel;
+import com.greamz.backend.model.Voucher;
 import com.greamz.backend.repository.IAccountRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -119,6 +120,7 @@ public class AccountModelService {
         AccountModel accountModel = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + id));
         repo.deleteById(id);
     }
+
     public static boolean isValidURL(String urlString) {
         try {
             URL url = new URL(urlString);

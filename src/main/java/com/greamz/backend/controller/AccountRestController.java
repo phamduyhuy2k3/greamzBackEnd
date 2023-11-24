@@ -1,6 +1,6 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.dto.*;
+import com.greamz.backend.dto.account.*;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.security.UserPrincipal;
