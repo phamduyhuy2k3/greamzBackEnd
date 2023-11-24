@@ -1,4 +1,4 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.game;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +18,6 @@ public class GameBasicDTO{
     private String header_image;
     private String website;
     private String capsule_image;
-    private Integer stock;
+
+
 }

@@ -9,6 +9,7 @@ import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.repository.IAccountRepo;
 import com.greamz.backend.repository.IGameRepo;
 import com.greamz.backend.repository.IOrderRepo;
+import com.greamz.backend.service.GameModelService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,19 +29,21 @@ import java.util.UUID;
 public class CheckoutService {
     private final IOrderRepo orderRepo;
     private final VnpayService vnpayService;
-    private final IGameRepo gameRepo;
+    private final GameModelService gameModelService;
     private final MomoService momoService;
     private final IAccountRepo accountRepo;
     @Transactional
     public Object placeOrder(Orders orders, HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
 
         orders.setOrdersStatus(OrdersStatus.PROCESSING);
-        Orders orderSaved= orderRepo.saveAndFlush(orders);
+        Orders orderSaved= orderRepo.save(orders);
         AccountModel accountModel= accountRepo.findById(orders.getAccount().getId()).orElseThrow();
         switch (orders.getPaymentmethod()) {
             case VNPAY:
                 try {
-                    return vnpayService.createPaymentUrl(orderSaved, request);
+                    return
+
+                            vnpayService.createPaymentUrl(orderSaved, request);
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
                 }
@@ -50,7 +53,7 @@ public class CheckoutService {
                         .orderId(orderSaved.getId())
                         .build();
             case MOMO:
-                return momoService.createMomoPayment(orderSaved,accountModel.getFullname() ).getPayUrl();
+                return momoService.createMomoPayment(orderSaved,accountModel.getFullname() );
 
             default:
                 throw new IllegalStateException("Please select a payment method: " + orders.getPaymentmethod());

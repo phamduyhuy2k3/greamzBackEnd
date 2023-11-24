@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Builder
@@ -20,6 +21,9 @@ public class OrdersDetail implements Serializable {
     private Long id;
     private Double price;
     private Integer quantity;
+    @ManyToOne
+    private Platform platform;
+    private Integer discount;
     @ManyToOne
     private GameModel game;
     @ManyToOne

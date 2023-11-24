@@ -10,6 +10,7 @@ import com.greamz.backend.model.Token;
 import com.greamz.backend.repository.IAccountRepo;
 import com.greamz.backend.repository.ITokenRepo;
 import com.greamz.backend.security.UserPrincipal;
+import com.greamz.backend.util.EncryptionUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -130,7 +131,7 @@ public class AuthenticationService {
                 var accessToken = jwtService.generateToken(userPrincipal);
                 log.info("Refresh token successfully");
                 return AuthenticationResponse.builder()
-                        .accessToken(accessToken)
+                        .accessToken(EncryptionUtil.encrypt(accessToken))
                         .build();
             }
         }

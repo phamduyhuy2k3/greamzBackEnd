@@ -1,4 +1,4 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.order;
 
 import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.enumeration.PAYMENTMETHOD;

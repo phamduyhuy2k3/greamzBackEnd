@@ -1,4 +1,4 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

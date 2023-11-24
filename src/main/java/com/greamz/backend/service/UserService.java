@@ -1,7 +1,7 @@
 package com.greamz.backend.service;
 
 
-import com.greamz.backend.dto.UserProfileDTO;
+import com.greamz.backend.dto.account.UserProfileDTO;
 import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.repository.IAccountRepo;

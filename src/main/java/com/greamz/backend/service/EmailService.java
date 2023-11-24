@@ -30,7 +30,7 @@ public class EmailService {
     }
 
     public void sendResetPasswordEmail(String email, String token, HttpServletRequest request) throws MessagingException, IOException {
-        String tokenEncrypt = EncryptionUtil.encrypt(token);
+        String tokenEncrypt = EncryptionUtil.encryptURL(token);
         if (tokenEncrypt == null) {
             throw new IOException("Token encrypt is null");
         }

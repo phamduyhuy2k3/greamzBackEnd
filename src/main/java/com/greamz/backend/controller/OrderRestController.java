@@ -1,7 +1,6 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.dto.OrderDetailsDTO;
-import com.greamz.backend.model.AccountModel;
+import com.greamz.backend.dto.order_detail.OrderDetailsDTO;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.service.OrderService;
 import lombok.RequiredArgsConstructor;

@@ -75,9 +75,6 @@ public class PaypalService {
                 Object.class
         );
         Orders orders1= orderService.getOrdersById(orders);
-        orders1.getOrdersDetails().forEach(ordersDetail -> {
-            ordersDetail.getGame().setStock(ordersDetail.getGame().getStock()-ordersDetail.getQuantity());
-        });
         if (response.getStatusCode() == HttpStatus.CREATED) {
             log.info("ORDER CAPTURED");
             orders1.setOrdersStatus(OrdersStatus.SUCCESS);

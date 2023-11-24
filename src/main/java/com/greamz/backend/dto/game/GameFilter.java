@@ -1,5 +1,6 @@
-package com.greamz.backend.dto;
+package com.greamz.backend.dto.game;
 
+import com.greamz.backend.dto.SortFilter;
 import com.greamz.backend.enumeration.Devices;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

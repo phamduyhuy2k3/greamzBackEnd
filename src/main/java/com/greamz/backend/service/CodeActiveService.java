@@ -1,18 +1,18 @@
 package com.greamz.backend.service;
 
-import com.greamz.backend.dto.CodeActiveDTO;
-import com.greamz.backend.dto.GameBasicDTO;
-import com.greamz.backend.dto.PlatformBasicDTO;
+import com.greamz.backend.dto.code.CodeActiveDTO;
+import com.greamz.backend.dto.game.GameBasicDTO;
+import com.greamz.backend.dto.platform.PlatformBasicDTO;
+import com.greamz.backend.dto.platform.PlatformDTO;
 import com.greamz.backend.model.CodeActive;
 import com.greamz.backend.repository.ICodeActiveRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Service
@@ -22,7 +22,7 @@ public class CodeActiveService {
     private final ICodeActiveRepo repo;
 
     @Transactional
-    public CodeActive save(CodeActive codeActive) throws SQLIntegrityConstraintViolationException {
+    public CodeActive save(CodeActive codeActive) throws DataIntegrityViolationException {
         CodeActive codeActiveSaved = repo.save(codeActive);
         return codeActiveSaved;
     }
@@ -56,6 +56,11 @@ public class CodeActiveService {
                 }).toList();
         return codeActiveDTOList;
     }
+    @Transactional(readOnly = true)
+    public List<PlatformDTO> findAllPlatform(Long appid){
+        List<PlatformDTO> platformDTOList = repo.findPlatformByGameAppid(appid);
+        return platformDTOList;
+    }
 
     @Transactional(readOnly = true)
     public List<CodeActiveDTO> findByIdGame(Long appid) {
@@ -85,6 +90,13 @@ public class CodeActiveService {
                     return codeActiveDTO;
                 }).toList();
         return codeActiveDTOList2;
+
+    }
+    @Transactional(readOnly = true)
+    public List<CodeActive> findByIdGameAndPlatform(Long appid, Integer platformId) {
+        List<CodeActive> CodeActive = repo.findAllByGameAppidAndPlatformId(appid, platformId);
+
+        return CodeActive;
 
     }
 
