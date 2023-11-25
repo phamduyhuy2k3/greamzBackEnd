@@ -52,31 +52,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         final String authHeader = request.getHeader("Authorization");
         String jwt;
-        if (request.getServletPath().contains("/api")|| request.getServletPath().equals("/") ) {
-            if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
-                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
-                isValid(jwt, request, response, filterChain,true);
-                return;
+        String requestURL = request.getRequestURL().toString();
+        if(requestURL.contains("http://localhost:8080")){
+            if (request.getServletPath().contains("/api")|| request.getServletPath().equals("/") ) {
+                if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
+                    jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
+                    isValid(jwt, request, response, filterChain,true);
+                    return;
+                }
+                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                    filterChain.doFilter(request, response);
+                } else {
+                    jwt = authHeader.substring(7);
+                    isValid(jwt, request, response, filterChain,true);
+                }
+            } else {
+                filterChain.doFilter(request, response);
             }
+        }else {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
             } else {
                 jwt = authHeader.substring(7);
                 isValid(jwt, request, response, filterChain,false);
             }
-        } else {
-            filterChain.doFilter(request, response);
         }
+
     }
     private void isValid(
             String token,
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain,
-            boolean isFromCookie
+            boolean isDashBoard
     ) throws ServletException, IOException {
-        final String jwtAccessToken= isFromCookie ? EncryptionUtil.decryptURL(token) : EncryptionUtil.decrypt(token);
-
+        final String jwtAccessToken= EncryptionUtil.decrypt(token);
         try {
 
             final String userName;
