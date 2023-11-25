@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +17,11 @@ import java.util.Set;
 
 @Repository
 public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificationExecutor<GameModel> {
-
+    @Procedure(name = "GetTopSellingProductsInMonthYear", outputParameterName = "result")
+    List<Object[]> getTopSellingProductsInMonthYear(
+            @Param("yearParam") int yearParam,
+            @Param("monthParam") int monthParam
+    );
     @Query("SELECT COUNT(g) FROM GameModel g WHERE g.createdAt >= CURRENT_DATE - 7 AND g.createdAt < CURRENT_DATE")
     Long countGamesAddedLastWeek();
 
