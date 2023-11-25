@@ -1,5 +1,7 @@
 app.controller("gameController", function ($scope, $rootScope, $http, $document, $cookies, $timeout) {
         $scope.games = [];
+        $scope.searchKey = '';
+        $scope.hide = false;
         $scope.reviews = [];
         $scope.keys = [];
         $scope.accountId = '';
@@ -543,6 +545,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
             }).then(resp => {
+                console.log(resp.data)
                     return resp.data;
                 }, error => {
                     return error;
@@ -602,6 +605,14 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                 }
             )
 
+
+        }
+        $scope.showAddBtn = function (scope) {
+            if (scope === 'true'){
+                $scope.hide = true;
+            }else{
+                $scope.hide = false;
+            }
 
         }
         $scope.openFormKey = function (appid) {

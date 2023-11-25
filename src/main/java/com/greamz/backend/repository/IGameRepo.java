@@ -17,13 +17,20 @@ import java.util.Set;
 @Repository
 public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificationExecutor<GameModel> {
 
+    @Query("SELECT COUNT(g) FROM GameModel g WHERE g.createdAt >= CURRENT_DATE - 7 AND g.createdAt < CURRENT_DATE")
+    Long countGamesAddedLastWeek();
+
+    @Query("SELECT COUNT(g) FROM GameModel g")
+    Long countTotalGames();
 
     List<GameModel> findAllByCategoriesId(Long categoryId);
+
     @Query("""
             select distinct g from GameModel g
             where g.appid in ?1
             """)
     List<GameModel> findAllByOrdersDetail(List<Long> ordersDetailId);
+
     @Override
     @EntityGraph(attributePaths = {"categories"})
     Optional<GameModel> findById(Long aLong);
@@ -35,6 +42,7 @@ public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificat
             or c.name like %?1% or cast(c.categoryTypes as string) like %?1%
             """)
     Page<GameModel> searchGame(String search, Pageable pageable);
+
     @Query("""
             select distinct g from GameModel g
             left join fetch g.categories c

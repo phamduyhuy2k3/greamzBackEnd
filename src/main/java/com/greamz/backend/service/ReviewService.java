@@ -106,6 +106,13 @@ public class ReviewService {
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found Review with id: " + id));
     }
     @Transactional(readOnly = true)
+    public List<Review> findAllByAccountId(Integer id) {
+        List<Review> reviews = repo.findAllByAccount_Id(id);
+        reviews.forEach(review -> {
+            review.setGame(null);
+            review.setAccount(null);
+        }
+    @Transactional(readOnly = true)
     public List<Review> findAllReviewsByAccountId(Integer accountId) {
         List<Review> reviews = repo.findAllByAccount_Id(accountId);
         reviews.forEach(reviews1 -> {

@@ -5,11 +5,14 @@ import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.Review;
+
 import com.greamz.backend.model.Voucher;
+
 import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.AccountModelService;
 import com.greamz.backend.service.OrderService;
 import com.greamz.backend.service.ReviewService;
+
 import com.greamz.backend.service.VoucherModelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -97,6 +100,12 @@ public class AccountRestController {
         List<Orders> ordersDTOS = orderService.findAllOrdersByAccountId(id);
         return ResponseEntity.ok(ordersDTOS);
     }
+    @GetMapping("/findReiewsByAccountId/{id}")
+    public ResponseEntity<List<Review>> findReiewsByAccountId(@PathVariable("id") Integer id) {
+        List<Review> reviewsUserDTOS = reviewService.findAllByAccountId(id);
+        return ResponseEntity.ok(reviewsUserDTOS);
+    }
+
 
     @GetMapping("/findReviewByAccountId/{id}")
     public ResponseEntity<List<Review>> findReviewByAccountId(@PathVariable("id") Integer id) {

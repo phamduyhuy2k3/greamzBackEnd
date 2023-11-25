@@ -111,4 +111,14 @@ public class GameRestController {
 //        return ResponseEntity.ok(gameModels);
 //    }
 
+    @GetMapping("/totalGame")
+    public Long countAllGame(){
+        return service.countAllByAppid();
+    }
+    @GetMapping("/totalGameLastWeek")
+    public Long countAllGameLastWeek(){
+        return service.countGamesAddedLastWeek();
+    }
+
+
 }

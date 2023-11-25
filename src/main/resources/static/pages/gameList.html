@@ -196,7 +196,7 @@
                     <ul class="nav nav-pills nav-fill p-1" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#code-tabs"
-                               role="tab" aria-controls="preview" aria-selected="true">
+                               role="tab" aria-controls="preview" aria-selected="true" ng-click="showAddBtn('false')">
                                                   <span class="material-icons align-middle mb-1">
                                                     password
                                                   </span>
@@ -205,7 +205,7 @@
                         </li>
                         <li class="nav-item" disabled="true">
                             <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#table-tabs"
-                               role="tab" aria-controls="code" aria-selected="false">
+                               role="tab" aria-controls="code" aria-selected="false" ng-click="showAddBtn('true')">
                                                     <span class="material-icons align-middle mb-1 font-weight-bold">
                                                       list
                                                     </span>
@@ -240,8 +240,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="table-tabs" class="tab-pane fade">
-                            <table class="table">
+                        <div id="table-tabs" class="tab-pane fade overflow-y-auto"
+                             style="height: 300px">
+                            <div class="mb-3">
+                                <div class="input-group input-group-static">
+                                    <h5 class="card-title">Search </h5>
+                                    <input type="text" class="form-control text-xl-start"
+                                           placeholder="search by platform or by id"
+                                           ng-model="searchKey">
+                                </div>
+                            </div>
+                            <table class="table ">
                                 <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -251,7 +260,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="k in keys">
+                                <tr ng-repeat="k in keys |filter: searchKey ">
                                     <th>{{k.id}}</th>
                                     <td>{{k.code}}</td>
                                     <td>{{k.active}}</td>
@@ -266,7 +275,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
                 </button>
-                <button type="button" class="btn btn-primary" ng-click="addKey()">Add
+                <button type="button" class="btn btn-primary" ng-click="addKey()" ng-hide="hide">Add
                 </button>
             </div>
         </div>
@@ -309,22 +318,22 @@
                         <div id="detail-tabs-icons" class="tab-pane fade show active">
                             <div class="card mb-3">
                                 <div class="container0">
-                                    <img src="{{form.header_image}}" class="card-img-top" id="image_background"
-                                         style="height: 400px" alt="loading">
-                                    <!--                                    <video class="card-img-top" id="video-background" style="height: 400px"-->
-                                    <!--                                           ng-if="form.movies.length > 0" autoplay muted controls>-->
-                                    <!--                                        <source src="{{form.movies}}" type="video/mp4">-->
-                                    <!--                                        <source src="{{form.movies}}" type="video/ogg"/>-->
-                                    <!--                                        Your browser does not support the video tag.-->
-                                    <!--                                    </video>-->
+<!--                                    <img src="{{form.header_image}}" class="card-img-top" id="image_background"-->
+<!--                                         style="height: 400px" alt="loading">-->
+                                    <video class="card-img-top" id="video-background" style="height: 400px; width: 100%; object-fit: cover"
+                                           ng-if="form.movies.length > 0" autoplay muted controls>
+                                        <source src="{{form.movies}}" type="video/mp4">
+                                        <source src="{{form.movies}}" type="video/ogg"/>
+                                        Your browser does not support the video tag.
+                                    </video>
                                 </div>
 
                                 <div class="card-body">
                                     <h3 class="card-title">{{form.name}}</h3>
                                     <h5 class="card-text">CATEGORIES:<small class="text-body-secondary"><p
                                             class="card-text">{{form.categories}}</p></small></h5>
-                                    <h5 class="card-text">PLATFORMS:<small class="text-body-secondary"><p
-                                            class="card-text">{{form.platforms}}</p></small></h5>
+                                    <!--                                    <h5 class="card-text">PLATFORMS:<small class="text-body-secondary"><p-->
+                                    <!--                                            class="card-text">{{form.platforms}}</p></small></h5>-->
                                     <h5 class="card-text">DETAIL DESCRIPTION:<p class="card-text"><small
                                             class="text-body-secondary">{{form.detailed_description}}</small></p></h5>
                                     <h5 class="card-text"><small class="text-body-secondary">ABOUT THE GAME: <p

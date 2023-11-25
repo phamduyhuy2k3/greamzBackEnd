@@ -218,12 +218,12 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         $scope.form = $scope.accounts.find(value => value.id === id)
         $scope.form.password = '';
         $scope.action = 'view';
-        $http.get(`/api/user/findOrdersByAccountId/${id}`,{
-            headers:{
+        $http.get(`/api/user/findOrdersByAccountId/${id}`, {
+            headers: {
                 'Authorization': 'Bearer ' + $cookies.get('accessToken')
             }
 
-        }).then(resp =>{
+        }).then(resp => {
             $scope.orders = resp.data;
             console.log($scope.orders)
         })
