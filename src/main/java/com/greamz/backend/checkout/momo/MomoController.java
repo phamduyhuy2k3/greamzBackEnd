@@ -29,7 +29,6 @@ public class MomoController { ;
 
     @SneakyThrows
     @GetMapping("momo-result")
-
     public void result(
             @RequestParam("partnerCode") String partnerCode,
             @RequestParam("orderId") String orderId,
@@ -62,8 +61,6 @@ public class MomoController { ;
         result.setExtraData(extraData);
         result.setSignature(signature);
         momoService.momoResult(result,response);
-
-
 
     }
 }
