@@ -34,7 +34,7 @@ public class LogoutService implements LogoutHandler {
             return;
         }
         jwt = EncryptionUtil.decrypt(authHeader.substring(7));
-        String username = jwtService.extractUsername(jwt);
+        String username = jwtService.extractUsernameThatTokenExpired(jwt);
         try {
             var user = accountService.findByUserNameOrEmail(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
 

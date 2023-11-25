@@ -5,6 +5,8 @@ import com.greamz.backend.dto.game.GameBasicDTO;
 import com.greamz.backend.dto.game.GameLibrary;
 import com.greamz.backend.dto.order.OrderDTO;
 import com.greamz.backend.dto.order_detail.OrderDetailsDTO;
+import com.greamz.backend.dto.platform.PlatformBasicDTO;
+import com.greamz.backend.dto.voucher.VoucherOrderDTO;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.OrdersDetail;
 import com.greamz.backend.enumeration.OrdersStatus;
@@ -127,19 +129,9 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getAllOrdersDetailByOrderId(UUID orderId) {
-        Set<OrdersDetail> ordersDetailPage = orderDetailRepo.findAllByOrders_Id(orderId);
-        ordersDetailPage.forEach(ordersDetail -> {
-            Hibernate.initialize(ordersDetail.getGame());
-            ordersDetail.getGame().setPlatforms(null);
-            ordersDetail.getGame().setSupported_languages(null);
-            ordersDetail.getGame().setReviews(null);
-            ordersDetail.getGame().setCategories(null);
-            ordersDetail.getGame().setMovies(null);
-            ordersDetail.getGame().setImages(null);
-            ordersDetail.getGame().setCodeActives(null);
-            ordersDetail.setOrders(null);
-        });
+
         Orders orders = orderRepo.findById(orderId).orElseThrow();
+        Hibernate.initialize(orders.getOrdersDetails());
         OrderDTO orderDTO = OrderDTO.builder()
                 .id(orders.getId())
                 .createdAt(orders.getCreatedAt())
@@ -147,8 +139,35 @@ public class OrderService {
                 .paymentmethod(orders.getPaymentmethod())
                 .totalPrice(orders.getTotalPrice())
                 .build();
-        Map<String, Object> map = Map.of("order", orderDTO, "orderDetail", ordersDetailPage);
-        return map;
+        List<OrderDetailsDTO> orderDetailsDTOS=new ArrayList<>();
+        orders.getOrdersDetails().forEach(ordersDetail -> {
+            Hibernate.initialize(ordersDetail.getGame());
+            ordersDetail.getGame().setPlatforms(null);
+            ordersDetail.getGame().setSupported_languages(null);
+            ordersDetail.getGame().setReviews(null);
+            ordersDetail.getGame().setCategories(null);
+            ordersDetail.getGame().setMovies(null);
+            ordersDetail.getGame().setImages(null);
+            OrderDetailsDTO orderDetailsDTO = OrderDetailsDTO.builder()
+                    .game(
+                            GameBasicDTO.builder()
+                                    .appid(ordersDetail.getGame().getAppid())
+                                    .name(ordersDetail.getGame().getName())
+                                    .header_image(ordersDetail.getGame().getHeader_image())
+                                    .build()
+                    )
+                    .platform(
+                            PlatformBasicDTO.builder()
+                                    .id(ordersDetail.getPlatform().getId())
+                                    .name(ordersDetail.getPlatform().getName())
+                                    .build()
+                    )
+                    .quantity(ordersDetail.getQuantity())
+                    .price(ordersDetail.getPrice())
+                    .build();
+            orderDetailsDTOS.add(orderDetailsDTO);
+        });
+        return Map.of("order", orderDTO, "orderDetail", orderDetailsDTOS);
     }
 
     @Transactional(readOnly = true)
