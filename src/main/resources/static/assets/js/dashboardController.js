@@ -2,6 +2,23 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
     $scope.totalGames = 0;
     $scope.totalGameLastWeek = 0;
     $scope.percentageChange = 0;
+
+    $scope.totalString='';
+
+    $('.counter-count').each(function () {
+        $scope.totalString = $scope.totalGames.toString();
+        $(this).prop('Counter',0).animate({
+            Counter: $scope.totalString
+        }, {
+            //chnage count up speed here
+            duration: 2000,
+            easing: 'swing',
+            step: function (now) {
+                $(this).text(Math.ceil(now));
+            }
+        });
+    });
+
     $scope.initialize = function () {
         $http.get("/api/v1/game/totalGame", {
             headers: {

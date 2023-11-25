@@ -36,12 +36,12 @@
                     </div>
                     <div class="text-end pt-1">
                         <p class="text-sm mb-0 text-capitalize">Game total</p>
-                        <h4 class="mb-0"><span class="text-info font-weight-bolder">{{totalGames}} </span> added</h4>
+                        <h4 class="mb-0"><span class="text-info font-weight-bolder counter-count" ng-bind="totalGames">{{totalGames}} </span> added</h4>
                     </div>
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer p-3">
-                    <p class="mb-0"><span class="text-success text-sm font-weight-bolder">{{percentageChange}}% </span>than
+                    <p class="mb-0"><span class="text-success text-sm font-weight-bolder"><i class="fa fa-arrow-up text-success" aria-hidden="true"></i> {{percentageChange}}% </span>than
                         last week</p>
                 </div>
             </div>

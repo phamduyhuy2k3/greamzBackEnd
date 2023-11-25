@@ -75,7 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain,
             boolean isFromCookie
     ) throws ServletException, IOException {
-        final String jwtAccessToken= isFromCookie ? EncryptionUtil.decryptURL(token) : EncryptionUtil.decrypt(token);
+        final String jwtAccessToken= EncryptionUtil.decrypt(token);
 
         try {
 

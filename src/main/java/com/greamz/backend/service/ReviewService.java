@@ -111,7 +111,9 @@ public class ReviewService {
         reviews.forEach(review -> {
             review.setGame(null);
             review.setAccount(null);
-        }
+        });
+        return reviews;
+    }
     @Transactional(readOnly = true)
     public List<Review> findAllReviewsByAccountId(Integer accountId) {
         List<Review> reviews = repo.findAllByAccount_Id(accountId);
