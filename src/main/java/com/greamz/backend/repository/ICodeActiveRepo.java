@@ -24,7 +24,7 @@ public interface ICodeActiveRepo extends JpaRepository<CodeActive, Long> {
                         )
                         FROM CodeActive c
                         left join c.platform p on p.id = c.platform.id
-                        WHERE c.game.appid = ?1
+                        WHERE c.game.appid = ?1 and c.account is null and c.active = false
                         group by p.id
                       
             """)

@@ -9,8 +9,7 @@
             <div class="card-body px-0 pb-2"
                  style="padding-top: 15px;">
                 <div class="table-responsive p-0">
-                    <div class="row input-group
-                                      input-group-dynamic">
+                    <div class="row " style="margin-right: 0px">
                         <button class="col btn btn-icon btn-3 bg-gradient-primary shadow-primary" type="button"
                                 style="margin-left: 30px; max-width: 120px"
                                 ng-click="action='create'"
@@ -22,14 +21,38 @@
                         </span>
                             <span class="btn-inner--text">Create</span>
                         </button>
-                        <input type="text"
-                               class="col-md-auto form-control"
-                               style="margin: 0px 10px 0px 10px"
-                               placeholder="Search by game or by category"
-                               aria-label="Username"
-                               aria-describedby="basic-addon1"
-                               ng-model="searchGame"
-                               ng-change="searchGameEvent()">
+                        <div class="col input-group
+                                      input-group-outline">
+                            <input type="text"
+                                   class="col-md-auto form-control"
+                                   style="margin: 0px 10px 0px 10px; padding: 0px 0px 0px 0px; height: 45px;"
+                                   placeholder="Search by game or by category"
+                                   aria-label="Username"
+                                   aria-describedby="basic-addon1"
+                                   ng-model="searchGame"
+                                   ng-change="searchGameEvent()">
+                        </div>
+                        <div class="col btn-group" style="margin-right: 20px" role="group"
+                             aria-label="Basic radio toggle button group">
+                            <input type="radio" class="btn-check checked" name="btnradio" id="btnradio1"
+                                   autocomplete="off" checked
+                                   ng-model="search"
+                                   ng-value="'all'"
+                                   ng-change="searchGameEvent()">
+                            <label class="btn btn-outline-primary" for="btnradio1">ALL</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+                                   ng-model="search"
+                                   ng-value="'name'"
+                                   ng-change="searchGameEvent()">
+                            <label class="btn btn-outline-primary" for="btnradio2">NAME</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
+                                   ng-model="search"
+                                   ng-value="'category'"
+                                   ng-change="searchGameEvent()">
+                            <label class="btn btn-outline-primary" for="btnradio3">CATEGORY</label>
+                        </div>
                     </div>
                     <div ng-show="isLoading" class="text-center">
                         <div class="spinner-border" role="status">
@@ -424,7 +447,8 @@
     </div>
 </div>
 <!--modal-->
-<div class="modal fade modal-crud" id="gameModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+<div ng-controller="modalCreateGameController" class="modal fade modal-crud" id="gameModal" tabindex="-1"
+     aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
@@ -462,24 +486,21 @@
                         <div class="col-12"
                              style="margin-top: 100px;">
                             <label>About</label>
-                            <div id="about"
-                            >
+                            <div id="about">
                             </div>
                         </div>
                         <div class="col-md-12"
                              style="margin-top: 100px;
                          margin-bottom: 100px">
                             <label>Short description</label>
-                            <div id="short_description"
-                            >
+                            <div id="short_description">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="input-group input-group-static">
                                 <label>Support Language</label>
                                 <select multiple id="country"
-                                        class="form-select" style="width: 100%"
-                                >
+                                        class="form-select" style="width: 100%">
                                 </select>
                             </div>
                         </div>
@@ -488,8 +509,7 @@
                                 <label>Website</label>
                                 <input type="text" class="form-control"
                                        placeholder="https://example.com/"
-                                       ng-model="form.website"
-                                >
+                                       ng-model="form.website">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -745,7 +765,7 @@
                 <button type="button" class="btn-close"
                         id="btnCloseModal2"
                         data-bs-toggle="modal"
-                        data-bs-target="#exampleModal"
+                        data-bs-target="#gameModal"
                         style="background-color: rebeccapurple"
                         aria-label="Close"></button>
             </div>
@@ -755,6 +775,8 @@
             <div class="modal-footer">
                 <button type="button"
                         id="btnCloseModal"
+                        data-bs-toggle="modal"
+                        data-bs-target="#gameModal"
                         class="btn bg-gradient-info">
                     Close
                 </button>
@@ -771,7 +793,7 @@
                 <button type="button" class="btn-close"
                         id="btnModalHeader"
                         data-bs-toggle="modal"
-                        data-bs-target="#exampleModal"
+                        data-bs-target="#gameModal"
                         style="background-color: rebeccapurple"
                         aria-label="Close"></button>
             </div>
@@ -781,6 +803,8 @@
             <div class="modal-footer">
                 <button type="button"
                         id="btnCloseModalHeader"
+                        data-bs-toggle="modal"
+                        data-bs-target="#gameModal"
                         class="btn bg-gradient-info">
                     Close
                 </button>
@@ -797,7 +821,7 @@
                 <button type="button" class="btn-close"
                         id="btnModalCapsule"
                         data-bs-toggle="modal"
-                        data-bs-target="#exampleModal"
+                        data-bs-target="#gameModal"
                         style="background-color: rebeccapurple"
                         aria-label="Close"></button>
             </div>
@@ -807,6 +831,8 @@
             <div class="modal-footer">
                 <button type="button"
                         id="btnCloseModalCapsule"
+                        data-bs-toggle="modal"
+                        data-bs-target="#gameModal"
                         class="btn bg-gradient-info">
                     Close
                 </button>
@@ -823,7 +849,7 @@
                 <button type="button" class="btn-close"
                         id="btnMovie"
                         data-bs-toggle="modal"
-                        data-bs-target="#exampleModal"
+                        data-bs-target="#gameModal"
                         style="background-color: rebeccapurple"
                         aria-label="Close"></button>
             </div>
@@ -833,6 +859,8 @@
             <div class="modal-footer">
                 <button type="button"
                         id="btnCloseMovie"
+                        data-bs-toggle="modal"
+                        data-bs-target="#gameModal"
                         class="btn bg-gradient-info">
                     Close
                 </button>

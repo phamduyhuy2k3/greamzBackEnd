@@ -46,10 +46,10 @@ public class GameRestControllerTest {
 
     @Test
     public void testSearchGame() {
-        Page<GameDetailClientDTO> page = new PageImpl<>(Collections.emptyList());
+        Page<GameModel> page = new PageImpl<>(Collections.emptyList());
         when(gameModelService.searchGame(anyString(), any())).thenReturn(page);
 
-        ResponseEntity<Page<GameDetailClientDTO>> response = gameRestController.searchGame("", 0, 7);
+        ResponseEntity<Page<GameModel>> response = gameRestController.searchGame("", 0, 7);
 
         assertEquals(page, response.getBody());
     }
@@ -57,9 +57,9 @@ public class GameRestControllerTest {
     @Test
     public void testFilter() {
         Page<GameDetailClientDTO> page = new PageImpl<>(Collections.emptyList());
-        when(gameModelService.filterGamesByCategoriesAndPlatform(anyString(), anyString(), anyLong(), anyInt(), anyInt(), anyDouble(), anyDouble(), anyString(), any())).thenReturn(page);
+        when(gameModelService.filterGamesByCategoriesAndPlatform(anyString(), anyString(), anyInt(), anyInt(), anyDouble(), anyDouble(), anyString(), any())).thenReturn(page);
 
-        ResponseEntity<Page<GameDetailClientDTO>> response = gameRestController.filter("", "", -1L, 0, 7, -1.0, -1.0, "", null);
+        ResponseEntity<Page<GameDetailClientDTO>> response = gameRestController.filter("", "", 0, 7, -1.0, -1.0, "", null);
 
         assertEquals(page, response.getBody());
     }
