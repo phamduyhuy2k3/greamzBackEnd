@@ -30,4 +30,5 @@ public class Platform extends TimeStampEntity {
     @ManyToMany(mappedBy = "platforms", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<GameModel> gameModels;
+
 }

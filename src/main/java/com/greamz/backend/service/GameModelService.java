@@ -3,13 +3,11 @@ package com.greamz.backend.service;
 import com.greamz.backend.dto.platform.PlatformDTO;
 import com.greamz.backend.dto.game.GameDetailClientDTO;
 import com.greamz.backend.dto.game.GenreDTO;
-import com.greamz.backend.model.Category;
-import com.greamz.backend.model.CodeActive;
-import com.greamz.backend.model.GameModel;
-import com.greamz.backend.model.OrdersDetail;
+import com.greamz.backend.model.*;
 import com.greamz.backend.repository.IGameRepo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.persistence.criteria.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +38,7 @@ public class GameModelService {
     @Transactional(rollbackFor = NoSuchElementException.class)
     public void updateStockForGameFromOrder(List<OrdersDetail> ordersDetail) {
         ordersDetail.forEach(ordersDetail1 -> {
-           List<CodeActive> codeActiveList= codeActiveService.findByIdGameAndPlatform(ordersDetail1.getGame().getAppid(), ordersDetail1.getPlatform().getId());
+           List<CodeActive> codeActiveList= codeActiveService.findByIdGameAndPlatformNotActiveAndAccountnull(ordersDetail1.getGame().getAppid(), ordersDetail1.getPlatform().getId());
             if(ordersDetail1.getQuantity()<=codeActiveList.size()){
                 codeActiveList.stream().limit(ordersDetail1.getQuantity()).forEach(codeActive -> {
                     codeActive.setAccount(ordersDetail1.getOrders().getAccount());
@@ -49,7 +47,7 @@ public class GameModelService {
             }
         });
 
-        gameModelRepository.saveAllAndFlush(ordersDetail.stream().map(OrdersDetail::getGame).collect(Collectors.toList()));
+
     }
 
     @Transactional(readOnly = true)
@@ -230,7 +228,7 @@ public class GameModelService {
     public Page<GameDetailClientDTO> filterGamesByCategoriesAndPlatform(
             String q,
             String categoriesId,
-            Long platformId,
+
             int page,
             int size,
 //            String devices,
@@ -240,56 +238,24 @@ public class GameModelService {
             Sort.Direction direction
     ) {
         List<Specification<GameModel>> gameModelSpecifications = new ArrayList<>();
-        if (categoriesId.isBlank() && platformId == -1 && minPrice == -1 && maxPrice == -1 && q.isBlank() && !sort.isBlank()) {
+        if (categoriesId.isBlank()  && minPrice == -1 && maxPrice == -1 && q.isBlank() && !sort.isBlank()) {
             Pageable pageable = PageRequest.of(page, size).withSort(Sort.by(direction, sort));
-            return findAll(pageable).map(gameModel -> {
-                Hibernate.initialize(gameModel.getImages());
-                Hibernate.initialize(gameModel.getMovies());
-                Hibernate.initialize(gameModel.getSupported_languages());
-                Hibernate.initialize(gameModel.getCategories());
-                List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
-                return GameDetailClientDTO
-                        .builder()
-                        .appid(gameModel.getAppid())
-                        .name(gameModel.getName())
-                        .detailed_description(gameModel.getDetailed_description())
-                        .about_the_game(gameModel.getAbout_the_game())
-                        .short_description(gameModel.getShort_description())
-                        .header_image(gameModel.getHeader_image())
-                        .website(gameModel.getWebsite())
-                        .capsule_image(gameModel.getCapsule_image())
-                        .images(gameModel.getImages())
-                        .movies(gameModel.getMovies())
-                        .price(gameModel.getPrice())
-                        .platforms(platforms)
-                        .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
-                        .build();
-            });
-        } else if (categoriesId.isBlank() && platformId == -1 && minPrice == -1 && maxPrice == -1 && q.isBlank()) {
+            return findAll(pageable).map(gameModel -> GameDetailClientDTO
+                    .builder()
+                    .appid(gameModel.getAppid())
+                    .name(gameModel.getName())
+                    .header_image(gameModel.getHeader_image())
+                    .price(gameModel.getPrice())
+                    .build());
+        } else if (categoriesId.isBlank()  && minPrice == -1 && maxPrice == -1 && q.isBlank()) {
             Pageable pageable = PageRequest.of(page, size);
-            return findAll(pageable).map(gameModel -> {
-                Hibernate.initialize(gameModel.getImages());
-                Hibernate.initialize(gameModel.getMovies());
-                Hibernate.initialize(gameModel.getSupported_languages());
-                Hibernate.initialize(gameModel.getCategories());
-                List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
-                return GameDetailClientDTO
-                        .builder()
-                        .appid(gameModel.getAppid())
-                        .name(gameModel.getName())
-                        .detailed_description(gameModel.getDetailed_description())
-                        .about_the_game(gameModel.getAbout_the_game())
-                        .short_description(gameModel.getShort_description())
-                        .header_image(gameModel.getHeader_image())
-                        .website(gameModel.getWebsite())
-                        .capsule_image(gameModel.getCapsule_image())
-                        .images(gameModel.getImages())
-                        .movies(gameModel.getMovies())
-                        .price(gameModel.getPrice())
-                        .platforms(platforms)
-                        .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
-                        .build();
-            });
+            return findAll(pageable).map(gameModel -> GameDetailClientDTO
+                    .builder()
+                    .appid(gameModel.getAppid())
+                    .name(gameModel.getName())
+                    .header_image(gameModel.getHeader_image())
+                    .price(gameModel.getPrice())
+                    .build());
         }
         if (!categoriesId.isBlank()) {
             Specification<GameModel> categorySpecification = (root, query, criteriaBuilder) -> {
@@ -298,13 +264,13 @@ public class GameModelService {
             };
             gameModelSpecifications.add(categorySpecification);
         }
-        if (platformId != -1) {
-            Specification<GameModel> platformSpecification = (root, query, criteriaBuilder) -> {
-                Predicate platformPredicate = criteriaBuilder.equal(root.get("platform").get("id"), platformId);
-                return platformPredicate;
-            };
-            gameModelSpecifications.add(platformSpecification);
-        }
+//        if (platformId != -1) {
+//            Specification<GameModel> platformSpecification = (root, query, criteriaBuilder) -> {
+//                Predicate platformPredicate = criteriaBuilder.equal(root.get("platform").get("id"), platformId);
+//                return platformPredicate;
+//            };
+//            gameModelSpecifications.add(platformSpecification);
+//        }
 
         if (!q.isBlank()) {
             Specification<GameModel> searchSpecification = (root, query, criteriaBuilder) -> {
@@ -353,32 +319,15 @@ public class GameModelService {
         }
 
         Page<GameModel> gameModelPage = gameModelRepository.findAll(combinedSpecification, pageable);
-        Page<GameDetailClientDTO> gameDetailClientDTOPage = gameModelPage.map(gameModel -> {
-            Hibernate.initialize(gameModel.getImages());
-            Hibernate.initialize(gameModel.getMovies());
-            Hibernate.initialize(gameModel.getSupported_languages());
-            Hibernate.initialize(gameModel.getCategories());
-            List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
-            return GameDetailClientDTO
-                    .builder()
-                    .appid(gameModel.getAppid())
-                    .name(gameModel.getName())
-                    .detailed_description(gameModel.getDetailed_description())
-                    .about_the_game(gameModel.getAbout_the_game())
-                    .short_description(gameModel.getShort_description())
-                    .header_image(gameModel.getHeader_image())
-                    .website(gameModel.getWebsite())
-                    .capsule_image(gameModel.getCapsule_image())
-                    .images(gameModel.getImages())
-                    .movies(gameModel.getMovies())
-                    .price(gameModel.getPrice())
-                    .platforms(platforms)
-                    .categories(gameModel.getCategories().stream().map(category -> new GenreDTO(category.getId(), category.getName())).collect(Collectors.toList()))
-                    .build();
-        });
+        Page<GameDetailClientDTO> gameDetailClientDTOPage = gameModelPage.map(gameModel -> GameDetailClientDTO
+                .builder()
+                .appid(gameModel.getAppid())
+                .name(gameModel.getName())
+                .header_image(gameModel.getHeader_image())
+                .price(gameModel.getPrice())
+                .build());
         return gameDetailClientDTOPage;
     }
-
     public List<Category> getCategoriesForGame(GameModel gameModel) {
         // Load the categories when needed
         return gameModel.getCategories();
@@ -389,7 +338,7 @@ public class GameModelService {
         return gameModel.getSupported_languages();
     }
 
-    private List<Long> parseIds(String idsParam) {
+    private List<Long>  parseIds(String idsParam) {
         if (idsParam == null || idsParam.equals("null") || idsParam.isBlank()) {
             return Collections.emptyList();
         } else {
@@ -400,6 +349,7 @@ public class GameModelService {
                     .collect(Collectors.toList());
         }
     }
+
     @Transactional(readOnly = true)
     public Long countGamesAddedLastWeek() {
         return gameModelRepository.countGamesAddedLastWeek();
@@ -407,5 +357,16 @@ public class GameModelService {
     @Transactional(readOnly = true)
     public Long countAllByAppid() {
         return gameModelRepository.countTotalGames();
+    }
+    private List<Integer>  parseIdsInt(String idsParam) {
+        if (idsParam == null || idsParam.equals("null") || idsParam.isBlank()) {
+            return Collections.emptyList();
+        } else {
+            List<String> idStrings = Arrays.asList(idsParam.split(","));
+            return idStrings.stream()
+                    .filter(s -> !s.isEmpty()) // Filter out empty strings
+                    .map(Integer::valueOf)
+                    .collect(Collectors.toList());
+        }
     }
 }

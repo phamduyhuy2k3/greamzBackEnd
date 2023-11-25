@@ -3,6 +3,7 @@ package com.greamz.backend.service;
 import com.greamz.backend.dto.account.*;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Orders;
+import com.greamz.backend.model.Voucher;
 import com.greamz.backend.repository.IAccountRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -152,4 +153,13 @@ public class AccountModelService {
             return false;
         }
     }
+    @Transactional(readOnly = true)
+    public List<Voucher> findAllVouchersByAccountId(Integer accountId) {
+        List<Voucher> vouchers = repo.findVoucherById(accountId);
+        vouchers.forEach(reviews1 -> {
+
+        });
+        return vouchers;
+    }
+
 }

@@ -28,4 +28,12 @@ public class GameDetailClientDTO {
     private Set<String> movies;
     private List<PlatformDTO> platforms;
     private List<GenreDTO> categories;
+
+    public GameDetailClientDTO(Long appid, String name, Double price, String header_image) {
+        this.appid = appid;
+        this.name = name;
+        this.price = price;
+        this.header_image = header_image;
+
+    }
 }

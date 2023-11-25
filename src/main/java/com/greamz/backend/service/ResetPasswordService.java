@@ -29,7 +29,7 @@ public class ResetPasswordService {
         emailService.sendResetPasswordEmail(email,token,request);
     }
     public void resetPassword(String token,String newPassword, HttpServletRequest request) {
-        String tokenDecrypt= EncryptionUtil.decryptURL(token);
+        String tokenDecrypt= EncryptionUtil.decrypt(token);
         String email= jwtService.extractUsername(tokenDecrypt);
         AccountModel accountModel = accountRepo.findByUserNameOrEmail(email).orElseThrow(() -> new RuntimeException("Not found account with email: " + email));
         accountModel.setPassword(passwordEncoder.encode(newPassword));
@@ -37,7 +37,7 @@ public class ResetPasswordService {
     }
     public boolean checkResetPasswordTokenIsValid(String token) {
 
-        String tokenDecrypt= EncryptionUtil.decryptURL(token);
+        String tokenDecrypt= EncryptionUtil.decrypt(token);
         String username= jwtService.extractUsername(tokenDecrypt);
         log.info("username: "+username);
         return accountRepo.existsByEmail(username);
