@@ -4,9 +4,11 @@ import com.greamz.backend.dto.account.*;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Orders;
+import com.greamz.backend.model.Review;
 import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.AccountModelService;
 import com.greamz.backend.service.OrderService;
+import com.greamz.backend.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ import static com.greamz.backend.util.Mapper.mapObject;
 public class AccountRestController {
     private final AccountModelService service;
     private final OrderService orderService;
+    private final ReviewService reviewService;
 
     @GetMapping("/currentUser")
     public ResponseEntity<UserProfileDTO> currentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
@@ -91,6 +94,12 @@ public class AccountRestController {
         List<Orders> ordersDTOS = orderService.findAllOrdersByAccountId(id);
         return ResponseEntity.ok(ordersDTOS);
     }
+    @GetMapping("/findReiewsByAccountId/{id}")
+    public ResponseEntity<List<Review>> findReiewsByAccountId(@PathVariable("id") Integer id) {
+        List<Review> reviewsUserDTOS = reviewService.findAllByAccountId(id);
+        return ResponseEntity.ok(reviewsUserDTOS);
+    }
+
 
     @PostMapping("/save")
     public AccountModel save(@RequestBody AccountRequest account) {

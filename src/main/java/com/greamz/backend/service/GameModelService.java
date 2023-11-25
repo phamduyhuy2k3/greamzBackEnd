@@ -75,13 +75,12 @@ public class GameModelService {
         List<Category> categories = categoryService.findAllByGameModelsAppid(appid);
         gameModel.setCategories(categories);
         gameModel.setReviews(null);
-        gameModel.setCategories(null);
         gameModel.setCodeActives(null);
+        gameModel.setPlatforms(null);
         Hibernate.initialize(gameModel.getImages());
         Hibernate.initialize(gameModel.getMovies());
         Hibernate.initialize(gameModel.getSupported_languages());
         Hibernate.initialize(gameModel.getCategories());
-        Hibernate.initialize(gameModel.getPlatforms());
         return gameModel;
     }
     @Transactional(readOnly = true)
@@ -400,5 +399,13 @@ public class GameModelService {
                     .map(Long::parseLong)
                     .collect(Collectors.toList());
         }
+    }
+    @Transactional(readOnly = true)
+    public Long countGamesAddedLastWeek() {
+        return gameModelRepository.countGamesAddedLastWeek();
+    }
+    @Transactional(readOnly = true)
+    public Long countAllByAppid() {
+        return gameModelRepository.countTotalGames();
     }
 }

@@ -120,6 +120,15 @@
                                 Orders
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link mb-0 px-0 py-1" data-bs-toggle="tab" href="#review-tabs-icons"
+                               role="tab" aria-controls="code" aria-selected="false">
+                                <span class="material-icons align-middle mb-1">
+                                  sports_esports
+                                </span>
+                                Review
+                            </a>
+                        </li>
                     </ul>
                     <!--                    content navs-->
                     <div class="tab-content mt-2">
@@ -219,6 +228,71 @@
                                         <td class="align-middle text-center text-sm">
                                             <p class="text-xs font-weight-bold mb-0">
                                                 {{od.paymentmethod}}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="review-tabs-icons" class="tab-pane fade ">
+                            <div class="overflow-y-auto" style="height: 200px;">
+                                <div ng-show="isLoading" class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                                <table ng-hide="isLoading" class="table align-items-center mb-0 " id="focusedInput">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            ID REVIEW
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            CONTENT
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            RATING
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            LIKE
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            DISLIKE
+                                        </th>
+                                        <th class="text-secondary opacity-7"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="r in reviews">
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">
+                                                <a href="javascript:;">
+                                                    {{r.id}}
+                                                </a>
+                                            </p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">
+                                                <a href="javascript:;">
+                                                    {{r.text}}
+                                                </a>
+                                            </p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0"
+                                               >
+                                                {{r.rating}}
+                                            </p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">
+                                                {{r.likes}}
+                                            </p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">
+                                                {{r.dislikes}}
                                             </p>
                                         </td>
                                     </tr>

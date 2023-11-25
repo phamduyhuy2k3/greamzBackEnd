@@ -64,6 +64,7 @@ public class CodeActiveService {
 
     @Transactional(readOnly = true)
     public List<CodeActiveDTO> findByIdGame(Long appid) {
+
         List<CodeActive> codeActive = repo.findAllByGameAppid(appid);
         List<CodeActiveDTO> codeActiveDTOList2 = codeActive.stream()
                 .map(codeActive1 -> {
