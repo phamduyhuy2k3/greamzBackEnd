@@ -6,6 +6,7 @@ import com.greamz.backend.dto.game.GameLibrary;
 import com.greamz.backend.dto.order.OrderDTO;
 import com.greamz.backend.dto.order_detail.OrderDetailsDTO;
 import com.greamz.backend.dto.platform.PlatformBasicDTO;
+import com.greamz.backend.dto.review.ReviewBasic;
 import com.greamz.backend.dto.voucher.VoucherOrderDTO;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.OrdersDetail;
@@ -16,6 +17,7 @@ import com.greamz.backend.repository.IGameRepo;
 import com.greamz.backend.repository.IOrderDetail;
 import com.greamz.backend.repository.IOrderRepo;
 import com.greamz.backend.repository.IReviewRepo;
+import com.greamz.backend.util.Mapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.PersistenceContext;
@@ -141,30 +143,7 @@ public class OrderService {
                 .build();
         List<OrderDetailsDTO> orderDetailsDTOS=new ArrayList<>();
         orders.getOrdersDetails().forEach(ordersDetail -> {
-            Hibernate.initialize(ordersDetail.getGame());
-            ordersDetail.getGame().setPlatforms(null);
-            ordersDetail.getGame().setSupported_languages(null);
-            ordersDetail.getGame().setReviews(null);
-            ordersDetail.getGame().setCategories(null);
-            ordersDetail.getGame().setMovies(null);
-            ordersDetail.getGame().setImages(null);
-            OrderDetailsDTO orderDetailsDTO = OrderDetailsDTO.builder()
-                    .game(
-                            GameBasicDTO.builder()
-                                    .appid(ordersDetail.getGame().getAppid())
-                                    .name(ordersDetail.getGame().getName())
-                                    .header_image(ordersDetail.getGame().getHeader_image())
-                                    .build()
-                    )
-                    .platform(
-                            PlatformBasicDTO.builder()
-                                    .id(ordersDetail.getPlatform().getId())
-                                    .name(ordersDetail.getPlatform().getName())
-                                    .build()
-                    )
-                    .quantity(ordersDetail.getQuantity())
-                    .price(ordersDetail.getPrice())
-                    .build();
+            OrderDetailsDTO orderDetailsDTO = Mapper.mapObject(ordersDetail, OrderDetailsDTO.class);
             orderDetailsDTOS.add(orderDetailsDTO);
         });
         return Map.of("order", orderDTO, "orderDetail", orderDetailsDTOS);

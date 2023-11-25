@@ -1,8 +1,13 @@
 package com.greamz.backend.service;
 
 import com.greamz.backend.dto.account.AccountBasicDTO;
+import com.greamz.backend.dto.review.ReviewFromUser;
 import com.greamz.backend.dto.review.ReviewsUserDTO;
+import com.greamz.backend.model.AccountModel;
+import com.greamz.backend.model.GameModel;
+import com.greamz.backend.model.OrdersDetail;
 import com.greamz.backend.model.Review;
+import com.greamz.backend.repository.IOrderDetail;
 import com.greamz.backend.repository.IReviewRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,18 +19,32 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 public class ReviewService {
     private final IReviewRepo repo;
-
+    private final IOrderDetail orderDetailRepo;
 
     public Review saveReviewModel(Review reviewModel) {
         return repo.save(reviewModel);
     }
-
+    public Review saveReviewOfUser(ReviewFromUser reviewFromUser) {
+        Review reviewModel = Review.builder()
+                .text(reviewFromUser.getText())
+                .rating(reviewFromUser.getRating())
+                .game(GameModel.builder().appid(reviewFromUser.getAppid()).build())
+                .account(AccountModel.builder().id(reviewFromUser.getAccountId()).build())
+                .build();
+        Optional<OrdersDetail> ordersDetail = orderDetailRepo.findById(reviewFromUser.getOrderDetailId());
+//        if (ordersDetail.isPresent()) {
+//            ordersDetail.get().setReviewed(true);
+//            orderDetailRepo.save(ordersDetail.get());
+//        }
+        return repo.save(reviewModel);
+    }
     @Transactional
     public void updateReviewModel(Review reviewModel) {
         Review review = repo.findById(reviewModel.getId()).orElseThrow();
@@ -111,7 +130,9 @@ public class ReviewService {
         reviews.forEach(review -> {
             review.setGame(null);
             review.setAccount(null);
-        }
+        });
+        return reviews;
+    }
     @Transactional(readOnly = true)
     public List<Review> findAllReviewsByAccountId(Integer accountId) {
         List<Review> reviews = repo.findAllByAccount_Id(accountId);

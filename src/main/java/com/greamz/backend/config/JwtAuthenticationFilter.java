@@ -125,10 +125,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         AuthenticationResponse.class
                 );
             } catch (HttpClientErrorException e1) {
-                // Xử lý khi không thể làm mới hoặc lỗi xác thực refresh token
                 CookieUtils.deleteCookie(request,response, "accessToken");
-
-//                filterChain.doFilter(request, response);
                 if(request.getRequestURI().contains("api") ){
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token is expired, please make a new sign in request");
 
@@ -140,9 +137,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (authenticationResponse.getBody() != null) {
                 String newAccessToken = authenticationResponse.getBody().getAccessToken();
                 if (newAccessToken != null) {
-                    CookieUtils.addCookie(response, "accessToken", EncryptionUtil.encrypt(newAccessToken));
+                    CookieUtils.addCookie(response, "accessToken", newAccessToken);
                     isValid(newAccessToken, request, response, filterChain,false);
                 }
+            }else {
+                CookieUtils.deleteCookie(request,response, "accessToken");
+                if(request.getRequestURI().contains("api") ){
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token is expired, please make a new sign in request");
+
+                }else {
+                    response.sendRedirect("/sign-in");
+                }
+
             }
         } catch (ServletException e) {
             throw new RuntimeException(e);

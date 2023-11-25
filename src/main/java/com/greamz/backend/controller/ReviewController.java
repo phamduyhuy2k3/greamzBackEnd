@@ -1,13 +1,17 @@
 package com.greamz.backend.controller;
 
 
+import com.greamz.backend.dto.review.ReviewFromUser;
 import com.greamz.backend.dto.review.ReviewsUserDTO;
+import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Review;
+import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,5 +76,10 @@ public class ReviewController {
     @GetMapping("{id}")
     public Review getOne(@PathVariable("id") Long appid) {
         return service.findByid(appid);
+    }
+    @PostMapping("/user/review")
+    public ResponseEntity<?> createReview(@RequestBody ReviewFromUser review, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        review.setAccountId(userPrincipal.getId());
+        return ResponseEntity.ok().body(service.saveReviewOfUser(review));
     }
 }

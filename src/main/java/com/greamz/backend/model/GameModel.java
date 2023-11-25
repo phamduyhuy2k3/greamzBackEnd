@@ -18,6 +18,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GameModel extends TimeStampEntity {
 
