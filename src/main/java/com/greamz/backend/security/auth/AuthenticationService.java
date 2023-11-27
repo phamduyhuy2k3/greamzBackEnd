@@ -37,7 +37,6 @@ public class AuthenticationService {
     public AuthenticationResponse register(RegisterRequest request) {
 
         var user = AccountModel.builder()
-
                 .fullname(request.getFullname())
                 .username(request.getUsername())
                 .email(request.getEmail())
@@ -46,9 +45,6 @@ public class AuthenticationService {
                 .provider(AuthProvider.local)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
-
-
-
         var savedUser = repository.save(user);
         UserPrincipal userPrincipal = UserPrincipal.create(savedUser);
         var jwtToken = jwtService.generateToken(userPrincipal);
@@ -56,7 +52,7 @@ public class AuthenticationService {
         saveUserToken(savedUser, refreshToken);
 
         return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
+                .accessToken(EncryptionUtil.encrypt(jwtToken))
                 .build();
 
 
@@ -77,7 +73,7 @@ public class AuthenticationService {
         revokeAllUserTokens(savedUser);
         saveUserToken(savedUser, refreshToken);
         return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
+                .accessToken(EncryptionUtil.encrypt(jwtToken))
                 .build();
     }
     public void authenticateOauth2(UserPrincipal authentication){

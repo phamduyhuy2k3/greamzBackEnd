@@ -47,7 +47,7 @@ public class AuthenticationController {
             @RequestBody @Validated RegisterRequest request
     ) {
         AuthenticationResponse authenticationResponse = service.register(request);
-        authenticationResponse.setAccessToken(EncryptionUtil.encrypt(authenticationResponse.getAccessToken()));
+        authenticationResponse.setAccessToken(authenticationResponse.getAccessToken());
         return ResponseEntity.ok().body(authenticationResponse);
     }
 
@@ -57,7 +57,7 @@ public class AuthenticationController {
     ) {
 
         AuthenticationResponse authenticationResponse = service.authenticate(request,servletRequest);
-        authenticationResponse.setAccessToken(EncryptionUtil.encrypt(authenticationResponse.getAccessToken()));
+
         CookieUtils.addCookie(response, "accessToken", authenticationResponse.getAccessToken());
 
         return ResponseEntity.ok().body(authenticationResponse);
@@ -71,7 +71,7 @@ public class AuthenticationController {
         try{
             AuthenticationResponse authenticationResponse= service.refreshToken(request);
             if(authenticationResponse!= null){
-                CookieUtils.addCookie(response,"accessToken", EncryptionUtil.encrypt(authenticationResponse.getAccessToken()));
+                CookieUtils.addCookie(response,"accessToken", authenticationResponse.getAccessToken());
                 return ResponseEntity.ok().body(authenticationResponse);
             }else {
                 return ResponseEntity.status(401).body(null);

@@ -29,4 +29,7 @@ public class OrdersDetail implements Serializable {
     @ManyToOne
     @JsonBackReference
     private Orders orders;
+    @OneToOne
+    private Review review;
+
 }

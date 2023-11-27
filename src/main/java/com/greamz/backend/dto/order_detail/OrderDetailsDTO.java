@@ -4,6 +4,7 @@ import com.greamz.backend.dto.account.AccountBasicDTO;
 import com.greamz.backend.dto.game.GameBasicDTO;
 import com.greamz.backend.dto.order.OrderDTO;
 import com.greamz.backend.dto.platform.PlatformBasicDTO;
+import com.greamz.backend.dto.review.ReviewBasic;
 import com.greamz.backend.dto.voucher.VoucherOrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +24,5 @@ public class OrderDetailsDTO {
     private PlatformBasicDTO platform;
     private Integer quantity;
     private Double price;
+    private ReviewBasic review;
 }
