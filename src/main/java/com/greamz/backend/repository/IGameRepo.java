@@ -1,5 +1,6 @@
 package com.greamz.backend.repository;
 
+import com.greamz.backend.dto.dashboard.RevenueDTO;
 import com.greamz.backend.model.GameModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificationExecutor<GameModel> {
@@ -22,6 +22,13 @@ public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificat
             @Param("yearParam") int yearParam,
             @Param("monthParam") int monthParam
     );
+    @Procedure(name = "GetRevenueByMonth")
+    List<Object[]> getRevenueByMonth(
+            @Param("p_year") Integer year,
+            @Param("p_month") Integer month
+    );
+
+
     @Query("SELECT COUNT(g) FROM GameModel g WHERE g.createdAt >= CURRENT_DATE - 7 AND g.createdAt < CURRENT_DATE")
     Long countGamesAddedLastWeek();
 
