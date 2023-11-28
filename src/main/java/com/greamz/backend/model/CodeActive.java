@@ -8,7 +8,8 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor@Table( uniqueConstraints = {
+@NoArgsConstructor
+@Table( uniqueConstraints = {
         @UniqueConstraint(columnNames = {"game_appid", "platform_id", "code"})
 })
 

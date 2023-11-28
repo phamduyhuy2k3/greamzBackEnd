@@ -35,6 +35,10 @@ public class CheckoutController {
     public ResponseEntity<UUID> saveOrder(@RequestBody Orders orders) {
         return ResponseEntity.ok(orderService.saveOrder(orders));
     }
+    @GetMapping("/callback")
+    public void callback(@RequestParam String orderId,HttpServletResponse response) throws IOException {
+        checkoutService.callback(UUID.fromString(orderId),response);
+    }
     @GetMapping("/failed")
     public void failed(@RequestParam("orderId") UUID orderId,HttpServletResponse response) throws IOException {
         checkoutService.failed(orderId);

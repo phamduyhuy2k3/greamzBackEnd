@@ -1,10 +1,12 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.dto.game.GameBasicDTO;
 import com.greamz.backend.dto.platform.PlatformDTO;
 import com.greamz.backend.dto.game.GameDetailClientDTO;
 import com.greamz.backend.dto.game.GenreDTO;
 import com.greamz.backend.model.*;
 import com.greamz.backend.repository.IGameRepo;
+import com.greamz.backend.util.Mapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -357,6 +359,13 @@ public class GameModelService {
     @Transactional(readOnly = true)
     public Long countAllByAppid() {
         return gameModelRepository.countTotalGames();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GameBasicDTO> findGameSimialr(String categoryIds, String platformIds) {
+        List<GameModel> gameModelByCategory = gameModelRepository.gameSimilar(parseIds(categoryIds), parseIds(platformIds));
+        List<GameBasicDTO> gameBasicDTOS=gameModelByCategory.stream().map(gameModel -> Mapper.mapObject(gameModel,GameBasicDTO.class)).collect(Collectors.toList());
+        return gameBasicDTOS;
     }
     private List<Integer>  parseIdsInt(String idsParam) {
         if (idsParam == null || idsParam.equals("null") || idsParam.isBlank()) {

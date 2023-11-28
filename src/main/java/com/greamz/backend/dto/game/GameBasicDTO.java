@@ -18,6 +18,6 @@ public class GameBasicDTO{
     private String header_image;
     private String website;
     private String capsule_image;
-
+    private Double price;
 
 }

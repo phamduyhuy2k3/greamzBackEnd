@@ -1,14 +1,17 @@
 package com.greamz.backend.service;
 
 import com.greamz.backend.dto.account.AccountBasicDTO;
+import com.greamz.backend.dto.review.ReviewBasic;
 import com.greamz.backend.dto.review.ReviewFromUser;
+import com.greamz.backend.dto.review.ReviewOfGame;
 import com.greamz.backend.dto.review.ReviewsUserDTO;
-import com.greamz.backend.model.AccountModel;
-import com.greamz.backend.model.GameModel;
-import com.greamz.backend.model.OrdersDetail;
-import com.greamz.backend.model.Review;
+import com.greamz.backend.enumeration.ReactionType;
+import com.greamz.backend.model.*;
 import com.greamz.backend.repository.IOrderDetail;
+import com.greamz.backend.repository.IReviewReaction;
 import com.greamz.backend.repository.IReviewRepo;
+import com.greamz.backend.security.UserPrincipal;
+import com.greamz.backend.util.Mapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -27,23 +30,27 @@ import java.util.Optional;
 public class ReviewService {
     private final IReviewRepo repo;
     private final IOrderDetail orderDetailRepo;
-
+    private final IReviewReaction reviewReactionRepo;
     public Review saveReviewModel(Review reviewModel) {
         return repo.save(reviewModel);
     }
-    public Review saveReviewOfUser(ReviewFromUser reviewFromUser) {
+    public ReviewBasic saveReviewOfUser(ReviewFromUser reviewFromUser) {
         Review reviewModel = Review.builder()
                 .text(reviewFromUser.getText())
                 .rating(reviewFromUser.getRating())
                 .game(GameModel.builder().appid(reviewFromUser.getAppid()).build())
                 .account(AccountModel.builder().id(reviewFromUser.getAccountId()).build())
                 .build();
+        Review review = repo.save(reviewModel);
         Optional<OrdersDetail> ordersDetail = orderDetailRepo.findById(reviewFromUser.getOrderDetailId());
-//        if (ordersDetail.isPresent()) {
-//            ordersDetail.get().setReviewed(true);
-//            orderDetailRepo.save(ordersDetail.get());
-//        }
-        return repo.save(reviewModel);
+        if (ordersDetail.isPresent()) {
+            OrdersDetail ordersDetail1= ordersDetail.get();
+            ordersDetail1.setReview(review);
+            orderDetailRepo.save(ordersDetail1);
+        }
+
+
+        return Mapper.mapObject(review, ReviewBasic.class);
     }
     @Transactional
     public void updateReviewModel(Review reviewModel) {
@@ -80,8 +87,7 @@ public class ReviewService {
                                     .username(review.getAccount().getUsername())
                                     .build()
                     );
-                    reviewsUserDTO.setDislike(review.getDislikes());
-                    reviewsUserDTO.setLike(review.getLikes());
+
                     reviewsUserDTO.setRating(review.getRating());
                     reviewsUserDTO.setText(review.getText());
                     return reviewsUserDTO;
@@ -90,7 +96,24 @@ public class ReviewService {
 
         return reviewsUserDTOList;
     }
-
+    @Transactional(readOnly = true)
+    public Page<ReviewOfGame> findReviewOfGame(Long gameAppId, Pageable pageable, UserPrincipal userPrincipal) {
+        Page<Review> reviewsList = repo.findAllByGameAppid(gameAppId, pageable);
+        return reviewsList.map(review -> {
+                    ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
+                    if(userPrincipal != null){
+                        Optional<ReviewReaction> optionalReviewReaction=reviewReactionRepo.existsByUserAndReview(userPrincipal.getId(),review.getId());
+                        if(optionalReviewReaction.isPresent()){
+                            ReviewReaction reviewReaction = optionalReviewReaction.get();
+                            reviewsUserDTO.setTheUserAuthenticatedReacted(true);
+                            reviewsUserDTO.setReactionType(reviewReaction.getReactionType() == ReactionType.LIKE);
+                        }
+                    }
+                    reviewsUserDTO.setLikes(reviewReactionRepo.countLikesForReview(review));
+                    reviewsUserDTO.setDislikes(reviewReactionRepo.countDislikesForReview(review));
+                   return reviewsUserDTO;
+                });
+    }
     @Transactional(readOnly = true)
     public Page<Review> findAll(Pageable pageable) {
         Page<Review> reviewPage = repo.findAll(pageable);
@@ -120,7 +143,7 @@ public class ReviewService {
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found Review with id: " + id));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Review findByid(Long id) {
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found Review with id: " + id));
     }
@@ -141,5 +164,9 @@ public class ReviewService {
             reviews1.setGame(null);
         });
         return reviews;
+    }
+
+    public void likeReview(Long id, Integer accountId) {
+
     }
 }
