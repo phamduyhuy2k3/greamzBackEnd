@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
@@ -14,6 +15,9 @@ import java.math.BigDecimal;
 public class TopSellingProductDTO {
     private Long appid;
     private String name;
+    private String image;
+    private String website;
+    private Double price;
     private BigDecimal totalQuantitySold;
 
 }

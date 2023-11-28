@@ -26,7 +26,10 @@ public class DashboardService {
             TopSellingProductDTO dto = new TopSellingProductDTO();
             dto.setAppid((Long) result[0]);
             dto.setName((String) result[1]);
-            dto.setTotalQuantitySold((BigDecimal) result[2]);
+            dto.setImage((String) result[2]);
+            dto.setWebsite((String) result[3]);
+            dto.setPrice((Double) result[4]);
+            dto.setTotalQuantitySold((BigDecimal) result[5]);
             dtos.add(dto);
         }
 
