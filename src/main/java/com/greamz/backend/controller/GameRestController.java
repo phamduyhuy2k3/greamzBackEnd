@@ -1,8 +1,12 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.game.GameBasicDTO;
 import com.greamz.backend.dto.game.GameDetailClientDTO;
+import com.greamz.backend.dto.review.ReviewOfGame;
 import com.greamz.backend.model.GameModel;
+import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.GameModelService;
+import com.greamz.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +25,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class GameRestController {
     private final GameModelService service;
+    private final ReviewService reviewService;
     @GetMapping("/findAllPagination")
     public ResponseEntity<Page<GameModel>> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "7") int size) {
@@ -120,5 +126,20 @@ public class GameRestController {
         return service.countGamesAddedLastWeek();
     }
 
-
+    @GetMapping("/gameSimilar")
+    public ResponseEntity<List<GameBasicDTO>> findGameSimilar(@RequestParam(defaultValue = "") String category_ids,
+                                                           @RequestParam(defaultValue = "") String platform_ids
+                                                         ) {
+        List<GameBasicDTO> gameModels = service.findGameSimialr(category_ids, platform_ids);
+        return ResponseEntity.ok(gameModels);
+    }
+    @GetMapping("/reviewsOfGame/{appid}")
+    public ResponseEntity<Page<ReviewOfGame>> getReviewsOfGame(@PathVariable("appid") Long appid,
+                                                               @RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "8") int size,
+                                                               @AuthenticationPrincipal UserPrincipal userPrincipal
+                                                               ) {
+        Page<ReviewOfGame> reviews = reviewService.findReviewOfGame(appid, PageRequest.of(page, size),userPrincipal);
+        return ResponseEntity.ok(reviews);
+    }
 }

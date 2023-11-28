@@ -62,6 +62,16 @@ public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificat
             """)
     Page<GameModel> searchGameByCategory(String search, Pageable pageable);
 
+
+    @Query(value = """
+            select distinct g.* from game_model g
+                          left join  game_category gc on  gc.game_id = g.appid
+                          left join category c on c.id = gc.category_id
+                          left join code_active ca on ca.game_appid = g.appid
+            where  c.id in ?1 and ca.platform_id in ?2
+            group by g.appid
+            """, nativeQuery = true)
+    List<GameModel> gameSimilar(List<Long> categoryId, List<Long> platformId);
 //    @Query("""
 //            select distinct g from GameModel g
 //            join fetch g.categories c

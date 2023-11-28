@@ -3,6 +3,7 @@ package com.greamz.backend.checkout.momo;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,15 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/api/v1/payment/momo")
-
-public class MomoController { ;
+@Slf4j
+public class MomoController {
     @Autowired
     private MomoService momoService;
 
-    @PostMapping("/momo/ipn")
+    @PostMapping("/momo-ipn")
     public ResponseEntity<MomoResponse> ipnMomo(MomoResponse response) {
         System.out.println("IPN MOMO");
-        System.out.println(response.getResultCode());
+        log.info("IPN MOMO:", response.getResultCode());
         return ResponseEntity.ok(response);
     }
 

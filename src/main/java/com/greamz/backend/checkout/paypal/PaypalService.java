@@ -1,6 +1,7 @@
 package com.greamz.backend.checkout.paypal;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.greamz.backend.checkout.CheckoutService;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.service.GameModelService;
@@ -26,6 +27,7 @@ import java.util.UUID;
 public class PaypalService {
     private final OrderService orderService;
     private final GameModelService gameModelService;
+    private final CheckoutService checkoutService;
     private final String  BASE = "https://api-m.sandbox.paypal.com";
     @Value("${application.payment.paypal.client-id}")
     private String clientId ;
@@ -59,7 +61,7 @@ public class PaypalService {
         }
     }
 
-    public String capturePayment(String orderId, UUID orders, HttpServletResponse servletResponse) throws IOException {
+    public void capturePayment(String orderId, UUID orders, HttpServletResponse servletResponse) throws IOException {
         String accessToken = generateAccessToken();
         HttpHeaders headers = new HttpHeaders();
         RestTemplate restTemplate = new RestTemplate();
@@ -74,18 +76,15 @@ public class PaypalService {
                 entity,
                 Object.class
         );
-        Orders orders1= orderService.getOrdersById(orders);
+
         if (response.getStatusCode() == HttpStatus.CREATED) {
             log.info("ORDER CAPTURED");
-            orders1.setOrdersStatus(OrdersStatus.SUCCESS);
-            orderService.saveOrder(orders1);
-            gameModelService.updateStockForGameFromOrder(orders1.getOrdersDetails());
-            return "/order/success?orderId="+orders1.getId();
+            checkoutService.callback(orders,servletResponse);
+
         } else {
             log.info("FAILED CREATING ORDER");
-            orders1.setOrdersStatus(OrdersStatus.FAILED);
-            orderService.saveOrder(orders1);
-            return "/order/failed";
+            checkoutService.failed(orders);
+
         }
     }
     public Object createOrder(JsonNode paypalCreateOrderRequest) {

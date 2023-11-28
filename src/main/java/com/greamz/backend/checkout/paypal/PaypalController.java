@@ -24,8 +24,8 @@ public class PaypalController {
     }
     @SneakyThrows
     @PostMapping(value = "/capture")
-    public String capturePayment(@RequestParam String paypalOrderId, @RequestParam UUID orderId, HttpServletResponse servletResponse) {
-       return paypalService.capturePayment(paypalOrderId,orderId,servletResponse);
+    public void capturePayment(@RequestParam String paypalOrderId, @RequestParam UUID orderId, HttpServletResponse servletResponse) {
+      paypalService.capturePayment(paypalOrderId,orderId,servletResponse);
     }
 //    @PostMapping(value = "/generateAcessToken")
 //    public ResponseEntity<?> generateAccessToken() {

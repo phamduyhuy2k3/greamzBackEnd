@@ -2,6 +2,7 @@ package com.greamz.backend.controller;
 
 
 import com.greamz.backend.dto.review.ReviewFromUser;
+import com.greamz.backend.dto.review.ReviewOfGame;
 import com.greamz.backend.dto.review.ReviewsUserDTO;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Review;
@@ -82,4 +83,10 @@ public class ReviewController {
         review.setAccountId(userPrincipal.getId());
         return ResponseEntity.ok().body(service.saveReviewOfUser(review));
     }
+    @PostMapping("/like/{id}")
+    public void likeReview(@PathVariable("id") Long id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        service.likeReview(id,userPrincipal.getId());
+    }
+
 }

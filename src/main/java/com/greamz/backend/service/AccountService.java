@@ -15,4 +15,8 @@ public class AccountService {
     public Optional<AccountModel> findByUserNameOrEmail(String username) {
         return iAcountRepostitory.findByUserNameOrEmail(username);
     }
+    public Optional<AccountModel> findById(Integer id) {
+        return iAcountRepostitory.findById(id);
+    }
+
 }

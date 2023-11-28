@@ -5,6 +5,8 @@ import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.enumeration.Role;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -38,9 +40,8 @@ public class AccountModel extends TimeStampEntity  {
     private List<Orders> orders;
     @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
-    @OneToMany(mappedBy = "account")
-    private List<Disscusion> disscusions;
     @Enumerated(EnumType.STRING)
     private Role role;
+    private BigDecimal balance;
 
 }

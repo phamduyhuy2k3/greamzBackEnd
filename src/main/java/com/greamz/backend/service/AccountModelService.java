@@ -28,7 +28,6 @@ public class AccountModelService {
     public List<AccountModel> findAll() {
         List<AccountModel> accountModels = repo.findAll();
         for (AccountModel accountModel : accountModels) {
-            accountModel.setDisscusions(null);
             accountModel.setOrders(null);
             accountModel.setReviews(null);
             accountModel.setVouchers(null);
@@ -39,7 +38,7 @@ public class AccountModelService {
     @Transactional(readOnly = true)
     public AccountModel findAccountById(Integer id) throws NoSuchElementException {
         AccountModel accountModel = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + id));
-        accountModel.setDisscusions(null);
+
         accountModel.setOrders(null);
         accountModel.setReviews(null);
         accountModel.setVouchers(null);
