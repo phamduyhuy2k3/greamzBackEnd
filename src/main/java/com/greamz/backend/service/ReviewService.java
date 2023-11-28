@@ -1,10 +1,7 @@
 package com.greamz.backend.service;
 
 import com.greamz.backend.dto.account.AccountBasicDTO;
-import com.greamz.backend.dto.review.ReviewBasic;
-import com.greamz.backend.dto.review.ReviewFromUser;
-import com.greamz.backend.dto.review.ReviewOfGame;
-import com.greamz.backend.dto.review.ReviewsUserDTO;
+import com.greamz.backend.dto.review.*;
 import com.greamz.backend.enumeration.ReactionType;
 import com.greamz.backend.model.*;
 import com.greamz.backend.repository.IOrderDetail;
@@ -31,9 +28,11 @@ public class ReviewService {
     private final IReviewRepo repo;
     private final IOrderDetail orderDetailRepo;
     private final IReviewReaction reviewReactionRepo;
+
     public Review saveReviewModel(Review reviewModel) {
         return repo.save(reviewModel);
     }
+
     public ReviewBasic saveReviewOfUser(ReviewFromUser reviewFromUser) {
         Review reviewModel = Review.builder()
                 .text(reviewFromUser.getText())
@@ -44,7 +43,7 @@ public class ReviewService {
         Review review = repo.save(reviewModel);
         Optional<OrdersDetail> ordersDetail = orderDetailRepo.findById(reviewFromUser.getOrderDetailId());
         if (ordersDetail.isPresent()) {
-            OrdersDetail ordersDetail1= ordersDetail.get();
+            OrdersDetail ordersDetail1 = ordersDetail.get();
             ordersDetail1.setReview(review);
             orderDetailRepo.save(ordersDetail1);
         }
@@ -52,6 +51,7 @@ public class ReviewService {
 
         return Mapper.mapObject(review, ReviewBasic.class);
     }
+
     @Transactional
     public void updateReviewModel(Review reviewModel) {
         Review review = repo.findById(reviewModel.getId()).orElseThrow();
@@ -76,7 +76,7 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<ReviewsUserDTO> findReviewByGame(Long gameAppId) {
         List<Review> reviewsList = repo.findAllByGameAppid(gameAppId);
-        List<ReviewsUserDTO> reviewsUserDTOList  = reviewsList.stream()
+        List<ReviewsUserDTO> reviewsUserDTOList = reviewsList.stream()
                 .map(review -> {
                     Hibernate.initialize(review.getAccount());
                     ReviewsUserDTO reviewsUserDTO = new ReviewsUserDTO();
@@ -96,39 +96,36 @@ public class ReviewService {
 
         return reviewsUserDTOList;
     }
+
     @Transactional(readOnly = true)
     public Page<ReviewOfGame> findReviewOfGame(Long gameAppId, Pageable pageable, UserPrincipal userPrincipal) {
         Page<Review> reviewsList = repo.findAllByGameAppid(gameAppId, pageable);
         return reviewsList.map(review -> {
-                    ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
-                    if(userPrincipal != null){
-                        Optional<ReviewReaction> optionalReviewReaction=reviewReactionRepo.existsByUserAndReview(userPrincipal.getId(),review.getId());
-                        if(optionalReviewReaction.isPresent()){
-                            ReviewReaction reviewReaction = optionalReviewReaction.get();
-                            reviewsUserDTO.setTheUserAuthenticatedReacted(true);
-                            reviewsUserDTO.setReactionType(reviewReaction.getReactionType() == ReactionType.LIKE);
-                        }
-                    }
-                    reviewsUserDTO.setLikes(reviewReactionRepo.countLikesForReview(review));
-                    reviewsUserDTO.setDislikes(reviewReactionRepo.countDislikesForReview(review));
-                   return reviewsUserDTO;
-                });
-    }
-    @Transactional(readOnly = true)
-    public Page<Review> findAll(Pageable pageable) {
-        Page<Review> reviewPage = repo.findAll(pageable);
-        reviewPage.forEach(review ->
-                {
-                    review.setCreatedAt(null);
-                    review.setUpdatedAt(null);
-                    review.setGame(null);
-                    review.setAccount(null);
-//                    Hibernate.initialize(review.getAccount());
-//                    Hibernate.initialize(review.getGame());
+            ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
+            if (userPrincipal != null) {
+                Optional<ReviewReaction> optionalReviewReaction = reviewReactionRepo.existsByUserAndReview(userPrincipal.getId(), review.getId());
+                if (optionalReviewReaction.isPresent()) {
+                    ReviewReaction reviewReaction = optionalReviewReaction.get();
+                    reviewsUserDTO.setTheUserAuthenticatedReacted(true);
+                    reviewsUserDTO.setReactionType(reviewReaction.getReactionType() == ReactionType.LIKE);
                 }
+            }
+            reviewsUserDTO.setLikes(reviewReactionRepo.countLikesForReview(review));
+            reviewsUserDTO.setDislikes(reviewReactionRepo.countDislikesForReview(review));
+            return reviewsUserDTO;
+        });
+    }
 
-        );
-        return reviewPage;
+    @Transactional(readOnly = true)
+    public Page<ReviewResponseForAdmin> findAll(Pageable pageable) {
+        Page<Review> reviewPage = repo.findAll(pageable);
+        Page<ReviewResponseForAdmin> reviewResponseForAdmins = reviewPage.map(review -> {
+            ReviewResponseForAdmin reviewResponseForAdmin = Mapper.mapObject(review, ReviewResponseForAdmin.class);
+            reviewResponseForAdmin.setAccountId(review.getAccount().getId());
+            reviewResponseForAdmin.setGameId(review.getGame().getAppid());
+            return reviewResponseForAdmin;
+        });
+        return reviewResponseForAdmins;
     }
 
     @Transactional
@@ -147,6 +144,7 @@ public class ReviewService {
     public Review findByid(Long id) {
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found Review with id: " + id));
     }
+
     @Transactional(readOnly = true)
     public List<Review> findAllByAccountId(Integer id) {
         List<Review> reviews = repo.findAllByAccount_Id(id);
@@ -156,6 +154,7 @@ public class ReviewService {
         });
         return reviews;
     }
+
     @Transactional(readOnly = true)
     public List<Review> findAllReviewsByAccountId(Integer accountId) {
         List<Review> reviews = repo.findAllByAccount_Id(accountId);

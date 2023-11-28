@@ -2,7 +2,6 @@ package com.greamz.backend.service;
 
 import com.greamz.backend.dto.dashboard.RevenueDTO;
 import com.greamz.backend.dto.dashboard.TopSellingProductDTO;
-import com.greamz.backend.model.TopSellingProduct;
 import com.greamz.backend.repository.IGameRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,13 +55,8 @@ public class DashboardService {
     }
 
     @Transactional
-    public Map<String, Object> getTopSellingProductsInMonthYear(int yearParam) {
-        Map<String, Object> map = new HashMap<>();
-        for (int i = 1; i <= 12; i++) {
-            map.put("month" + i, mapResultListToDTO(gameRepo.getTopSellingProductsInMonthYear(yearParam, i)));
-        }
-
-        return map;
+    public List<TopSellingProductDTO>getTopSellingProductsInMonthYear(int yearParam, int monthParam) {
+        return mapResultListToDTO(gameRepo.getTopSellingProductsInMonthYear(yearParam, monthParam));
     }
 
     @Transactional

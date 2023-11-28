@@ -129,7 +129,7 @@
                     <h6 class="mb-0 col">Revenue chart</h6>
                     <select class="col form-select mb-2" aria-label="select by year"
                             ng-model="selectedYearForRevenue" ng-change="getRevenueByYear()">
-                        <option value="" disabled selected>Open this select years</option>
+                        <option value="" disabled >Open this select years</option>
                         <option ng-repeat="y in years" ng-value="y.value">{{y.name}}</option>
                     </select>
                 </div>
@@ -157,14 +157,14 @@
                     <div class=" col-lg-6 col-5 my-auto text-end">
                         <select class="col form-select mb-2" aria-label="select by year"
                                 ng-model="selectedYear" ng-change="getGameBestSeller()">
-                            <option value="" disabled selected>Open this select years</option>
+                            <option value="" disabled >Open this select years</option>
                             <option ng-repeat="y in years" ng-value="y.value">{{y.name}}</option>
                         </select>
                         <select class="col form-select" aria-label="Default select example"
                                 ng-model="selectedMonth"
                                 ng-change="getGamesByMonth()"
                                 ng-disabled="selectedYear === null">
-                            <option value="" disabled selected>Chọn một tháng</option>
+                            <option value="" disabled>Chọn một tháng</option>
                             <option ng-repeat="m in months" ng-value="m.value">{{m.name}}</option>
                         </select>
                     </div>
