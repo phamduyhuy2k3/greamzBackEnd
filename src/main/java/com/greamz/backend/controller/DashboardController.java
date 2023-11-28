@@ -20,10 +20,10 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/getTopSellingProductsInMonthYear")
-    public ResponseEntity<Map<String, Object>> getTopSellingProductsInMonthYear(
-            @RequestParam int year) {
+    public ResponseEntity<List<TopSellingProductDTO>> getTopSellingProductsInMonthYear(
+            @RequestParam int year, @RequestParam(defaultValue = "1") int month) {
 
-        return ResponseEntity.ok(dashboardService.getTopSellingProductsInMonthYear(year));
+        return ResponseEntity.ok(dashboardService.getTopSellingProductsInMonthYear(year, month));
     }
 
     @GetMapping("/getRevenueByMonth")

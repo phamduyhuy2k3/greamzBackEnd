@@ -109,6 +109,7 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
                     ...$scope.pager,
                     ...resp.data
                 };
+
             })
         }
 
@@ -125,6 +126,7 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
                     ...$scope.pager,
                     ...resp.data
                 };
+                console.log($scope.pager)
             },
             error => {
                 console.log("Error", error);

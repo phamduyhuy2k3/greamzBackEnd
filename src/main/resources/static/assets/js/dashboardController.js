@@ -32,13 +32,22 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
     function generateYears() {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
+        const establishedYear = 2023;
 
-        const years = [];
-        for (let i = currentYear; i >= currentYear - 2; i--) {
-            years.push({name: i.toString(), value: i.toString()});
+        $scope.selectedYear = currentYear.toString();
+
+        if (currentYear === establishedYear) {
+            return [{name: currentYear.toString(), value: currentYear.toString()}];
+        } else if (currentYear > establishedYear) {
+            const years = [];
+            const count = currentYear - establishedYear
+            for (let i = currentYear; i >= currentYear + count; i--) {
+                years.push({name: i.toString(), value: i.toString()});
+            }
+            return years;
+        } else {
+            alert("Cút");
         }
-
-        return years;
     }
 
     // Hàm để chọn năm hiện tại hoặc năm tiếp theo nếu đã qua năm mới
@@ -163,15 +172,16 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
         chartRevenue.data.datasets[0].data = data;
         chartRevenue.update();
     }
+
     // Hàm để chạy animation cho bộ số đếm
     function animateValue(id, start, end, duration) {
         if (start === end) return;
         let range = end - start;
         let current = start;
-        let increment = end > start? 1 : -1;
+        let increment = end > start ? 1 : -1;
         let stepTime = Math.abs(Math.floor(duration / range));
         let obj = document.getElementById(id);
-        let timer = setInterval(function() {
+        let timer = setInterval(function () {
             current += increment;
             obj.innerHTML = current;
             if (current == end) {
@@ -181,12 +191,14 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
     }
 
     $scope.initialize = async function () {
+        const currentDate = new Date();
         // Tạo mảng năm
         $scope.years = generateYears();
-
+        $scope.month = currentDate.getMonth() + 1;
+        $scope.year = currentDate.getFullYear();
+        $scope.selectedMonth = $scope.month.toString();
         // Chọn năm hiện tại làm giá trị mặc định cho ô chọn năm
         $scope.selectedYear = getCurrentOrNextYear();
-
         $scope.selectedYearForRevenue = getCurrentOrNextYear();
 
         await $http.get("/api/v1/game/totalGame", {
@@ -221,13 +233,12 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
             console.log($scope.percentageChange)
         });
 
-        $http.get(`/api/v1/dashboard/getTopSellingProductsInMonthYear?year=2023`, {
+        $http.get(`/api/v1/dashboard/getTopSellingProductsInMonthYear?year=${$scope.year}&month=${$scope.month}`, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
             }
         }).then(resp => {
-            $scope.gameOfTheYear = resp.data;
-            $scope.gameOfTheMonth = $scope.gameOfTheYear['month11'];
+            $scope.gameOfTheMonth = resp.data;
             console.log(resp.data);
             console.log($scope.gameOfTheMonth)
             $scope.isLoading = false;
@@ -259,9 +270,18 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
             $scope.gameOfTheYear = r;
         })
     }
-    $scope.getGamesByMonth = function () {
-        $scope.gameOfTheMonth = $scope.gameOfTheYear['month' + $scope.selectedMonth];
-        console.log($scope.gameOfTheMonth)
+    $scope.getGamesByMonth = async function () {
+        $scope.isLoading = true;
+        await $http.get(`/api/v1/dashboard/getTopSellingProductsInMonthYear?year=${$scope.selectedYear}&month=${$scope.selectedMonth}`, {
+            headers: {
+                "Authorization": "Bearer " + $cookies.get("accessToken")
+            }
+        }).then(resp => {
+            $scope.gameOfTheMonth = resp.data;
+            console.log(resp.data);
+            console.log($scope.gameOfTheMonth)
+            $scope.isLoading = false;
+        })
     }
     $scope.getRevenueByYear = function () {
         $http.get(`/api/v1/dashboard/getRevenueByMonth?year=${$scope.selectedYearForRevenue}`, {
