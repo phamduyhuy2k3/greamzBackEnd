@@ -5,6 +5,7 @@ import com.greamz.backend.common.TimeStampEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,6 @@ public class Review extends TimeStampEntity {
     @Column(length = 600)
     private String text;
     private int rating;
-
     @ManyToOne
     private AccountModel account;
     @ManyToOne
