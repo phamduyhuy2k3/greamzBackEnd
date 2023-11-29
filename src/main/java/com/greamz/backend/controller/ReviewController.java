@@ -5,11 +5,14 @@ import com.greamz.backend.dto.review.ReviewFromUser;
 import com.greamz.backend.dto.review.ReviewOfGame;
 import com.greamz.backend.dto.review.ReviewResponseForAdmin;
 import com.greamz.backend.dto.review.ReviewsUserDTO;
+import com.greamz.backend.dto.review.reaction.ReactResponse;
+import com.greamz.backend.dto.review.reaction.UserReactTheReview;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Review;
 import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/api/v1/review")
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewController {
 
     private final ReviewService service;
@@ -68,6 +72,7 @@ public class ReviewController {
     @PutMapping("/update")
     public Review update(@RequestBody Review review) {
         service.updateReviewModel(review);
+
         return review;
     }
 
@@ -87,10 +92,10 @@ public class ReviewController {
         return ResponseEntity.ok().body(service.saveReviewOfUser(review));
     }
 
-    @PostMapping("/like/{id}")
-    public void likeReview(@PathVariable("id") Long id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-
-        service.likeReview(id, userPrincipal.getId());
+    @PostMapping("/react")
+    public ResponseEntity<ReactResponse> likeReview(@RequestBody UserReactTheReview userReactTheReview) {
+        log.info("userReactTheReview:"+userReactTheReview);
+       return ResponseEntity.ok(service.reactReview(userReactTheReview));
     }
 
 }

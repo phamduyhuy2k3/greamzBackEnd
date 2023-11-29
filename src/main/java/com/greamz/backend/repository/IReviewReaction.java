@@ -18,13 +18,13 @@ public interface IReviewReaction extends JpaRepository<ReviewReaction, Long> {
             """)
     Object countLikesAndDislikesForReview(@Param("review") Review review);
 
-    @Query("SELECT COUNT(rr) FROM ReviewReaction rr WHERE rr.review = :review AND rr.reactionType = 'LIKE'")
-    int countLikesForReview(@Param("review") Review review);
+    @Query("SELECT COUNT(rr) FROM ReviewReaction rr WHERE rr.review.id = :review AND rr.reactionType = 'LIKE'")
+    int countLikesForReview(@Param("review") Long review);
 
-    @Query("SELECT COUNT(rr) FROM ReviewReaction rr WHERE rr.review = :review AND rr.reactionType = 'DISLIKE'")
-    int countDislikesForReview(@Param("review") Review review);
+    @Query("SELECT COUNT(rr) FROM ReviewReaction rr WHERE rr.review.id = :review AND rr.reactionType = 'DISLIKE'")
+    int countDislikesForReview(@Param("review") Long review);
 
     //isUSerReact
-    @Query("SELECT rr FROM ReviewReaction rr WHERE rr.user.id = ?1 AND rr.review.id = ?2")
-    Optional<ReviewReaction> existsByUserAndReview(Integer userId, Long reviewId);
+
+    Optional<ReviewReaction> findByUser_IdAndReview_Id(Integer userId, Long reviewId);
 }

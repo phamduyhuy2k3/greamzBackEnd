@@ -36,6 +36,7 @@ public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificat
     Long countTotalGames();
 
     List<GameModel> findAllByCategoriesId(Long categoryId);
+    long countAllByCategoriesId(Long categoryId);
 
     @Query("""
             select distinct g from GameModel g

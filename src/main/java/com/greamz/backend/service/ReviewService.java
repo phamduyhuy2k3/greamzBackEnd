@@ -1,7 +1,13 @@
 package com.greamz.backend.service;
 
 import com.greamz.backend.dto.account.AccountBasicDTO;
-import com.greamz.backend.dto.review.*;
+import com.greamz.backend.dto.review.ReviewBasic;
+import com.greamz.backend.dto.review.ReviewFromUser;
+import com.greamz.backend.dto.review.ReviewOfGame;
+import com.greamz.backend.dto.review.ReviewsUserDTO;
+import com.greamz.backend.dto.review.reaction.ReactResponse;
+import com.greamz.backend.dto.review.reaction.UserReactTheReview;
+
 import com.greamz.backend.enumeration.ReactionType;
 import com.greamz.backend.model.*;
 import com.greamz.backend.repository.IOrderDetail;
@@ -98,22 +104,28 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ReviewOfGame> findReviewOfGame(Long gameAppId, Pageable pageable, UserPrincipal userPrincipal) {
+    public Page<ReviewOfGame> findReviewOfGame(Long gameAppId, Pageable pageable, Integer userId) {
         Page<Review> reviewsList = repo.findAllByGameAppid(gameAppId, pageable);
         return reviewsList.map(review -> {
-            ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
-            if (userPrincipal != null) {
-                Optional<ReviewReaction> optionalReviewReaction = reviewReactionRepo.existsByUserAndReview(userPrincipal.getId(), review.getId());
-                if (optionalReviewReaction.isPresent()) {
-                    ReviewReaction reviewReaction = optionalReviewReaction.get();
-                    reviewsUserDTO.setTheUserAuthenticatedReacted(true);
-                    reviewsUserDTO.setReactionType(reviewReaction.getReactionType() == ReactionType.LIKE);
-                }
-            }
-            reviewsUserDTO.setLikes(reviewReactionRepo.countLikesForReview(review));
-            reviewsUserDTO.setDislikes(reviewReactionRepo.countDislikesForReview(review));
-            return reviewsUserDTO;
-        });
+
+                    ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
+                    if(userId >-1 ){
+                        Optional<ReviewReaction> optionalReviewReaction=reviewReactionRepo.findByUser_IdAndReview_Id(userId,review.getId());
+                        if(optionalReviewReaction.isPresent()){
+                            ReviewReaction reviewReaction = optionalReviewReaction.get();
+                            reviewsUserDTO.setReactionType(reviewReaction.getReactionType());
+                            reviewsUserDTO.setReacted(true);
+                            log.info("reviewReaction.getReactionType()"+reviewReaction.getReactionType());
+                        }else {
+                            reviewsUserDTO.setReacted(false);
+                            log.info("reviewReaction.getReactionType()"+null);
+                        }
+                    }
+                    reviewsUserDTO.setLikes(reviewReactionRepo.countLikesForReview(review.getId()));
+                    reviewsUserDTO.setDislikes(reviewReactionRepo.countDislikesForReview(review.getId()));
+                   return reviewsUserDTO;
+                });
+
     }
 
     @Transactional(readOnly = true)
@@ -165,7 +177,41 @@ public class ReviewService {
         return reviews;
     }
 
-    public void likeReview(Long id, Integer accountId) {
+    public ReactResponse reactReview(UserReactTheReview userReactTheReview) {
+        ReactResponse userReactTheReviewResponse=null;
+        Optional<ReviewReaction> optionalReviewReaction=reviewReactionRepo.findByUser_IdAndReview_Id(userReactTheReview.getUserId(),userReactTheReview.getReviewId());
+        if(optionalReviewReaction.isPresent()){
+            ReviewReaction reviewReaction = optionalReviewReaction.get();
+            if(reviewReaction.getReactionType().equals(userReactTheReview.getReactionType())){
+                reviewReactionRepo.delete(reviewReaction);
+                userReactTheReviewResponse=ReactResponse.builder()
+                        .isReacted(false)
+                        .reactionType(null)
+                        .build();
 
+            }else {
+                reviewReaction.setReactionType(userReactTheReview.getReactionType());
+                reviewReactionRepo.save(reviewReaction);
+                userReactTheReviewResponse=ReactResponse.builder()
+                        .isReacted(true)
+                        .reactionType(reviewReaction.getReactionType())
+                        .build();
+            }
+
+
+        }else {
+            ReviewReaction reviewReaction1 = reviewReactionRepo.save(ReviewReaction.builder()
+                    .reactionType(userReactTheReview.getReactionType())
+                    .review(Review.builder().id(userReactTheReview.getReviewId()).build())
+                    .user(AccountModel.builder().id(userReactTheReview.getUserId()).build())
+                    .build());
+            userReactTheReviewResponse=ReactResponse.builder()
+                    .isReacted(true)
+                    .reactionType(reviewReaction1.getReactionType())
+                    .build();
+        }
+        userReactTheReviewResponse.setLikes(reviewReactionRepo.countLikesForReview(userReactTheReview.getReviewId()));
+        userReactTheReviewResponse.setDislikes(reviewReactionRepo.countDislikesForReview(userReactTheReview.getReviewId()));
+        return userReactTheReviewResponse;
     }
 }
