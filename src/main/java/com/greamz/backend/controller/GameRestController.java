@@ -107,7 +107,7 @@ public class GameRestController {
         }
     }
     @DeleteMapping("/delete/{appid}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','EMPLOYEE')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public void delete(@PathVariable("appid") Long appid){
         service.deleteGameByAppid(appid);
     }
@@ -137,9 +137,9 @@ public class GameRestController {
     public ResponseEntity<Page<ReviewOfGame>> getReviewsOfGame(@PathVariable("appid") Long appid,
                                                                @RequestParam(defaultValue = "0") int page,
                                                                @RequestParam(defaultValue = "8") int size,
-                                                               @AuthenticationPrincipal UserPrincipal userPrincipal
+                                                               @RequestParam(defaultValue = "-1") Integer userId
                                                                ) {
-        Page<ReviewOfGame> reviews = reviewService.findReviewOfGame(appid, PageRequest.of(page, size),userPrincipal);
+        Page<ReviewOfGame> reviews = reviewService.findReviewOfGame(appid, PageRequest.of(page, size),userId);
         return ResponseEntity.ok(reviews);
     }
 }

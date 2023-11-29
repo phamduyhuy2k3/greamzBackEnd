@@ -1,5 +1,6 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.category.CategoryBasicDTO;
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.model.Category;
 import com.greamz.backend.model.GameModel;
@@ -36,6 +37,11 @@ public class CategoryController {
     @GetMapping("/findAll")
     public ResponseEntity<List<Category>> findAll() {
         List<Category> gameCategories = service.findAll();
+        return ResponseEntity.ok(gameCategories);
+    }
+    @GetMapping("/findAllFromClient")
+    public ResponseEntity<List<CategoryBasicDTO>> findAllFromClient() {
+        List<CategoryBasicDTO> gameCategories = service.findAllFromClient();
         return ResponseEntity.ok(gameCategories);
     }
     @GetMapping("/search")
