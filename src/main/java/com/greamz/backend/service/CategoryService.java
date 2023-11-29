@@ -1,9 +1,12 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.dto.category.CategoryBasicDTO;
 import com.greamz.backend.enumeration.CategoryTypes;
 import com.greamz.backend.model.Category;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.repository.ICategoryRepo;
+import com.greamz.backend.repository.IGameRepo;
+import com.greamz.backend.util.Mapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
@@ -22,6 +25,7 @@ import java.util.Set;
 @Slf4j
 public class CategoryService {
     private final ICategoryRepo repo;
+    private final IGameRepo gameRepo;
     @Transactional(readOnly = true)
     public List<Category> findAll() {
         List<Category> gameCategories = repo.findAll();
@@ -41,7 +45,18 @@ public class CategoryService {
         }
         return gameCategories;
     }
-
+    @Transactional(readOnly = true)
+    public List<CategoryBasicDTO> findAllFromClient() {
+        List<Category> gameCategories = repo.findAll();
+        List<CategoryBasicDTO> categoryBasicDTOS = gameCategories.stream().map(
+                category -> {
+                    CategoryBasicDTO categoryBasicDTO = Mapper.mapObject(category, CategoryBasicDTO.class);
+                    categoryBasicDTO.setGameCount(gameRepo.countAllByCategoriesId(category.getId()));
+                    return categoryBasicDTO;
+                })
+                .toList();
+        return categoryBasicDTOS;
+    }
     @Transactional(readOnly = true)
     public Category findById(Long id) throws NoSuchElementException {
         Category category=repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));

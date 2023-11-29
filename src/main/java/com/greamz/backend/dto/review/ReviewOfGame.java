@@ -1,6 +1,7 @@
 package com.greamz.backend.dto.review;
 
 import com.greamz.backend.dto.account.UserProfileSuperBasic;
+import com.greamz.backend.enumeration.ReactionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +19,8 @@ public class ReviewOfGame {
     private int rating;
     private int likes;
     private int dislikes;
-    private boolean isTheUserAuthenticatedReacted;
-    private boolean reactionType;
+    private boolean isReacted;
+    private ReactionType reactionType;
     private Date createdAt;
     private UserProfileSuperBasic account;
 }
