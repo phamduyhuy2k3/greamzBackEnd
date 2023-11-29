@@ -1,5 +1,6 @@
 package com.greamz.backend.service;
 
+import com.greamz.backend.dto.dashboard.RevenueDTO;
 import com.greamz.backend.dto.dashboard.TopSellingProductDTO;
 import com.greamz.backend.repository.IGameRepo;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class DashboardService {
     private final IGameRepo gameRepo;
+
     private List<TopSellingProductDTO> mapResultListToDTO(List<Object[]> resultList) {
         // Ánh xạ dữ liệu từ Object[] vào DTO
         // Có thể sử dụng MapStruct hoặc ModelMapper để giảm mã và tăng tính tái sử dụng
@@ -35,11 +37,33 @@ public class DashboardService {
 
         return dtos;
     }
+    private List<RevenueDTO> mapResultListToRevenueDTO(List<Object[]> resultList) {
+        // Ánh xạ dữ liệu từ Object[] vào DTO
+        // Có thể sử dụng MapStruct hoặc ModelMapper để giảm mã và tăng tính tái sử dụng
+        // Trong ví dụ này, chúng ta sử dụng cách thủ công để minh họa
+        List<RevenueDTO> dtos = new ArrayList<>();
+
+        for (Object[] result : resultList) {
+            RevenueDTO dto = new RevenueDTO();
+            dto.setYear((Long) result[0]);
+            dto.setMonth((Long) result[1]);
+            dto.setRevenue((Double) result[2]);
+            dtos.add(dto);
+        }
+
+        return dtos;
+    }
+
     @Transactional
-    public Map<String, Object > getTopSellingProductsInMonthYear(int yearParam) {
+    public List<TopSellingProductDTO>getTopSellingProductsInMonthYear(int yearParam, int monthParam) {
+        return mapResultListToDTO(gameRepo.getTopSellingProductsInMonthYear(yearParam, monthParam));
+    }
+
+    @Transactional
+    public Map<String, Object> getRevenueByMonth(int yearParam) {
         Map<String, Object> map = new HashMap<>();
         for (int i = 1; i <= 12; i++) {
-            map.put("month" + i, mapResultListToDTO(gameRepo.getTopSellingProductsInMonthYear(yearParam, i)));
+            map.put("month" + i, mapResultListToRevenueDTO(gameRepo.getRevenueByMonth(yearParam, i)));
         }
 
         return map;

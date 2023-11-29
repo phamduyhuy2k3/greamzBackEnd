@@ -92,6 +92,31 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         )
 
     }
+    $scope.statusAccount = function (scope) {
+        if (scope.enabled == true) {
+            scope.status = 'disable';
+        }else {
+            scope.status = 'active';
+        }
+        Swal.fire({
+            title: "Do you want to change status this account into " + scope.status + "?",
+            text: "Will be send notification email to user!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Save!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Change success!",
+                    text: "Email has been send.",
+                    icon: "success"
+                });
+            }
+        });
+    }
+
 
     $scope.delete = function (id) {
         Swal.fire({
@@ -227,24 +252,24 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             $scope.orders = resp.data;
             console.log($scope.orders)
         })
-        $http.get(`/api/user/findReviewByAccountId/${id}`,{
-                    headers:{
-                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
-                    }
+        $http.get(`/api/user/findReviewByAccountId/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+            }
 
-                }).then(resp =>{
-                    $scope.reviews = resp.data;
-                    console.log($scope.reviews)
-                })
-        $http.get(`/api/user/findVoucherByAccountId/${id}`,{
-                            headers:{
-                                'Authorization': 'Bearer ' + $cookies.get('accessToken')
-                            }
+        }).then(resp => {
+            $scope.reviews = resp.data;
+            console.log($scope.reviews)
+        })
+        $http.get(`/api/user/findVoucherByAccountId/${id}`, {
+            headers: {
+                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+            }
 
-                        }).then(resp =>{
-                            $scope.vouchers = resp.data;
-                            console.log($scope.vouchers)
-                        })
+        }).then(resp => {
+            $scope.vouchers = resp.data;
+            console.log($scope.vouchers)
+        })
     }
     $scope.initialize();
 

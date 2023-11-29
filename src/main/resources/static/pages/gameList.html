@@ -54,7 +54,11 @@
                             <label class="btn btn-outline-primary" for="btnradio3">CATEGORY</label>
                         </div>
                     </div>
-
+                    <div ng-show="isLoading" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                     <table ng-hide="isLoading" class="table align-items-center mb-0">
                         <thead>
                         <tr>
@@ -69,13 +73,6 @@
                             </th>
                             <th class="text-secondary opacity-7"></th>
                             <th class="text-secondary opacity-7"></th>
-                        </tr>
-                        <tr ng-show="isLoading">
-                            <div  class="text-center">
-                                <div class="spinner-border" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
                         </tr>
                         </thead>
                         <tbody>
