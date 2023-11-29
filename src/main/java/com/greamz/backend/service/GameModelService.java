@@ -147,8 +147,11 @@ public class GameModelService {
 
     @Transactional
     public void deleteGameByAppid(Long appid) {
-        GameModel gameModel = gameModelRepository.findById(appid).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + appid));
-        gameModelRepository.delete(gameModel);
+        Query deleteQuery = entityManager.createNativeQuery("DELETE FROM game_category WHERE game_id= :gameId");
+        deleteQuery.setParameter("gameId", appid);
+        int deletedRows = deleteQuery.executeUpdate();
+        System.out.println("Deleted " + deletedRows + " game_category records.");
+        gameModelRepository.deleteById(appid);
     }
     @Transactional(readOnly = true)
     public Page<GameModel> searchGame(String searchTerm, Pageable pageable) {

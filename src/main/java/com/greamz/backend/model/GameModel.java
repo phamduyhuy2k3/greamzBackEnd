@@ -42,14 +42,14 @@ public class GameModel extends TimeStampEntity {
     @ElementCollection()
     private Set<String> images;
     @ElementCollection()
-
     private Set<String> movies;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JoinTable(name = "game_category",
             joinColumns = @JoinColumn(name = "game_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
+            inverseJoinColumns = @JoinColumn(name = "category_id"
+            )
     )
     private List<Category> categories;
     @ElementCollection(fetch = FetchType.LAZY)
@@ -64,7 +64,7 @@ public class GameModel extends TimeStampEntity {
     private List<Platform> platforms;
     @OneToMany(mappedBy = "game")
     private List<Review> reviews;
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game",cascade = CascadeType.ALL)
     private List<CodeActive> codeActives;
 
 }
