@@ -3,7 +3,6 @@ package com.greamz.backend.controller;
 
 import com.greamz.backend.dto.review.ReviewFromUser;
 import com.greamz.backend.dto.review.ReviewOfGame;
-import com.greamz.backend.dto.review.ReviewResponseForAdmin;
 import com.greamz.backend.dto.review.ReviewsUserDTO;
 import com.greamz.backend.dto.review.reaction.ReactResponse;
 import com.greamz.backend.dto.review.reaction.UserReactTheReview;
@@ -37,8 +36,8 @@ public class ReviewController {
     }
 
     @GetMapping("/findAllPagination")
-    public ResponseEntity<Page<ReviewResponseForAdmin>> findAllPagination(@RequestParam(defaultValue = "0") int page,
-                                                                          @RequestParam(defaultValue = "7") int size) {
+    public ResponseEntity<Page<Review>> findAllPagination(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "7") int size) {
         return ResponseEntity.ok(service.findAll(PageRequest.of(page, size)));
     }
 
@@ -52,7 +51,6 @@ public class ReviewController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @GetMapping("/findByGame/{appid}")
     public ResponseEntity<List<ReviewsUserDTO>> findByGame(@PathVariable("appid") Long id) {
         try {
@@ -85,13 +83,11 @@ public class ReviewController {
     public Review getOne(@PathVariable("id") Long appid) {
         return service.findByid(appid);
     }
-
     @PostMapping("/user/review")
     public ResponseEntity<?> createReview(@RequestBody ReviewFromUser review, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         review.setAccountId(userPrincipal.getId());
         return ResponseEntity.ok().body(service.saveReviewOfUser(review));
     }
-
     @PostMapping("/react")
     public ResponseEntity<ReactResponse> likeReview(@RequestBody UserReactTheReview userReactTheReview) {
         log.info("userReactTheReview:"+userReactTheReview);

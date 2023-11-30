@@ -117,6 +117,7 @@ public class GameRestController {
     }
 
     @DeleteMapping("/delete/{appid}")
+
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','EMPLOYEE')")
     public ResponseEntity<?> delete(@PathVariable("appid") Long appid) {
         try {

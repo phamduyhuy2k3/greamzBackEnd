@@ -90,19 +90,7 @@ public class SecurityAdminConfig {
                                         return false;
                                 }
                             }).hasAnyAuthority("ADMIN")
-
-                            .requestMatchers(request -> {
-                                switch (request.getMethod().toLowerCase()) {
-                                    case "post":
-                                    case "get":
-                                    case "put":
-                                    case "delete":
-                                        return request.getServletPath().contains("/api/v1/user/employee");
-                                    default:
-                                        return false;
-                                }
-
-                            }).hasAnyAuthority("MANAGER")
+                            .requestMatchers(DELETE, "/api/v1/game/**").hasAnyAuthority("ADMIN","MANAGER")
                             .requestMatchers(
                                     GET,
                                     "/api/v1/game/**",
