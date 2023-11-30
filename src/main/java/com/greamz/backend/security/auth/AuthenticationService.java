@@ -58,7 +58,7 @@ public class AuthenticationService {
 
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request,HttpServletRequest servletRequest) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletRequest servletRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -76,13 +76,15 @@ public class AuthenticationService {
                 .accessToken(EncryptionUtil.encrypt(jwtToken))
                 .build();
     }
-    public void authenticateOauth2(UserPrincipal authentication){
+
+    public void authenticateOauth2(UserPrincipal authentication) {
         var refreshToken = jwtService.generateRefreshToken(authentication);
         var savedUser = repository.findByUserNameOrEmail(authentication.getEmail())
                 .orElseThrow();
         revokeAllUserTokens(savedUser);
         saveUserToken(savedUser, refreshToken);
     }
+
     public void saveUserToken(AccountModel user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
@@ -114,11 +116,11 @@ public class AuthenticationService {
             return null;
         }
         final String jwt = authHeader.substring(7);
-        final String username= jwtService.extractUsernameThatTokenExpired(jwt);
+        final String username = jwtService.extractUsernameThatTokenExpired(jwt);
         if (username != null) {
             var user = this.repository.findByUserNameOrEmail(username)
                     .orElseThrow();
-            log.info("user:"+user.getId());
+            log.info("user:" + user.getId());
             var refreshToken = this.tokenRepository.findByUser_Id(user.getId())
                     .orElseThrow().getToken();
 

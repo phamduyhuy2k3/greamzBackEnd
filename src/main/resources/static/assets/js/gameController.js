@@ -443,14 +443,25 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                                 "Authorization": "Bearer " + $cookies.get("accessToken")
                             }
                         }).then(resp => {
-                            Swal.fire({
-                                title: "Deleted!",
-                                text: "Your game has been deleted.",
-                                icon: "success"
-                            });
-                            $rootScope.reset();
-                            $scope.pager.fetchPage()
-                        }).catch(error => {
+                                Swal.fire({
+                                    title: "Deleted!",
+                                    text: "Your game has been deleted.",
+                                    icon: "success"
+                                });
+                                $rootScope.reset();
+                                $scope.pager.fetchPage()
+                            },
+                            error => {
+                                console.log("Error", error.status)
+                                if (error.status === 406) {
+
+                                    Swal.fire({
+                                        icon: "error",
+                                        title: "Oops...",
+                                        text: "Game is exited in other table!",
+                                    });
+                                }
+                            }).catch(error => {
                             Swal.fire({
                                 icon: "error",
                                 title: "Oops...",

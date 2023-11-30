@@ -9,16 +9,17 @@ import com.greamz.backend.model.Review;
 import com.greamz.backend.model.Voucher;
 
 import com.greamz.backend.security.UserPrincipal;
-import com.greamz.backend.service.AccountModelService;
-import com.greamz.backend.service.OrderService;
-import com.greamz.backend.service.ReviewService;
+import com.greamz.backend.service.*;
 
-import com.greamz.backend.service.VoucherModelService;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -35,7 +36,28 @@ public class AccountRestController {
     private final AccountModelService service;
     private final OrderService orderService;
     private final ReviewService reviewService;
-    private final VoucherModelService voucherService;
+    private final EmailService emailService;
+
+    @GetMapping("/sendEmailToRevoke/{email}")
+    public ResponseEntity<String> sendEmailToRevoke(@PathVariable String email) {
+        try {
+            emailService.sendEmailRevokedAccount(email);
+        } catch (MessagingException e) {
+            return ResponseEntity.badRequest().body("Send email failed");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body("Email not found");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Send email failed");
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{userId}/toggle-enable/{enabled}")
+    public ResponseEntity<Void> toggleEnable(@PathVariable Integer userId, @PathVariable boolean enabled) {
+        service.updateEnabledField(userId, enabled);
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/currentUser")
     public ResponseEntity<UserProfileDTO> currentUser(@AuthenticationPrincipal UserPrincipal currentUser) {
@@ -100,6 +122,7 @@ public class AccountRestController {
         List<Orders> ordersDTOS = orderService.findAllOrdersByAccountId(id);
         return ResponseEntity.ok(ordersDTOS);
     }
+
     @GetMapping("/findReiewsByAccountId/{id}")
     public ResponseEntity<List<Review>> findReiewsByAccountId(@PathVariable("id") Integer id) {
         List<Review> reviewsUserDTOS = reviewService.findAllByAccountId(id);
@@ -112,6 +135,7 @@ public class AccountRestController {
         List<Review> reviewsDTOS = reviewService.findAllReviewsByAccountId(id);
         return ResponseEntity.ok(reviewsDTOS);
     }
+
     @GetMapping("/findVoucherByAccountId/{id}")
     public ResponseEntity<List<Voucher>> findVoucherByAccountId(@PathVariable("id") Integer id) {
         List<Voucher> voucherDTOS = service.findAllVouchersByAccountId(id);
@@ -119,15 +143,13 @@ public class AccountRestController {
     }
 
     @PostMapping("/save")
-    public AccountModel save(@RequestBody AccountRequest account) {
-
+    public AccountModel save(@Validated @RequestBody AccountRequest account) {
         return service.saveAccount(account);
     }
 
     @PutMapping("/update")
-    public AccountModel update(@RequestBody AccountModel account) {
-        service.updateAccount(account);
-        return account;
+    public AccountModel update( @RequestBody AccountRequest account) {
+        return service.updateAccount(account);
     }
 
     @DeleteMapping("/delete/{id}")

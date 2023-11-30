@@ -1,10 +1,7 @@
 package com.greamz.backend.service;
 
 import com.greamz.backend.dto.account.AccountBasicDTO;
-import com.greamz.backend.dto.review.ReviewBasic;
-import com.greamz.backend.dto.review.ReviewFromUser;
-import com.greamz.backend.dto.review.ReviewOfGame;
-import com.greamz.backend.dto.review.ReviewsUserDTO;
+import com.greamz.backend.dto.review.*;
 import com.greamz.backend.dto.review.reaction.ReactResponse;
 import com.greamz.backend.dto.review.reaction.UserReactTheReview;
 

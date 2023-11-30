@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.net.URL;
 import java.util.List;
@@ -23,6 +24,12 @@ import static com.greamz.backend.util.Mapper.mapObject;
 public class AccountModelService {
     private final IAccountRepo repo;
     private final PasswordEncoder passwordEncoder;
+
+
+    @Transactional
+    public void updateEnabledField(Integer userId, boolean enabled) {
+        repo.updateEnabled(userId, enabled);
+    }
 
     @Transactional(readOnly = true)
     public List<AccountModel> findAll() {
@@ -75,15 +82,18 @@ public class AccountModelService {
     }
 
     @Transactional
-    public AccountModel updateAccount(AccountModel account) {
+    public AccountModel updateAccount(@Validated AccountRequest account) {
         AccountModel accountModel = repo.findById(account.getId()).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + account.getId()));
-        if (account.getPassword() == null || account.getPassword().isEmpty()) {
-            account.setPassword(accountModel.getPassword());
-        } else {
+        accountModel.setUsername(account.getUsername());
+        accountModel.setEmail(account.getEmail());
+        accountModel.setFullname(account.getFullname());
+        if (account.getPassword() != null || !account.getPassword().isEmpty()) {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
+        }else{
+
         }
 
-        return repo.save(account);
+        return repo.save(accountModel);
     }
 
     @Transactional
@@ -152,6 +162,7 @@ public class AccountModelService {
             return false;
         }
     }
+
     @Transactional(readOnly = true)
     public List<Voucher> findAllVouchersByAccountId(Integer accountId) {
         List<Voucher> vouchers = repo.findVoucherById(accountId);

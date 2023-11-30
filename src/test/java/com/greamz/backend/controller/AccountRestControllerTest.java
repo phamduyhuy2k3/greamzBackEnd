@@ -136,7 +136,7 @@ public class AccountRestControllerTest {
     @Test
     public void testUpdate() {
         // Test for update method
-        AccountModel accountModelToUpdate = new AccountModel(/*mock parameters*/);
+        AccountRequest accountModelToUpdate = new AccountRequest(/*mock parameters*/);
 
         AccountModel result = accountRestController.update(accountModelToUpdate);
 
