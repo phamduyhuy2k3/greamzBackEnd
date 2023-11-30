@@ -8,10 +8,12 @@ import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.GameModelService;
 import com.greamz.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,6 +28,7 @@ import java.util.NoSuchElementException;
 public class GameRestController {
     private final GameModelService service;
     private final ReviewService reviewService;
+
     @GetMapping("/findAllPagination")
     public ResponseEntity<Page<GameModel>> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                              @RequestParam(defaultValue = "7") int size) {
@@ -35,12 +38,13 @@ public class GameRestController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<GameModel>> searchGame(@RequestParam(defaultValue = "") String term,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "7") int size) {
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "7") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<GameModel> gameModels = service.searchGame(term, pageable);
         return ResponseEntity.ok(gameModels);
     }
+
     @GetMapping("/searchFilterByName")
     public ResponseEntity<Page<GameModel>> searchGameFilterByName(@RequestParam(defaultValue = "") String term,
                                                                   @RequestParam(defaultValue = "0") int page,
@@ -49,6 +53,7 @@ public class GameRestController {
         Page<GameModel> gameModels = service.searchGameByName(term, pageable);
         return ResponseEntity.ok(gameModels);
     }
+
     @GetMapping("/searchFilterByCategory")
     public ResponseEntity<Page<GameModel>> searchGameFilterByCategory(@RequestParam(defaultValue = "") String term,
                                                                       @RequestParam(defaultValue = "0") int page,
@@ -61,23 +66,25 @@ public class GameRestController {
     @GetMapping("/filter")
     public ResponseEntity<Page<GameDetailClientDTO>> filter(
             @RequestParam(defaultValue = "") String q,
-            @RequestParam (defaultValue = "")String categoriesId,
+            @RequestParam(defaultValue = "") String categoriesId,
 
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(defaultValue = "-1") Double minPrice,
-            @RequestParam (defaultValue = "-1")Double maxPrice,
+            @RequestParam(defaultValue = "-1") Double maxPrice,
             @RequestParam(defaultValue = "") String sort,
-            @RequestParam (defaultValue = "ASC")Sort.Direction direction){
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction) {
 
-        Page<GameDetailClientDTO> gameModels = service.filterGamesByCategoriesAndPlatform(q,categoriesId,page,size,minPrice,maxPrice,sort,direction);
+        Page<GameDetailClientDTO> gameModels = service.filterGamesByCategoriesAndPlatform(q, categoriesId, page, size, minPrice, maxPrice, sort, direction);
         return ResponseEntity.ok(gameModels);
     }
+
     @PostMapping("/create")
-    public GameModel create(@RequestBody GameModel game){
+    public GameModel create(@RequestBody GameModel game) {
         service.saveGameModel(game);
         return game;
     }
+
     @GetMapping("/{appid}")
     public ResponseEntity<GameModel> getOne(@PathVariable("appid") Long appid) {
         try {
@@ -87,6 +94,7 @@ public class GameRestController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/detail/{appid}")
     public ResponseEntity<?> getDetail(@PathVariable("appid") Long appid) {
         try {
@@ -96,6 +104,7 @@ public class GameRestController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/ids/{appids}")
     public ResponseEntity<List<GameModel>> findGamesByIds(@PathVariable("appids") String appid) {
         System.out.println(appid);
@@ -106,10 +115,21 @@ public class GameRestController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @DeleteMapping("/delete/{appid}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
-    public void delete(@PathVariable("appid") Long appid){
-        service.deleteGameByAppid(appid);
+
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','EMPLOYEE')")
+    public ResponseEntity<?> delete(@PathVariable("appid") Long appid) {
+        try {
+            service.deleteGameByAppid(appid);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(406).build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
     }
 //    @GetMapping("/findByCategory/{categoryId}")
 //    public ResponseEntity<List<GameModel>> findByCategory(@PathVariable("categoryId") Long categoryId){
@@ -118,28 +138,30 @@ public class GameRestController {
 //    }
 
     @GetMapping("/totalGame")
-    public Long countAllGame(){
+    public Long countAllGame() {
         return service.countAllByAppid();
     }
+
     @GetMapping("/totalGameLastWeek")
-    public Long countAllGameLastWeek(){
+    public Long countAllGameLastWeek() {
         return service.countGamesAddedLastWeek();
     }
 
     @GetMapping("/gameSimilar")
     public ResponseEntity<List<GameBasicDTO>> findGameSimilar(@RequestParam(defaultValue = "") String category_ids,
-                                                           @RequestParam(defaultValue = "") String platform_ids
-                                                         ) {
+                                                              @RequestParam(defaultValue = "") String platform_ids
+    ) {
         List<GameBasicDTO> gameModels = service.findGameSimialr(category_ids, platform_ids);
         return ResponseEntity.ok(gameModels);
     }
+
     @GetMapping("/reviewsOfGame/{appid}")
     public ResponseEntity<Page<ReviewOfGame>> getReviewsOfGame(@PathVariable("appid") Long appid,
                                                                @RequestParam(defaultValue = "0") int page,
                                                                @RequestParam(defaultValue = "8") int size,
                                                                @RequestParam(defaultValue = "-1") Integer userId
-                                                               ) {
-        Page<ReviewOfGame> reviews = reviewService.findReviewOfGame(appid, PageRequest.of(page, size),userId);
+    ) {
+        Page<ReviewOfGame> reviews = reviewService.findReviewOfGame(appid, PageRequest.of(page, size), userId);
         return ResponseEntity.ok(reviews);
     }
 }

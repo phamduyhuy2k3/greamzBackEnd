@@ -92,11 +92,13 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         )
 
     }
-    $scope.statusAccount = function (scope) {
+    $scope.statusAccount = async function (scope) {
         if (scope.enabled == true) {
             scope.status = 'disable';
-        }else {
+            scope.statusApi = false;
+        } else {
             scope.status = 'active';
+            scope.statusApi = true;
         }
         Swal.fire({
             title: "Do you want to change status this account into " + scope.status + "?",
@@ -108,11 +110,30 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             confirmButtonText: "Save!"
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: "Change success!",
-                    text: "Email has been send.",
-                    icon: "success"
-                });
+                if (scope) {
+                    $http.put(`/api/user/${scope.id}/toggle-enable/${scope.statusApi}`, {
+                        headers: "Authorization: Bearer " + $cookies.get("accessToken")
+                    }).then(() => {
+                        $http.get(`/api/user/sendEmailToRevoke/${scope.email}`, {
+                            headers: "Authentication: Bearer " + $cookies.get("accessToken")
+                        }).then(() => {
+                            Swal.fire({
+                                title: "Change success!",
+                                text: "Email has been send.",
+                                icon: "success"
+                            });
+                            $scope.initialize();
+                        })
+                    })
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Error changing status!",
+                    });
+                    console.log("Error", error);
+
+                }
             }
         });
     }

@@ -62,4 +62,16 @@ public class EmailService {
         javaMailSender.send(mimeMessage);
         System.out.println("Send email success");
     }
+
+    public void sendEmailRevokedAccount(String email) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        helper.setTo(email);
+        Context context = new Context();
+        context.setVariable("code", "123456");
+        String emailContent = thymeleafService.setContent(context, "announceRevocationOfRight");
+        helper.setText(emailContent, true);
+        javaMailSender.send(mimeMessage);
+        System.out.println("Send email success");
+    }
 }
