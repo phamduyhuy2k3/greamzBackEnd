@@ -71,7 +71,21 @@ public class ReviewService {
         });
         return reviews;
     }
+    @Transactional(readOnly = true)
+    public Page<ReviewOfGame> findAllPage(Pageable pageable) {
+        Page<Review> reviews = repo.findAll(pageable);
+        Page<ReviewOfGame> reviewsUserDTOS= reviews.map(review -> {
+            Hibernate.initialize(review.getAccount());
+            Hibernate.initialize(review.getGame());
+            ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
+            reviewsUserDTO.setLikes(reviewReactionRepo.countLikesForReview(review.getId()));
+            reviewsUserDTO.setDislikes(reviewReactionRepo.countDislikesForReview(review.getId()));
 
+            return reviewsUserDTO;
+        });
+
+        return reviewsUserDTOS;
+    }
     @Transactional(readOnly = true)
     public List<ReviewsUserDTO> findReviewByGame(Long gameAppId) {
         List<Review> reviewsList = repo.findAllByGameAppid(gameAppId);

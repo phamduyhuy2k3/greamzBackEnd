@@ -4,6 +4,7 @@ public enum PAYMENTMETHOD {
     MOMO,
     VNPAY,
     PAYPAL,
-    SOLANA
+    SOLANA,
+    FREE
 
 }

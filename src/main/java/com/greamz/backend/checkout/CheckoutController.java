@@ -26,8 +26,10 @@ public class CheckoutController {
     @PostMapping("/placeorder")
     public ResponseEntity<?> checkout(
             @RequestBody Orders orders,
-            HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-        Object data= checkoutService.placeOrder(orders, request );
+            HttpServletRequest request,
+            HttpServletResponse response
+            ) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+        Object data= checkoutService.placeOrder(orders, request,response );
 
         return ResponseEntity.ok(data);
     }
@@ -37,7 +39,11 @@ public class CheckoutController {
     }
     @GetMapping("/callback")
     public void callback(@RequestParam String orderId,HttpServletResponse response) throws IOException {
-        checkoutService.callback(UUID.fromString(orderId),response);
+        checkoutService.callback(UUID.fromString(orderId),response,true);
+    }
+    @GetMapping("/callback/client")
+    public ResponseEntity<String> callbackClient(@RequestParam String orderId,HttpServletResponse response) throws IOException {
+      return  ResponseEntity.ok(checkoutService.callbackFromClient(UUID.fromString(orderId),response));
     }
     @GetMapping("/failed")
     public void failed(@RequestParam("orderId") UUID orderId,HttpServletResponse response) throws IOException {

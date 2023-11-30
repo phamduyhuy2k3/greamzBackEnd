@@ -118,7 +118,7 @@ public class MomoService {
         } else {
             order.setOrdersStatus(OrdersStatus.FAILED);
             orderService.saveOrder(order);
-            httpServletResponse.sendRedirect("http://localhost:8080/api/v1/checkout/failed?orderId=" + order.getId());
+            httpServletResponse.sendRedirect("/api/v1/checkout/failed?orderId=" + order.getId());
         }
 
 

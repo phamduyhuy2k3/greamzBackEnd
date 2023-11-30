@@ -6,6 +6,7 @@ import com.greamz.backend.dto.game.GameDetailClientDTO;
 import com.greamz.backend.dto.game.GenreDTO;
 import com.greamz.backend.model.*;
 import com.greamz.backend.repository.IGameRepo;
+import com.greamz.backend.repository.IReviewRepo;
 import com.greamz.backend.util.Mapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -32,6 +33,7 @@ public class GameModelService {
     private final IGameRepo gameModelRepository;
     private final CategoryService categoryService;
     private final CodeActiveService codeActiveService;
+    private final IReviewRepo reviewRepo;
     @Transactional
     public GameModel saveGameModel(GameModel gameModel) {
         return gameModelRepository.saveAndFlush(gameModel);
@@ -89,6 +91,7 @@ public class GameModelService {
         Hibernate.initialize(gameModel.getImages());
         Hibernate.initialize(gameModel.getMovies());
         Hibernate.initialize(gameModel.getSupported_languages());
+
         Hibernate.initialize(gameModel.getCategories());
         List<PlatformDTO> platforms =codeActiveService.findAllPlatform(appid);
 
@@ -96,6 +99,8 @@ public class GameModelService {
                 .builder()
                 .appid(gameModel.getAppid())
                 .name(gameModel.getName())
+                .averageRating(reviewRepo.calculateAverageRating(gameModel.getAppid()))
+                .totalReviewed(reviewRepo.countAllByGameAppid(gameModel.getAppid()))
                 .detailed_description(gameModel.getDetailed_description())
                 .about_the_game(gameModel.getAbout_the_game())
                 .short_description(gameModel.getShort_description())
@@ -103,6 +108,7 @@ public class GameModelService {
                 .website(gameModel.getWebsite())
                 .capsule_image(gameModel.getCapsule_image())
                 .images(gameModel.getImages())
+                .discount(gameModel.getDiscount())
                 .movies(gameModel.getMovies())
                 .price(gameModel.getPrice())
                 .platforms(platforms)
@@ -128,21 +134,23 @@ public class GameModelService {
 
 
     @Transactional(readOnly = true)
-    public List<GameModel> findGameByGameIds(String ids) {
+    public List<GameDetailClientDTO> findGameByGameIds(String ids,String platformIds) {
         List<Long> idList = parseIds(ids);
-        System.out.println(idList);
-        List<GameModel> gameModels = gameModelRepository.findAllById(idList);
-        System.out.println(gameModels.size());
-        gameModels.forEach(gameModel -> {
-            gameModel.setImages(null);
-            gameModel.setMovies(null);
-            gameModel.setSupported_languages(null);
-            gameModel.setReviews(null);
-            gameModel.setCodeActives(null);
-            Hibernate.initialize(gameModel.getCategories());
-            Hibernate.initialize(gameModel.getPlatforms());
-        });
-        return gameModels;
+        List<Integer> platformIdList = parseIdsInt(platformIds);
+        List<GameModel> gameModels = gameModelRepository.findAllByAppidsAndPlatformIds(idList,platformIdList);
+        return gameModels.stream().map(gameModel -> {
+            List<PlatformDTO> platforms =codeActiveService.findAllPlatform(gameModel.getAppid());
+           return GameDetailClientDTO
+                    .builder()
+                    .appid(gameModel.getAppid())
+                    .name(gameModel.getName())
+                    .header_image(gameModel.getHeader_image())
+                    .discount(gameModel.getDiscount())
+                    .price(gameModel.getPrice())
+                    .platforms(platforms)
+                    .build();
+        }).toList();
+
     }
 
     @Transactional

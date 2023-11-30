@@ -17,6 +17,7 @@ public class TopSellingProductDTO {
     private String name;
     private String image;
     private String website;
+    private Integer discount;
     private Double price;
     private BigDecimal totalQuantitySold;
 

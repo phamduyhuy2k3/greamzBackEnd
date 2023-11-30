@@ -6,6 +6,7 @@ import com.greamz.backend.model.Orders;
 import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.service.GameModelService;
 import com.greamz.backend.service.OrderService;
+import com.greamz.backend.util.GlobalState;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,15 +77,20 @@ public class PaypalService {
                 entity,
                 Object.class
         );
-
+        Orders order = orderService.getOrdersById(orders);
         if (response.getStatusCode() == HttpStatus.CREATED) {
-            log.info("ORDER CAPTURED");
-            checkoutService.callback(orders,servletResponse);
-
+            order.setOrdersStatus(OrdersStatus.SUCCESS);
+            orderService.saveOrder(order);
+            gameModelService.updateStockForGameFromOrder(order.getOrdersDetails());
+            String redirectURL = GlobalState.FRONTEND_URL + "/order/success?orderId=" + order.getId();
+            servletResponse.setStatus(201);
+            servletResponse.getWriter().write("{\"redirectURL\": \"" + redirectURL + "\"}");
         } else {
-            log.info("FAILED CREATING ORDER");
-            checkoutService.failed(orders);
-
+            order.setOrdersStatus(OrdersStatus.FAILED);
+            orderService.saveOrder(order);
+            String redirectURL = "/api/v1/checkout/failed?orderId=" + order.getId();
+            servletResponse.setStatus(400);
+            servletResponse.getWriter().write("{\"redirectURL\": \"" + redirectURL + "\"}");
         }
     }
     public Object createOrder(JsonNode paypalCreateOrderRequest) {

@@ -88,10 +88,12 @@ public class GameRestControllerTest {
     @Test
     public void testFindGamesByIds() {
         String appid = "1,2,3"; // Chuỗi các appid
-        List<GameModel> gameModels = Collections.emptyList(); // Danh sách GameModel rỗng
-        when(gameModelService.findGameByGameIds(appid)).thenReturn(gameModels);
+        List<GameDetailClientDTO> gameModels = Collections.emptyList(); // Danh sách GameModel rỗng
+        String platformIds = "1,2,3"; // Chuỗi các platformId
+        when(gameModelService.findGameByGameIds(appid,platformIds)).thenReturn(gameModels);
 
-        ResponseEntity<List<GameModel>> response = gameRestController.findGamesByIds(appid);
+
+        ResponseEntity<List<GameDetailClientDTO>> response = gameRestController.findGamesByIds(appid,platformIds);
 
         assertEquals(gameModels, response.getBody());
     }

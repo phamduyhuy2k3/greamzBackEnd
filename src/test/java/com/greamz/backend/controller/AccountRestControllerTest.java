@@ -40,7 +40,7 @@ public class AccountRestControllerTest {
     @Test
     public void testCurrentUserWithValidUserPrincipal() {
         // Test for currentUser method with a valid UserPrincipal
-        UserPrincipal userPrincipal = new UserPrincipal(1, "username", "password", Collections.singletonList(Role.USER));
+        UserPrincipal userPrincipal = new UserPrincipal(1, "username", "password", true,Collections.singletonList(Role.USER));
         when(accountModelService.findAccountById(1)).thenReturn(new AccountModel(/*mock parameters*/));
 
         ResponseEntity<UserProfileDTO> response = accountRestController.currentUser(userPrincipal);

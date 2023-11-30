@@ -96,7 +96,10 @@ public class SecurityAdminConfig {
                                     "/api/v1/game/**",
                                     "/api/v1/category/**",
                                     "/api/v1/platform/**",
-                                    "/api/v1/checkout/**","/api/v1/payment/vnpay/**")
+                                    "/api/v1/checkout/**",
+                                    "/api/v1/payment/vnpay/**",
+                                    "/api/v1/review/**",
+                                    "/api/v1/dashboard/**")
                             .permitAll()
                             .requestMatchers(WHITE_LIST_URLS).permitAll()
                             .anyRequest().authenticated();
@@ -104,10 +107,8 @@ public class SecurityAdminConfig {
                 })
                 .exceptionHandling(exceptionHandlingConfigurer -> {
                     exceptionHandlingConfigurer
-                            .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                System.out.println(request.getRequestURI());
-                            })
                             .authenticationEntryPoint(new RestAuthenticationEntryPoint());
+
                 })
                 .sessionManagement(sessionManagement -> {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

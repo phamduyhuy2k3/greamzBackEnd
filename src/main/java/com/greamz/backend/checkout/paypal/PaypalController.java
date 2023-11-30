@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -22,9 +23,8 @@ public class PaypalController {
          return   ResponseEntity.ok(paypalService.createOrder(order));
 
     }
-    @SneakyThrows
     @PostMapping(value = "/capture")
-    public void capturePayment(@RequestParam String paypalOrderId, @RequestParam UUID orderId, HttpServletResponse servletResponse) {
+    public void capturePayment(@RequestParam String paypalOrderId, @RequestParam UUID orderId, HttpServletResponse servletResponse) throws IOException {
       paypalService.capturePayment(paypalOrderId,orderId,servletResponse);
     }
 //    @PostMapping(value = "/generateAcessToken")

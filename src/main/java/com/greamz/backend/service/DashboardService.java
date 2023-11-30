@@ -2,7 +2,11 @@ package com.greamz.backend.service;
 
 import com.greamz.backend.dto.dashboard.RevenueDTO;
 import com.greamz.backend.dto.dashboard.TopSellingProductDTO;
+import com.greamz.backend.dto.game.GameBasicDTO;
+import com.greamz.backend.dto.game.GameDetailClientDTO;
+import com.greamz.backend.model.GameModel;
 import com.greamz.backend.repository.IGameRepo;
+import com.greamz.backend.util.Mapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +62,23 @@ public class DashboardService {
     public List<TopSellingProductDTO>getTopSellingProductsInMonthYear(int yearParam, int monthParam) {
         return mapResultListToDTO(gameRepo.getTopSellingProductsInMonthYear(yearParam, monthParam));
     }
+    @Transactional
+    public List<GameDetailClientDTO>getTopSellingClient(int yearParam, int monthParam) {
+        List<Object[]> resultList= gameRepo.getTopSellingProductsInMonthYear(yearParam, monthParam);
+        List<GameDetailClientDTO> dtos = new ArrayList<>();
 
+        for (Object[] result : resultList) {
+            GameDetailClientDTO dto = new GameDetailClientDTO();
+            dto.setAppid((Long) result[0]);
+            dto.setName((String) result[1]);
+            dto.setHeader_image((String) result[2]);
+            dto.setWebsite((String) result[3]);
+            dto.setPrice((Double) result[4]);
+            dto.setDiscount((Integer) result[6]);
+            dtos.add(dto);
+        }
+        return dtos;
+    }
     @Transactional
     public Map<String, Object> getRevenueByMonth(int yearParam) {
         Map<String, Object> map = new HashMap<>();
@@ -67,5 +87,11 @@ public class DashboardService {
         }
 
         return map;
+    }
+    public List<GameBasicDTO> getSpecialOffer() {
+        List<GameModel> gameModels=gameRepo.specialOffer();
+        return gameModels.stream().map(gameModel -> {
+            return Mapper.mapObject(gameModel, GameBasicDTO.class);
+        }).toList();
     }
 }

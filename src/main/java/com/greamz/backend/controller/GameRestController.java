@@ -105,11 +105,12 @@ public class GameRestController {
         }
     }
 
-    @GetMapping("/ids/{appids}")
-    public ResponseEntity<List<GameModel>> findGamesByIds(@PathVariable("appids") String appid) {
-        System.out.println(appid);
+    @GetMapping("/gameids")
+    public ResponseEntity<List<GameDetailClientDTO>> findGamesByIds(@RequestParam String appids,@RequestParam String platformIds) {
+        System.out.println(appids);
+        System.out.println(platformIds);
         try {
-            List<GameModel> gameModels = service.findGameByGameIds(appid);
+            List<GameDetailClientDTO> gameModels = service.findGameByGameIds(appids,platformIds);
             return ResponseEntity.ok(gameModels);
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();

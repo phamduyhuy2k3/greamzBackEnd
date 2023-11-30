@@ -16,15 +16,16 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     private Integer id;
     private String email;
     private String password;
-
+    private boolean isEnabled;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    public UserPrincipal(Integer id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Integer id, String email, String password,boolean isEnabled,  Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.isEnabled = isEnabled;
     }
 
     public static UserPrincipal create(AccountModel user) {
@@ -38,6 +39,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
+                user.isEnabled(),
                 authorities
         );
     }
@@ -87,7 +89,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 
     @Override

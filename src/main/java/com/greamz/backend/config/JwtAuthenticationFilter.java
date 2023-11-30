@@ -52,30 +52,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         final String authHeader = request.getHeader("Authorization");
         String jwt;
-        String requestURL = request.getRequestURL().toString();
-        if(requestURL.contains("http://localhost:8080")){
-            if (request.getServletPath().contains("/api")|| request.getServletPath().equals("/") ) {
-                if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
-                    jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
-                    isValid(jwt, request, response, filterChain,true);
-                    return;
-                }
-                if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                    filterChain.doFilter(request, response);
-                } else {
-                    jwt = authHeader.substring(7);
-                    isValid(jwt, request, response, filterChain,true);
-                }
-            } else {
-                filterChain.doFilter(request, response);
+        if (request.getServletPath().contains("/api") |request.getServletPath().equals("/")) {
+            if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
+                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
+                isValid(jwt, request, response, filterChain,true);
+                return;
             }
-        }else {
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
             } else {
                 jwt = authHeader.substring(7);
-                isValid(jwt, request, response, filterChain,false);
+                isValid(jwt, request, response, filterChain,true);
             }
+        } else {
+            filterChain.doFilter(request, response);
         }
 
     }
@@ -97,17 +87,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 logger.info("istoken valid = " + jwtService.isTokenValid(jwtAccessToken, userDetails));
                 if (jwtService.isTokenValid(jwtAccessToken, userDetails)) {
                     logger.info("jwt is valid");
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                    logger.info("set Authentication to security context for '{}', uri: {}");
-                    filterChain.doFilter(request, response);
+                    if(userDetails.isEnabled()){
+                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                        authToken.setDetails(
+                                new WebAuthenticationDetailsSource().buildDetails(request)
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                        logger.info("set Authentication to security context for '{}', uri: {}");
+                        filterChain.doFilter(request, response);
+                    }else {
+
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Your account is temporarily locked, please contact admin to unlock your account");
+
+                    }
+
+
                 }
             }else {
                 logger.info("jwt is not valid");

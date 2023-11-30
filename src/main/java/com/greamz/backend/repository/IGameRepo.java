@@ -80,6 +80,21 @@ public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificat
             group by g.appid
             """, nativeQuery = true)
     List<GameModel> gameSimilar(List<Long> categoryId, List<Long> platformId);
+    @Query("""
+            select distinct g from GameModel g
+            left join fetch g.categories c
+            order by g.discount desc
+            limit 15
+            """)
+
+    List<GameModel> specialOffer();
+
+    @Query("""
+            select distinct g from GameModel g
+            left join fetch g.codeActives ca
+            where ca.platform.id in ?2 and g.appid in ?1
+            """)
+    List<GameModel> findAllByAppidsAndPlatformIds(List<Long> appids, List<Integer> platformIds);
 //    @Query("""
 //            select distinct g from GameModel g
 //            join fetch g.categories c
