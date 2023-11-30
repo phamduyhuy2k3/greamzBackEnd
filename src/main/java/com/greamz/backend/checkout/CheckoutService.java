@@ -17,6 +17,7 @@ import com.greamz.backend.util.GlobalState;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -39,7 +40,7 @@ public class CheckoutService {
     private final MomoService momoService;
     private final IAccountRepo accountRepo;
     @Transactional
-    public Object placeOrder(Orders orders, HttpServletRequest request) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public Object placeOrder(Orders orders, HttpServletRequest request,HttpServletResponse response) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
 
         orders.setOrdersStatus(OrdersStatus.PROCESSING);
         orders.getOrdersDetails().forEach(ordersDetail -> {
@@ -63,6 +64,15 @@ public class CheckoutService {
                         .build();
             case MOMO:
                 return momoService.createMomoPayment(orderSaved,accountModel.getFullname() );
+            case FREE:
+                if(orders.getTotalPrice()<=0){
+                    return CheckOutResponse.builder()
+                            .payUrl("")
+                            .orderId(orderSaved.getId())
+                            .build();
+                }else {
+                    throw new IllegalStateException("Please select a payment method: " + orders.getPaymentmethod());
+                }
             default:
                 throw new IllegalStateException("Please select a payment method: " + orders.getPaymentmethod());
         }
@@ -70,7 +80,7 @@ public class CheckoutService {
     }
 
 
-    public void callback(UUID orderId,HttpServletResponse response) throws IOException {
+    public void callback(UUID orderId, HttpServletResponse response) throws IOException {
         Orders orders = orderService.getOrdersById(orderId);
         orders.setOrdersStatus(OrdersStatus.SUCCESS);
         orderService.saveOrder(orders);
@@ -78,9 +88,22 @@ public class CheckoutService {
         AccountModel accountModel= accountRepo.findById(orders.getAccount().getId()).orElseThrow();
         BigDecimal balance= BigDecimal.valueOf(orders.getTotalPrice());
         balance.divide(BigDecimal.valueOf(10000));
-        accountModel.setBalance(accountModel.getBalance());
+        accountModel.setBalance(accountModel.getBalance().add(balance));
         accountRepo.save(accountModel);
+        response.addHeader("Location", GlobalState.FRONTEND_URL+"/order/success?orderId="+orderId);
         response.sendRedirect(GlobalState.FRONTEND_URL+"/order/success?orderId="+orderId);
+    }
+    public String callbackFromClient(UUID orderId, HttpServletResponse response) throws IOException {
+        Orders orders = orderService.getOrdersById(orderId);
+        orders.setOrdersStatus(OrdersStatus.SUCCESS);
+        orderService.saveOrder(orders);
+        gameModelService.updateStockForGameFromOrder(orders.getOrdersDetails());
+        AccountModel accountModel= accountRepo.findById(orders.getAccount().getId()).orElseThrow();
+        BigDecimal balance= BigDecimal.valueOf(orders.getTotalPrice());
+        balance.divide(BigDecimal.valueOf(10000));
+        accountModel.setBalance(accountModel.getBalance().add(balance));
+        accountRepo.save(accountModel);
+        return "/order/success?orderId="+orderId;
     }
     @Transactional
     public void failed(UUID orderId) {

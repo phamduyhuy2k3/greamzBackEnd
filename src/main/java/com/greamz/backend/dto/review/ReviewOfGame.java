@@ -1,6 +1,7 @@
 package com.greamz.backend.dto.review;
 
 import com.greamz.backend.dto.account.UserProfileSuperBasic;
+import com.greamz.backend.dto.game.GameBasicDTO;
 import com.greamz.backend.enumeration.ReactionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ import java.util.Date;
 public class ReviewOfGame {
     private Long id;
     private String text;
+    private GameBasicDTO game;
     private int rating;
     private int likes;
     private int dislikes;

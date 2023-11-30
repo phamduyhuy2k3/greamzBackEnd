@@ -1,7 +1,8 @@
 package com.greamz.backend.controller;
 
-import com.greamz.backend.dto.dashboard.RevenueDTO;
 import com.greamz.backend.dto.dashboard.TopSellingProductDTO;
+import com.greamz.backend.dto.game.GameBasicDTO;
+import com.greamz.backend.dto.game.GameDetailClientDTO;
 import com.greamz.backend.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,16 @@ public class DashboardController {
 
         return ResponseEntity.ok(dashboardService.getRevenueByMonth(year));
     }
+    @GetMapping("/specialOffer")
+    public ResponseEntity<List<GameBasicDTO>> getSpecialOffer() {
 
+        return ResponseEntity.ok(dashboardService.getSpecialOffer());
+    }
+    @GetMapping("/getTopSellingClient")
+    public ResponseEntity<List<GameDetailClientDTO>> getTopSellingClient(
+            @RequestParam int year, @RequestParam(defaultValue = "1") int month) {
+
+        return ResponseEntity.ok(dashboardService.getTopSellingClient(year, month));
+    }
 
 }
