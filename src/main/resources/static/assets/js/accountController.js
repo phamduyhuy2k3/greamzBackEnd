@@ -123,7 +123,15 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                                 icon: "success"
                             });
                             $scope.initialize();
-                        })
+                        },
+                            error => {
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Oops...",
+                                    text: "Error sending email!",
+                                });
+                                console.log("Error", error);
+                            })
                     })
                 } else {
                     Swal.fire({
@@ -132,7 +140,6 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                         text: "Error changing status!",
                     });
                     console.log("Error", error);
-
                 }
             }
         });
