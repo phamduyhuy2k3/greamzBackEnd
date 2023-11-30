@@ -367,14 +367,11 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                     }
                 }).then(
                 resp => {
-                    $timeout(function () {
-                            $scope.pager = {
-                                ...$scope.pager,
-                                ...resp.data
-                            };
-                            $scope.isLoading = false;
-                        }
-                    )
+                    $scope.pager = {
+                        ...$scope.pager,
+                        ...resp.data
+                    }
+                    $scope.isLoading = false;
                 },
                 error => {
                     console.log("Error", error);
@@ -545,7 +542,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                     'Authorization': 'Bearer ' + $cookies.get('accessToken')
                 }
             }).then(resp => {
-                console.log(resp.data)
+                    console.log(resp.data)
                     return resp.data;
                 }, error => {
                     return error;
@@ -608,9 +605,9 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
 
         }
         $scope.showAddBtn = function (scope) {
-            if (scope === 'true'){
+            if (scope === 'true') {
                 $scope.hide = true;
-            }else{
+            } else {
                 $scope.hide = false;
             }
 

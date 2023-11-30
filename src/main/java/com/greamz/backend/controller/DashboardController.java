@@ -1,5 +1,6 @@
 package com.greamz.backend.controller;
 
+import com.greamz.backend.dto.dashboard.RevenueDTO;
 import com.greamz.backend.dto.dashboard.TopSellingProductDTO;
 import com.greamz.backend.service.DashboardService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,18 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/getTopSellingProductsInMonthYear")
-    public ResponseEntity<Map<String, Object>> getTopSellingProductsInMonthYear(
+    public ResponseEntity<List<TopSellingProductDTO>> getTopSellingProductsInMonthYear(
+            @RequestParam int year, @RequestParam(defaultValue = "1") int month) {
+
+        return ResponseEntity.ok(dashboardService.getTopSellingProductsInMonthYear(year, month));
+    }
+
+    @GetMapping("/getRevenueByMonth")
+    public ResponseEntity<Map<String, Object>> getRevenueByMonth(
             @RequestParam int year) {
 
-        return ResponseEntity.ok(dashboardService.getTopSellingProductsInMonthYear(year));
+        return ResponseEntity.ok(dashboardService.getRevenueByMonth(year));
     }
+
+
 }

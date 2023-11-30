@@ -1,12 +1,37 @@
 <style>
-    .checked {
-        color: orange;
+
+    @keyframes slide-in {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .slide-in-component {
+        animation: slide-in 2s ease-in-out;
+    }
+
+    @keyframes slide-in2 {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .animateForIntroduce {
+        animation: slide-in2 2s ease-in-out;
     }
 </style>
 <div class="row">
     <div class="col-lg-6 col-md-6 mb-4">
         <div class=" mb-3">
-            <div class="card-body p-3">
+            <div class="card-body p-3 animateForIntroduce">
                 <div class="introduce">
                     <div height="500px">
                         <img class="imageIntroduce border-4"
@@ -25,18 +50,21 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-6 col-md-6 mb-4"
+    <div class="col-lg-6 col-md-6 mb-4 slide-in-component"
          style="margin-top: 30px">
-        <div class="mb-xl-0 mb-4 w-75"
+        <div class="mb-xl-0 mb-4 w-75 "
              style="padding-bottom:29px">
             <div class="card">
                 <div class="card-header p-3 pt-2">
                     <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
-                        <i class="material-icons opacity-10">weekend</i>
+                        <i class="material-icons opacity-10">
+                            videogame_asset
+                            </i>
                     </div>
                     <div class="text-end pt-1">
                         <p class="text-sm mb-0 text-capitalize">Game total</p>
-                        <h4 class="mb-0"><span class="text-info font-weight-bolder counter-count">{{totalGames}} </span>
+                        <h4 class="mb-0"><span class="text-info font-weight-bolder"
+                                               id="countDisplay">{{totalGames}} </span>
                             added</h4>
                     </div>
                 </div>
@@ -99,10 +127,10 @@
             <div class="card-body">
                 <div class="row">
                     <h6 class="mb-0 col">Revenue chart</h6>
-                    <select class="col form-select" aria-label="select by year">
-                        <option selected>Open this select years</option>
-                        <option value="2022">2022</option>
-                        <option value="2023">2023</option>
+                    <select class="col form-select mb-2" aria-label="select by year"
+                            ng-model="selectedYearForRevenue" ng-change="getRevenueByYear()">
+                        <option value="" disabled >Open this select years</option>
+                        <option ng-repeat="y in years" ng-value="y.value">{{y.name}}</option>
                     </select>
                 </div>
                 <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today sales.</p>
@@ -129,14 +157,14 @@
                     <div class=" col-lg-6 col-5 my-auto text-end">
                         <select class="col form-select mb-2" aria-label="select by year"
                                 ng-model="selectedYear" ng-change="getGameBestSeller()">
-                            <option value="" disabled selected>Open this select years</option>
+                            <option value="" disabled >Open this select years</option>
                             <option ng-repeat="y in years" ng-value="y.value">{{y.name}}</option>
                         </select>
                         <select class="col form-select" aria-label="Default select example"
                                 ng-model="selectedMonth"
                                 ng-change="getGamesByMonth()"
                                 ng-disabled="selectedYear === null">
-                            <option value="" disabled selected>Chọn một tháng</option>
+                            <option value="" disabled>Chọn một tháng</option>
                             <option ng-repeat="m in months" ng-value="m.value">{{m.name}}</option>
                         </select>
                     </div>
@@ -213,87 +241,6 @@
 <script src="../assets/js/plugins/chartjs.min.js"></script>
 <script>
 
-    const ctx2 = document.getElementById("chart-line").getContext("2d");
-    new Chart(ctx2, {
-        type: "line",
-        data: {
-            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            datasets: [{
-                label: "Mobile apps",
-                tension: 0,
-                borderWidth: 0,
-                pointRadius: 5,
-                pointBackgroundColor: "rgba(255, 255, 255, .8)",
-                pointBorderColor: "transparent",
-                borderColor: "rgba(255, 255, 255, .8)",
-                borderColor: "rgba(255, 255, 255, .8)",
-                borderWidth: 4,
-                backgroundColor: "transparent",
-                fill: true,
-                data: [50, 40, 300, 320, 500, 350, 200, 230, 500],
-                maxBarThickness: 6
-
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false,
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            },
-            scales: {
-                y: {
-                    grid: {
-                        drawBorder: false,
-                        display: true,
-                        drawOnChartArea: true,
-                        drawTicks: false,
-                        borderDash: [5, 5],
-                        color: 'rgba(255, 255, 255, .2)'
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        display: false,
-                        drawOnChartArea: false,
-                        drawTicks: false,
-                        borderDash: [5, 5]
-                    },
-                    ticks: {
-                        display: true,
-                        color: '#f8f9fa',
-                        padding: 10,
-                        font: {
-                            size: 14,
-                            weight: 300,
-                            family: "Roboto",
-                            style: 'normal',
-                            lineHeight: 2
-                        },
-                    }
-                },
-            },
-        },
-    });
 
 </script>
 <script>
