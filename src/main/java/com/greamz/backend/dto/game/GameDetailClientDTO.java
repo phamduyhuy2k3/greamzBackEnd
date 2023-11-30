@@ -24,6 +24,8 @@ public class GameDetailClientDTO {
     private String website;
     private String capsule_image;
     private Integer discount;
+    private Integer totalReviewed;
+    private Double averageRating;
     private Set<String> images;
     private Set<String> movies;
     private List<PlatformDTO> platforms;
