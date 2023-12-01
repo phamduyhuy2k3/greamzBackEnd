@@ -194,8 +194,15 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
         const currentDate = new Date();
         // Tạo mảng năm
         $scope.years = generateYears();
-        $scope.month = currentDate.getMonth() + 1;
+        $scope.month = currentDate.getMonth();
         $scope.year = currentDate.getFullYear();
+        console.log($scope.month)
+        console.log($scope.year)
+
+
+
+
+
         $scope.selectedMonth = $scope.month.toString();
         // Chọn năm hiện tại làm giá trị mặc định cho ô chọn năm
         $scope.selectedYear = getCurrentOrNextYear();
@@ -272,6 +279,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
     }
     $scope.getGamesByMonth = async function () {
         $scope.isLoading = true;
+
         await $http.get(`/api/v1/dashboard/getTopSellingProductsInMonthYear?year=${$scope.selectedYear}&month=${$scope.selectedMonth}`, {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
