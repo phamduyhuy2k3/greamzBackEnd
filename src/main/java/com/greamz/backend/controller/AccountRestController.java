@@ -38,10 +38,10 @@ public class AccountRestController {
     private final ReviewService reviewService;
     private final EmailService emailService;
 
-    @GetMapping("/sendEmailToRevoke/{email}")
-    public ResponseEntity<String> sendEmailToRevoke(@PathVariable String email) {
+    @GetMapping("/sendEmailToRevoke/{email}/{fullname}")
+    public ResponseEntity<String> sendEmailToRevoke(@PathVariable String email, @PathVariable String fullname) {
         try {
-            emailService.sendEmailRevokedAccount(email);
+            emailService.sendEmailRevokedAccount(email, fullname);
         } catch (MessagingException e) {
             return ResponseEntity.badRequest().body("Send email failed");
         } catch (NoSuchElementException e) {

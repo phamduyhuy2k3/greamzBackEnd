@@ -114,7 +114,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                     $http.put(`/api/user/${scope.id}/toggle-enable/${scope.statusApi}`, {
                         headers: "Authorization: Bearer " + $cookies.get("accessToken")
                     }).then(() => {
-                        $http.get(`/api/user/sendEmailToRevoke/${scope.email}`, {
+                        $http.get(`/api/user/sendEmailToRevoke/${scope.email}/${scope.fullname}`, {
                             headers: "Authentication: Bearer " + $cookies.get("accessToken")
                         }).then(() => {
                             Swal.fire({
