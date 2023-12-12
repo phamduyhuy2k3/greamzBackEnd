@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.plaf.PanelUI;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -26,6 +28,17 @@ import java.util.Set;
 public class CategoryService {
     private final ICategoryRepo repo;
     private final IGameRepo gameRepo;
+
+    @Transactional(readOnly = true)
+    public Long countTotalCategory() {
+        return repo.countTotalCategory();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> countByCategoryTypes() {
+        return repo.countCategoriesByCategoryTypes();
+    }
+
     @Transactional(readOnly = true)
     public List<Category> findAll() {
         List<Category> gameCategories = repo.findAll();
@@ -45,21 +58,23 @@ public class CategoryService {
         }
         return gameCategories;
     }
+
     @Transactional(readOnly = true)
     public List<CategoryBasicDTO> findAllFromClient() {
         List<Category> gameCategories = repo.findAll();
         List<CategoryBasicDTO> categoryBasicDTOS = gameCategories.stream().map(
-                category -> {
-                    CategoryBasicDTO categoryBasicDTO = Mapper.mapObject(category, CategoryBasicDTO.class);
-                    categoryBasicDTO.setGameCount(gameRepo.countAllByCategoriesId(category.getId()));
-                    return categoryBasicDTO;
-                })
+                        category -> {
+                            CategoryBasicDTO categoryBasicDTO = Mapper.mapObject(category, CategoryBasicDTO.class);
+                            categoryBasicDTO.setGameCount(gameRepo.countAllByCategoriesId(category.getId()));
+                            return categoryBasicDTO;
+                        })
                 .toList();
         return categoryBasicDTOS;
     }
+
     @Transactional(readOnly = true)
     public Category findById(Long id) throws NoSuchElementException {
-        Category category=repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
+        Category category = repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
 
         return category;
     }
@@ -74,14 +89,17 @@ public class CategoryService {
         repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found game category with id: " + id));
         repo.deleteById(id);
     }
+
     @Transactional(readOnly = true)
     public Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes) {
         return repo.findAllByCategoryTypes(categoryTypes);
     }
+
     @Transactional(readOnly = true)
     public List<Category> findAllByGameModelsAppid(Long gameId) {
         return repo.findAllByGameModelsAppid(gameId);
     }
+
     @Transactional(readOnly = true)
     public Page<Category> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -90,6 +108,7 @@ public class CategoryService {
 
         return gameCategories;
     }
+
     @Transactional(readOnly = true)
     public Page<Category> searchCategory(String searchTerm, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

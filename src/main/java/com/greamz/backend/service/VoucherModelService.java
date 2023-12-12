@@ -29,13 +29,15 @@ public class VoucherModelService {
 
     @Transactional
     public void updateVoucherModel(Voucher voucherModel) {
-        Voucher voucher=voucherRepository.findById(voucherModel.getId()).orElseThrow();
+        Voucher voucher = voucherRepository.findById(voucherModel.getId()).orElseThrow();
         voucherRepository.save(voucherModel);
     }
+
     @Transactional
     public List<Voucher> findAll() {
         return voucherRepository.findAll();
     }
+
     @Transactional
     public Page<Voucher> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -43,8 +45,8 @@ public class VoucherModelService {
     }
 
     @Transactional
-    public void deleteVoucherByAppid(Long id){
-        Voucher voucherModel = voucherRepository.findById(id).orElseThrow(()->new NoSuchElementException("Not found product with id: "+ id));
+    public void deleteVoucherByAppid(Long id) {
+        Voucher voucherModel = voucherRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + id));
         voucherRepository.deleteById(id);
 
     }
@@ -55,8 +57,8 @@ public class VoucherModelService {
     }
 
     @Transactional
-    public Voucher findByid(Long id){
-        return voucherRepository.findById(id).orElseThrow(()->new NoSuchElementException("Not found product with id: "+ id));
+    public Voucher findByid(Long id) {
+        return voucherRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Not found product with id: " + id));
     }
 
 

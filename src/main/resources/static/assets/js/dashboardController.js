@@ -6,10 +6,15 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
     $scope.gameOfTheMonth = [];
     $scope.gameOfTheYear = [];
 
+    $scope.totalCategory = 0;
+    $scope.totalCategoryByCategoryType = [];
+
+    $scope.revenueToday = 0;
+
     $scope.revenueByMonth = [];
     $scope.resultRevenue = [];
 
-    $scope.selectedMonth = '11';
+    $scope.selectedMonth = '12';
     $scope.months = [
         {name: 'Tháng 1', value: '1'},
         {name: 'Tháng 2', value: '2'},
@@ -23,7 +28,6 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
         {name: 'Tháng 10', value: '10'},
         {name: 'Tháng 11', value: '11'},
         {name: 'Tháng 12', value: '12'}
-
     ]
 
     $scope.isLoading = true;
@@ -46,7 +50,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
             }
             return years;
         } else {
-            alert("Cút");
+            alert("Get out of here!");
         }
     }
 
@@ -200,9 +204,6 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
         console.log($scope.year)
 
 
-
-
-
         $scope.selectedMonth = $scope.month.toString();
         // Chọn năm hiện tại làm giá trị mặc định cho ô chọn năm
         $scope.selectedYear = getCurrentOrNextYear();
@@ -239,6 +240,28 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
             $scope.percentageChange = $scope.calculatePercentageChange($scope.totalGames, $scope.totalGameLastWeek);
             console.log($scope.percentageChange)
         });
+
+        await $http.get(`/api/v1/category/countTotalCategory`, {
+            headers: "Authorization: Bearer " + $cookies.get("accessToken")
+        }).then(resp => {
+            $scope.totalCategory = resp.data;
+            console.log(resp.data);
+            animateValue("countCategory", 0, $scope.totalCategory, 3000);
+        })
+
+        await $http.get(`/api/v1/category/countByCategoryTypes`, {
+            headers: "Authorization: Bearer " + $cookies.get("accessToken")
+        }).then(resp => {
+            $scope.totalCategoryByCategoryType = resp.data;
+            console.log(resp.data);
+        })
+
+        await $http.get(`/api/v1/order/getRevenueForCurrentDay`, {
+            headers: "Authorization: Bearer " + $cookies.get("accessToken")
+        }).then(resp => {
+            $scope.revenueToday = resp.data;
+            console.log(resp.data);
+        })
 
         $http.get(`/api/v1/dashboard/getTopSellingProductsInMonthYear?year=${$scope.year}&month=${$scope.month}`, {
             headers: {

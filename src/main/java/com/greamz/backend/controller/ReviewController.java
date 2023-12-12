@@ -3,6 +3,7 @@ package com.greamz.backend.controller;
 
 import com.greamz.backend.dto.review.ReviewFromUser;
 import com.greamz.backend.dto.review.ReviewOfGame;
+import com.greamz.backend.dto.review.ReviewResponseForAdmin;
 import com.greamz.backend.dto.review.ReviewsUserDTO;
 import com.greamz.backend.dto.review.reaction.ReactResponse;
 import com.greamz.backend.dto.review.reaction.UserReactTheReview;
@@ -34,8 +35,8 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
     @GetMapping("/findAllPagination")
-    public ResponseEntity<Page<Review>> findAllPagination(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "7") int size) {
+    public ResponseEntity<Page<ReviewResponseForAdmin>> findAllPagination(@RequestParam(defaultValue = "0") int page,
+                                                                          @RequestParam(defaultValue = "7") int size) {
         return ResponseEntity.ok(service.findAll(PageRequest.of(page, size)));
     }
     @GetMapping("/findById/{id}")

@@ -14,7 +14,7 @@
                             data-bs-target="#voucherModal" ng-click="reset()">
                         <span class="btn-inner--icon"><i
                                 class="material-icons material-symbols-outlined">library_add</i></span>
-                        <span class="btn-inner--text" >Create</span>
+                        <span class="btn-inner--text">Create</span>
                     </button>
                     <table class="table align-items-center mb-0">
                         <thead>
@@ -25,7 +25,7 @@
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 NAME
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 DESCRIPTION
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -35,13 +35,13 @@
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 DATE EXPIRED
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 discount
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 order Condition
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 max Price
                             </th>
                             <th class="text-secondary opacity-7"></th>
@@ -59,7 +59,7 @@
                                 <span class="text-secondary text-xs font-weight-bold">{{v.description}}</span>
                             </td>
                             <td class="align-middle">
-                                <span  class="text-secondary text-xs font-weight-bold ps-3">{{v.dateAt}}</span>
+                                <span class="text-secondary text-xs font-weight-bold ps-3">{{v.dateAt}}</span>
                             </td>
                             <td class="align-middle">
                                 <span class="text-secondary text-xs font-weight-bold">{{v.dateExpired}}</span>
@@ -135,6 +135,8 @@
         </div>
     </div>
 </div>
+
+<!--modal create-->
 <div class="modal fade modal-crud" id="voucherModal" tabindex="-1" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-xl">
@@ -142,18 +144,10 @@
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Voucher</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                style="background-color: #6f42c1"></button>
+                        style="background-color: #6f42c1"></button>
             </div>
             <div class="modal-body">
                 <form class="row g-3">
-                    <div class="col-md-12">
-                        <div class="input-group input-group-static">
-                            <label>ID</label>
-                            <input type="text" class="form-control"
-                                   ng-model="voucher.id" disabled>
-                        </div>
-                    </div>
-
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
                             <label>NAME</label>
@@ -161,7 +155,6 @@
                                    ng-model="voucher.name">
                         </div>
                     </div>
-
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
                             <label>DESCRIPTION</label>
@@ -179,7 +172,8 @@
                     <div class="col-md-12">
                         <div class="input-group input-group-static">
                             <label>DATE EXPIRED</label>
-                            <input type="date" class="form-control"
+                            <input type="number" class="form-control"
+                                   min="0"
                                    ng-model="voucher.dateExpired">
                         </div>
                     </div>
@@ -187,6 +181,7 @@
                         <div class="input-group input-group-static">
                             <label>DISCOUNT</label>
                             <input type="number" class="form-control"
+                                   min="0"
                                    ng-model="voucher.discount">
                         </div>
                     </div>
@@ -194,6 +189,7 @@
                         <div class="input-group input-group-static">
                             <label>ORDER CONDITION</label>
                             <input type="number" class="form-control"
+                                   min="0"
                                    ng-model="voucher.orderCondition">
                         </div>
                     </div>
@@ -201,6 +197,7 @@
                         <div class="input-group input-group-static">
                             <label>MAX PRICE</label>
                             <input type="number" class="form-control"
+                                   min="0"
                                    ng-model="voucher.maxPrice">
                         </div>
                     </div>
@@ -209,8 +206,11 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <!--                                <button type="button" class="btn btn-primary"  ng-click="update()" ng-if="action==='update'">Save changes</button>-->
-                <button type="button" class="btn btn-primary" ng-click="create()">Save</button>
+                <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='update'">Save
+                    changes
+                </button>
+                <button type="button" class="btn btn-primary" ng-click="create()" ng-if="action==='create'">Save
+                </button>
             </div>
         </div>
     </div>

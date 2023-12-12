@@ -4,9 +4,8 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
     $scope.action = 'create'
 
     $scope.review = {
-        id: null,
         text: '',
-        rating: '',
+        rating: 0,
         likes: '',
         dislikes: ''
     }
@@ -21,31 +20,74 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
         }).then(
             resp => {
                 console.log($scope.review)
-                alert("Saved successfully!");
-                // $scope.initialize()
+                if ($scope.action === 'create') {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Saved successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $scope.reset();
+                    $scope.initialize()
+                } else {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Update successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $scope.initialize()
+                }
             },
             error => {
-
+                alert("Error!");
+                console.log("Error", error);
             }
         )
     }
 
     $scope.delete = function (id) {
-        if (confirm("Bạn muốn xóa sản phẩm này?")) {
-            $http.delete(`/api/v1/review/delete/${id}`, {
-                headers: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
+        Swal.fire({
+            title: "Do you want to delete this category?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+                if (result.isConfirmed) {
+                    if (id) {
+                        $http.delete(`/api/v1/review/delete/${id}`, {
+                            headers: {
+                                "Authorization": "Bearer " + $cookies.get("accessToken")
+                            }
+                        }).then(resp => {
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "success",
+                                    title: "Delete successfully!",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                                $scope.initialize();
+                            },
+                            error => {
+                                Swal.fire({
+                                    position: "center",
+                                    icon: "error",
+                                    title: "Delete failed!",
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                })
+                            }
+                        )
+                    }
                 }
-            }).then(resp => {
-                $scope.initialize();
-                // $scope.reset();
-                alert("Xóa sản phẩm thành công!");
-            }).catch(error => {
-                alert("Lỗi xóa sản phẩm!");
+            }
+        )
 
-                console.log("Error", error);
-            })
-        }
     }
 
 
@@ -63,17 +105,14 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
         )
     }
     $scope.reset = function () {
+        $scope.action = 'create';
         $scope.review = {
-            id: null,
             text: '',
             rating: '',
             likes: '',
             dislikes: ''
         }
-        $scope.action = 'create';
         $scope.initialize();
-
-
     }
     $scope.pager = {
         toFirst() {
@@ -135,4 +174,5 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
     }
     $scope.initialize()
 
-});
+})
+;

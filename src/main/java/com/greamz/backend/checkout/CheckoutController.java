@@ -45,10 +45,10 @@ public class CheckoutController {
     public ResponseEntity<String> callbackClient(@RequestParam String orderId,HttpServletResponse response) throws IOException {
       return  ResponseEntity.ok(checkoutService.callbackFromClient(UUID.fromString(orderId),response));
     }
-    @GetMapping("/callback/client")
-    public ResponseEntity<String> callbackClient(@RequestParam String orderId,HttpServletResponse response) throws IOException {
-      return  ResponseEntity.ok(checkoutService.callbackFromClient(UUID.fromString(orderId),response));
-    }
+//    @GetMapping("/callback/client")
+//    public ResponseEntity<String> callbackClient(@RequestParam String orderId,HttpServletResponse response) throws IOException {
+//      return  ResponseEntity.ok(checkoutService.callbackFromClient(UUID.fromString(orderId),response));
+//    }
     @GetMapping("/failed")
     public void failed(@RequestParam("orderId") UUID orderId,HttpServletResponse response) throws IOException {
         checkoutService.failed(orderId);

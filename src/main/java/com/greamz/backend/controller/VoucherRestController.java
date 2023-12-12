@@ -15,11 +15,13 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class VoucherRestController {
     private final VoucherModelService service;
+
     @GetMapping("/findALl")
-    public ResponseEntity<Iterable<Voucher>> findAll(){
+    public ResponseEntity<Iterable<Voucher>> findAll() {
         List<Voucher> voucherModels = service.findAll();
         return ResponseEntity.ok(voucherModels);
     }
+
     @GetMapping("/findAllPagination")
     public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "7") int size) {
@@ -27,9 +29,8 @@ public class VoucherRestController {
     }
 
 
-
     @GetMapping("/findById/{id}")
-    public ResponseEntity<Voucher> findByid(@PathVariable("id") Long id){
+    public ResponseEntity<Voucher> findByid(@PathVariable("id") Long id) {
         try {
             Voucher voucherModels = service.findVoucherByid(id);
             return ResponseEntity.ok(voucherModels);
@@ -39,17 +40,18 @@ public class VoucherRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody Voucher voucher){
+    public ResponseEntity<?> create(@RequestBody Voucher voucher) {
         return ResponseEntity.ok().body(service.saveVoucherModel(voucher));
     }
 
     @PutMapping("/update")
-    public Voucher update(@RequestBody Voucher voucher){
+    public Voucher update(@RequestBody Voucher voucher) {
         service.updateVoucherModel(voucher);
         return voucher;
     }
+
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable("id") Long id){
+    public void delete(@PathVariable("id") Long id) {
         service.deleteVoucherByAppid(id);
     }
 
