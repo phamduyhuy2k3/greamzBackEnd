@@ -18,6 +18,11 @@ import java.util.UUID;
 public class OrderRestController {
     private final OrderService service;
 
+    @GetMapping("/getRevenueForCurrentDay")
+    public ResponseEntity<Double> getRevenueForCurrentDay() {
+        return ResponseEntity.ok(service.findRevenueForCurrentDay());
+    }
+
     @GetMapping("/findAll")
     public ResponseEntity<Iterable<Orders>> findAll() {
         List<Orders> orders = service.findAll();

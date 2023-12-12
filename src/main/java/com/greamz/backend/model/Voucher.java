@@ -26,5 +26,4 @@ public class Voucher extends TimeStampEntity {
     private Integer discount;
     private Double orderCondition;
     private Double maxPrice;
-
 }

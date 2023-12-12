@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/category")
@@ -21,6 +18,16 @@ import java.util.Set;
 public class CategoryController {
     private final CategoryService service;
     private final GameModelService serviceGameModal;
+
+    @GetMapping("/countByCategoryTypes")
+    public ResponseEntity<List<Map<String, Object>>> countByCategoryTypes() {
+        return ResponseEntity.ok(service.countByCategoryTypes());
+    }
+
+    @GetMapping("/countTotalCategory")
+    public ResponseEntity<Long> countTotalCategory() {
+        return ResponseEntity.ok(service.countTotalCategory());
+    }
 
     @GetMapping("/type/{type}")
     public ResponseEntity<Set<Category>> finAdllByType(@PathVariable CategoryTypes type) {
@@ -39,18 +46,21 @@ public class CategoryController {
         List<Category> gameCategories = service.findAll();
         return ResponseEntity.ok(gameCategories);
     }
+
     @GetMapping("/findAllFromClient")
     public ResponseEntity<List<CategoryBasicDTO>> findAllFromClient() {
         List<CategoryBasicDTO> gameCategories = service.findAllFromClient();
         return ResponseEntity.ok(gameCategories);
     }
+
     @GetMapping("/search")
     public ResponseEntity<Iterable<Category>> searchGame(@RequestParam(defaultValue = "") String term,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "7") int size) {
+                                                         @RequestParam(defaultValue = "0") int page,
+                                                         @RequestParam(defaultValue = "7") int size) {
         Iterable<Category> categoryModels = service.searchCategory(term, page, size);
         return ResponseEntity.ok(categoryModels);
     }
+
     @GetMapping("/findById/{id}")
     public ResponseEntity<Category> findById(@PathVariable("id") Long id) {
         try {
@@ -76,10 +86,12 @@ public class CategoryController {
     public void delete(@PathVariable("id") Long id) {
         service.deleteGameCategoryById(id);
     }
+
     @GetMapping("/findAllByCategory/{id}")
     public ResponseEntity<?> findByCategory(@PathVariable("id") Long id) {
         return ResponseEntity.ok(serviceGameModal.findGameByCategory(id));
     }
+
     @GetMapping("/findAllPagination")
     public ResponseEntity<?> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "10") int size) {

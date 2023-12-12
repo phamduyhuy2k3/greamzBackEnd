@@ -235,13 +235,11 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                             'Authorization': 'Bearer ' + $cookies.get('accessToken')
                         }
                     }).then(resp => {
-
                         $scope.pager = {
                             ...$scope.pager,
                             ...resp.data
                         };
                         $scope.isLoading = false;
-
                     })
                 } else {
                     $http.get(`/api/v1/game/search?term=${$scope.searchGame}&page=${this.number}&size=7`, {
@@ -260,6 +258,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
 
         }
         $scope.searchGameEvent = function () {
+            $scope.isLoading = true;
             if ($scope.searchGame === '') {
                 $scope.pager.fetchPage();
             } else if ($scope.search === 'all') {
@@ -272,6 +271,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                         ...$scope.pager,
                         ...resp.data
                     };
+                    $scope.isLoading = false;
                 })
             } else if ($scope.search === 'name') {
                 $http.get(`/api/v1/game/searchFilterByName?term=${$scope.searchGame}`, {
@@ -283,6 +283,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                         ...$scope.pager,
                         ...resp.data
                     };
+                    $scope.isLoading = false;
                 })
             } else if ($scope.search === 'category') {
                 $http.get(`/api/v1/game/searchFilterByCategory?term=${$scope.searchGame}`, {
@@ -294,6 +295,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                         ...$scope.pager,
                         ...resp.data
                     };
+                    $scope.isLoading = false;
                 })
             } else {
                 $http.get(`/api/v1/game/search?term=${$scope.searchGame}`, {
@@ -305,6 +307,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                         ...$scope.pager,
                         ...resp.data
                     };
+                    $scope.isLoading = false;
                 })
             }
         }

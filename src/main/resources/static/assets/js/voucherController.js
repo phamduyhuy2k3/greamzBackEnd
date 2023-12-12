@@ -3,11 +3,10 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
 
     $scope.action = 'create'
     $scope.voucher = {
-        id: null,
         name: '',
         description: '',
         dateAt: '',
-        dateExpired: '',
+        dateExpired: 0,
         discount: '',
         orderCondition: '',
         maxPrice: ''
@@ -22,14 +21,24 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
             }
         }).then(
             resp => {
-                Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "Saved successfully!",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                $scope.reset();
+                if ($scope.action === 'create') {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Saved successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $scope.reset();
+                } else {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Update successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
                 $scope.initialize();
             },
             error => {
@@ -86,44 +95,29 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
     }
 
     $scope.reset = function () {
+        $scope.action = 'create';
         $scope.voucher = {
-            id: null,
             name: '',
             description: '',
             dateAt: '',
-            dateExpired: '',
-            discount: '',
-            orderCondition: '',
-            maxPrice: ''
+            dateExpired: 0,
+            discount: 0,
+            orderCondition: 0,
+            maxPrice: 0
         }
-        $scope.action = 'create';
         $scope.initialize();
-    }
-
-    $scope.update = function () {
-        $http.p("/api/voucher/update", {
-            headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
-            },
-            data: $scope.voucher
-        }).then(
-            resp => {
-                $scope.initialize();
-            },
-            error => {
-            }
-        )
     }
 
 
     $scope.edit = async function (id) {
+        $scope.action = 'update';
         await $http.get(`/api/voucher/${id}`, {
             headers: {
                 'Authorization': 'Bearer ' + $cookies.get('accessToken')
             }
         }).then(resp => {
-                $scope.action = 'update';
                 $scope.voucher = resp.data;
+                $scope.voucher.dateAt = new Date(resp.data.dateAt);
             }, error => {
                 return error;
             }
@@ -173,7 +167,6 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         $http.get("/api/voucher/findAllPagination", {
             headers: {
                 "Authorization": "Bearer " + $cookies.get("accessToken")
-
             }
         }).then(
             resp => {

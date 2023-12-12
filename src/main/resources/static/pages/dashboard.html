@@ -14,6 +14,9 @@
     .slide-in-component {
         animation: slide-in 2s ease-in-out;
     }
+    .revenueToday {
+        animation: slide-in 5s ease-in-out;
+    }
 
     @keyframes slide-in2 {
         from {
@@ -35,7 +38,7 @@
                 <div class="introduce">
                     <div height="500px">
                         <img class="imageIntroduce border-4"
-                             style="height: 500px;
+                             style="height: 550px;
                                 object-fit: cover;
                                 width: 100%;"
                              src="https://www.gstatic.com/images/icons/material/apps/fonts/1x/catalog/v5/heroes/material-symbols-bg-light.jpg=w1860">
@@ -59,7 +62,7 @@
                     <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
                         <i class="material-icons opacity-10">
                             videogame_asset
-                            </i>
+                        </i>
                     </div>
                     <div class="text-end pt-1">
                         <p class="text-sm mb-0 text-capitalize">Game total</p>
@@ -81,16 +84,18 @@
             <div class="card">
                 <div class="card-header p-3 pt-2">
                     <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
-                        <i class="material-icons opacity-10">weekend</i>
+                        <i class="material-icons opacity-10">category</i>
                     </div>
                     <div class="text-end pt-1">
                         <p class="text-sm mb-0 text-capitalize">Category</p>
-                        <h4 class="mb-0"><span class="text-info font-weight-bolder">74</span> added </h4>
+                        <h4 class="mb-0"><span class="text-info font-weight-bolder"
+                                               id="countCategory">{{totalCategory}}</span> added </h4>
                     </div>
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer p-3">
-                    <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than last week</p>
+                    <p class="mb-0" ng-repeat="ct in totalCategoryByCategoryType"><span class="font-weight-bold">{{ct.categoryType}}</span>:
+                        <span class="text-info font-weight-bolder"> {{ct.categoryCount}} </span> added</p>
                 </div>
             </div>
         </div>
@@ -98,16 +103,19 @@
             <div class="card">
                 <div class="card-header p-3 pt-2">
                     <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
-                        <i class="material-icons opacity-10">weekend</i>
+                        <i class="material-icons opacity-10">payments</i>
                     </div>
                     <div class="text-end pt-1">
-                        <p class="text-sm mb-0 text-capitalize">Today's Money</p>
-                        <h4 class="mb-0">$53k</h4>
+                        <p class="text-sm mb-0 text-capitalize">Revenue today</p>
+                        <h4 class="mb-0">
+                            <span class="text-success font-weight-bolder revenueToday">{{ revenueToday | number:0 }}</span> VND
+
+                        </h4>
                     </div>
                 </div>
-                <hr class="dark horizontal my-0">
+                <!--                <hr class="dark horizontal my-0">-->
                 <div class="card-footer p-3">
-                    <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than last week</p>
+                    <!--                    <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+55% </span>than last week</p>-->
                 </div>
             </div>
         </div>
@@ -129,7 +137,7 @@
                     <h6 class="mb-0 col">Revenue chart</h6>
                     <select class="col form-select mb-2" aria-label="select by year"
                             ng-model="selectedYearForRevenue" ng-change="getRevenueByYear()">
-                        <option value="" disabled >Open this select years</option>
+                        <option value="" disabled>Open this select years</option>
                         <option ng-repeat="y in years" ng-value="y.value">{{y.name}}</option>
                     </select>
                 </div>
@@ -157,7 +165,7 @@
                     <div class=" col-lg-6 col-5 my-auto text-end">
                         <select class="col form-select mb-2" aria-label="select by year"
                                 ng-model="selectedYear" ng-change="getGameBestSeller()">
-                            <option value="" disabled >Open this select years</option>
+                            <option value="" disabled>Open this select years</option>
                             <option ng-repeat="y in years" ng-value="y.value">{{y.name}}</option>
                         </select>
                         <select class="col form-select" aria-label="Default select example"

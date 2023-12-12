@@ -46,6 +46,11 @@ public class OrderService {
     private EntityManager entityManager;
 
     @Transactional(readOnly = true)
+    public Double findRevenueForCurrentDay() {
+        return orderRepo.findRevenueForCurrentDay();
+    }
+
+    @Transactional(readOnly = true)
     public Page<Orders> getAllOrdersByAccountId(Integer accountId, int page, int size) {
         Page<Orders> ordersPage = orderRepo.findAllByAccount_Id(accountId, PageRequest.of(page, size, Sort.by("createdAt").descending()));
         ordersPage.forEach(orders -> {
@@ -89,8 +94,8 @@ public class OrderService {
 
     @Transactional
 
-    public Orders saveOrdersAndUpdateTheStockForGames(Orders orders){
-        Orders orders1= orderRepo.saveAndFlush(orders);
+    public Orders saveOrdersAndUpdateTheStockForGames(Orders orders) {
+        Orders orders1 = orderRepo.saveAndFlush(orders);
         Set<OrdersDetail> ordersDetails = this.findOrdersDetailsByOrderId(orders.getId());
         gameModelService.updateStockForGameFromOrder(ordersDetails.stream().toList());
         return orders1;
@@ -98,8 +103,8 @@ public class OrderService {
 
     @Transactional(readOnly = true)
 
-    public Orders getOrdersById(UUID orderId){
-        Orders orders=orderRepo.findById(orderId).orElseThrow();
+    public Orders getOrdersById(UUID orderId) {
+        Orders orders = orderRepo.findById(orderId).orElseThrow();
         Hibernate.initialize(orders.getOrdersDetails());
         orders.getOrdersDetails().forEach(ordersDetail -> {
             Hibernate.initialize(ordersDetail.getGame());
@@ -112,8 +117,9 @@ public class OrderService {
         });
         return orders;
     }
+
     @Transactional(readOnly = true)
-    public Set<OrdersDetail> findOrdersDetailsByOrderId(UUID orderId){
+    public Set<OrdersDetail> findOrdersDetailsByOrderId(UUID orderId) {
         Set<OrdersDetail> ordersDetails = orderDetailRepo.findAllByOrders_Id(orderId);
         ordersDetails.forEach(ordersDetail -> {
             ordersDetail.setOrders(null);
@@ -141,7 +147,7 @@ public class OrderService {
                 .paymentmethod(orders.getPaymentmethod())
                 .totalPrice(orders.getTotalPrice())
                 .build();
-        List<OrderDetailsDTO> orderDetailsDTOS=new ArrayList<>();
+        List<OrderDetailsDTO> orderDetailsDTOS = new ArrayList<>();
         orders.getOrdersDetails().forEach(ordersDetail -> {
             OrderDetailsDTO orderDetailsDTO = Mapper.mapObject(ordersDetail, OrderDetailsDTO.class);
             orderDetailsDTOS.add(orderDetailsDTO);
@@ -189,6 +195,7 @@ public class OrderService {
         });
         return ordersPage;
     }
+
     @Transactional(readOnly = true)
     public List<Orders> findAllOrdersByAccountId(Integer accountId) {
         List<Orders> orders = orderRepo.findAllByAccountId(accountId);

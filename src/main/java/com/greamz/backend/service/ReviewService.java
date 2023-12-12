@@ -30,9 +30,11 @@ public class ReviewService {
     private final IReviewRepo repo;
     private final IOrderDetail orderDetailRepo;
     private final IReviewReaction reviewReactionRepo;
+
     public Review saveReviewModel(Review reviewModel) {
         return repo.save(reviewModel);
     }
+
     public ReviewBasic saveReviewOfUser(ReviewFromUser reviewFromUser) {
         Review reviewModel = Review.builder()
                 .text(reviewFromUser.getText())
@@ -43,7 +45,7 @@ public class ReviewService {
         Review review = repo.save(reviewModel);
         Optional<OrdersDetail> ordersDetail = orderDetailRepo.findById(reviewFromUser.getOrderDetailId());
         if (ordersDetail.isPresent()) {
-            OrdersDetail ordersDetail1= ordersDetail.get();
+            OrdersDetail ordersDetail1 = ordersDetail.get();
             ordersDetail1.setReview(review);
             orderDetailRepo.save(ordersDetail1);
         }
@@ -51,6 +53,7 @@ public class ReviewService {
 
         return Mapper.mapObject(review, ReviewBasic.class);
     }
+
     @Transactional
     public void updateReviewModel(Review reviewModel) {
         Review review = repo.findById(reviewModel.getId()).orElseThrow();
@@ -71,10 +74,11 @@ public class ReviewService {
         });
         return reviews;
     }
+
     @Transactional(readOnly = true)
     public Page<ReviewOfGame> findAllPage(Pageable pageable) {
         Page<Review> reviews = repo.findAll(pageable);
-        Page<ReviewOfGame> reviewsUserDTOS= reviews.map(review -> {
+        Page<ReviewOfGame> reviewsUserDTOS = reviews.map(review -> {
             Hibernate.initialize(review.getAccount());
             Hibernate.initialize(review.getGame());
             ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
@@ -86,10 +90,11 @@ public class ReviewService {
 
         return reviewsUserDTOS;
     }
+
     @Transactional(readOnly = true)
     public List<ReviewsUserDTO> findReviewByGame(Long gameAppId) {
         List<Review> reviewsList = repo.findAllByGameAppid(gameAppId);
-        List<ReviewsUserDTO> reviewsUserDTOList  = reviewsList.stream()
+        List<ReviewsUserDTO> reviewsUserDTOList = reviewsList.stream()
                 .map(review -> {
                     Hibernate.initialize(review.getAccount());
                     ReviewsUserDTO reviewsUserDTO = new ReviewsUserDTO();
@@ -109,43 +114,39 @@ public class ReviewService {
 
         return reviewsUserDTOList;
     }
+
     @Transactional(readOnly = true)
     public Page<ReviewOfGame> findReviewOfGame(Long gameAppId, Pageable pageable, Integer userId) {
         Page<Review> reviewsList = repo.findAllByGameAppid(gameAppId, pageable);
         return reviewsList.map(review -> {
-                    ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
-                    if(userId >-1 ){
-                        Optional<ReviewReaction> optionalReviewReaction=reviewReactionRepo.findByUser_IdAndReview_Id(userId,review.getId());
-                        if(optionalReviewReaction.isPresent()){
-                            ReviewReaction reviewReaction = optionalReviewReaction.get();
-                            reviewsUserDTO.setReactionType(reviewReaction.getReactionType());
-                            reviewsUserDTO.setReacted(true);
-                            log.info("reviewReaction.getReactionType()"+reviewReaction.getReactionType());
-                        }else {
-                            reviewsUserDTO.setReacted(false);
-                            log.info("reviewReaction.getReactionType()"+null);
-                        }
-                    }
-                    reviewsUserDTO.setLikes(reviewReactionRepo.countLikesForReview(review.getId()));
-                    reviewsUserDTO.setDislikes(reviewReactionRepo.countDislikesForReview(review.getId()));
-                   return reviewsUserDTO;
-                });
-    }
-    @Transactional(readOnly = true)
-    public Page<Review> findAll(Pageable pageable) {
-        Page<Review> reviewPage = repo.findAll(pageable);
-        reviewPage.forEach(review ->
-                {
-                    review.setCreatedAt(null);
-                    review.setUpdatedAt(null);
-                    review.setGame(null);
-                    review.setAccount(null);
-//                    Hibernate.initialize(review.getAccount());
-//                    Hibernate.initialize(review.getGame());
+            ReviewOfGame reviewsUserDTO = Mapper.mapObject(review, ReviewOfGame.class);
+            if (userId > -1) {
+                Optional<ReviewReaction> optionalReviewReaction = reviewReactionRepo.findByUser_IdAndReview_Id(userId, review.getId());
+                if (optionalReviewReaction.isPresent()) {
+                    ReviewReaction reviewReaction = optionalReviewReaction.get();
+                    reviewsUserDTO.setReactionType(reviewReaction.getReactionType());
+                    reviewsUserDTO.setReacted(true);
+                    log.info("reviewReaction.getReactionType()" + reviewReaction.getReactionType());
+                } else {
+                    reviewsUserDTO.setReacted(false);
+                    log.info("reviewReaction.getReactionType()" + null);
                 }
+            }
+            reviewsUserDTO.setLikes(reviewReactionRepo.countLikesForReview(review.getId()));
+            reviewsUserDTO.setDislikes(reviewReactionRepo.countDislikesForReview(review.getId()));
+            return reviewsUserDTO;
+        });
+    }
 
-        );
-        return reviewPage;
+    @Transactional(readOnly = true)
+    public Page<ReviewResponseForAdmin> findAll(Pageable pageable) {
+        Page<Review> reviewPage = repo.findAll(pageable);
+        return reviewPage.map(review -> {
+            ReviewResponseForAdmin reviewResponseForAdmin = Mapper.mapObject(review, ReviewResponseForAdmin.class);
+            reviewResponseForAdmin.setAccountId(review.getAccount().getId());
+            reviewResponseForAdmin.setGameId(review.getGame().getAppid());
+            return reviewResponseForAdmin;
+        });
     }
 
     @Transactional
@@ -164,6 +165,7 @@ public class ReviewService {
     public Review findByid(Long id) {
         return repo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found Review with id: " + id));
     }
+
     @Transactional(readOnly = true)
     public List<Review> findAllByAccountId(Integer id) {
         List<Review> reviews = repo.findAllByAccount_Id(id);
@@ -173,6 +175,7 @@ public class ReviewService {
         });
         return reviews;
     }
+
     @Transactional(readOnly = true)
     public List<Review> findAllReviewsByAccountId(Integer accountId) {
         List<Review> reviews = repo.findAllByAccount_Id(accountId);
@@ -184,34 +187,34 @@ public class ReviewService {
     }
 
     public ReactResponse reactReview(UserReactTheReview userReactTheReview) {
-        ReactResponse userReactTheReviewResponse=null;
-        Optional<ReviewReaction> optionalReviewReaction=reviewReactionRepo.findByUser_IdAndReview_Id(userReactTheReview.getUserId(),userReactTheReview.getReviewId());
-        if(optionalReviewReaction.isPresent()){
+        ReactResponse userReactTheReviewResponse = null;
+        Optional<ReviewReaction> optionalReviewReaction = reviewReactionRepo.findByUser_IdAndReview_Id(userReactTheReview.getUserId(), userReactTheReview.getReviewId());
+        if (optionalReviewReaction.isPresent()) {
             ReviewReaction reviewReaction = optionalReviewReaction.get();
-            if(reviewReaction.getReactionType().equals(userReactTheReview.getReactionType())){
+            if (reviewReaction.getReactionType().equals(userReactTheReview.getReactionType())) {
                 reviewReactionRepo.delete(reviewReaction);
-                userReactTheReviewResponse=ReactResponse.builder()
+                userReactTheReviewResponse = ReactResponse.builder()
                         .isReacted(false)
                         .reactionType(null)
                         .build();
 
-            }else {
+            } else {
                 reviewReaction.setReactionType(userReactTheReview.getReactionType());
                 reviewReactionRepo.save(reviewReaction);
-                userReactTheReviewResponse=ReactResponse.builder()
+                userReactTheReviewResponse = ReactResponse.builder()
                         .isReacted(true)
                         .reactionType(reviewReaction.getReactionType())
                         .build();
             }
 
 
-        }else {
+        } else {
             ReviewReaction reviewReaction1 = reviewReactionRepo.save(ReviewReaction.builder()
                     .reactionType(userReactTheReview.getReactionType())
                     .review(Review.builder().id(userReactTheReview.getReviewId()).build())
                     .user(AccountModel.builder().id(userReactTheReview.getUserId()).build())
                     .build());
-            userReactTheReviewResponse=ReactResponse.builder()
+            userReactTheReviewResponse = ReactResponse.builder()
                     .isReacted(true)
                     .reactionType(reviewReaction1.getReactionType())
                     .build();

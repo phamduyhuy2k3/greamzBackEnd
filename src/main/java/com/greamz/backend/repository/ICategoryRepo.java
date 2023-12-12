@@ -10,10 +10,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Repository
 public interface ICategoryRepo extends JpaRepository<Category, Long> {
+    @Query("SELECT COUNT(c) FROM Category c")
+    Long countTotalCategory();
+
+    @Query("SELECT c.categoryTypes AS categoryType, COUNT(c) AS categoryCount FROM Category c GROUP BY c.categoryTypes")
+    List<Map<String, Object>> countCategoriesByCategoryTypes();
 
     Set<Category> findAllByCategoryTypes(CategoryTypes categoryTypes);
 
