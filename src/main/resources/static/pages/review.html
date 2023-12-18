@@ -8,16 +8,17 @@
             </div>
             <div class="card-body px-0 pb-2">
                 <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0">
+                    <table class="table align-items-center mb-0" style="table-layout: fixed">
                         <thead>
                         <tr>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 ID
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+                                style="width: 500px">
                                 TEXT
                             </th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-7">
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                 RATING
                             </th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -34,8 +35,8 @@
                             <td>
                                 <span class="text-secondary text-xs font-weight-bold">{{r.id}}</span>
                             </td>
-                            <td class="align-middle">
-                                <span class="text-secondary text-xs font-weight-bold text-wrap">{{r.text}}</span>
+                            <td class="align-middle" style="white-space: normal">
+                                <span class="text-secondary text-xs font-weight-bold">{{r.text}}</span>
                             </td>
                             <td class="align-middle">
                                 <span class="text-secondary text-xs font-weight-bold">{{r.rating}}</span>
@@ -48,7 +49,7 @@
                             </td>
                             <td class="align-middle">
                                 <a href="javascript:;" class="text-secondary font-weight-bold text-xs"
-                                   data-bs-toggle="modal" data-bs-target="#reviewModal" ng-click="edit(r.id)">
+                                   data-bs-toggle="modal" data-bs-target="#reviewModal" ng-click="edit(r.gameId)">
                                     View
                                 </a>|
                                 <a class="text-secondary font-weight-bold text-xs"
@@ -118,42 +119,100 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form class="row g-3">
-                    <div class="col-md-12">
-                        <div class="input-group input-group-static">
-                            <label>TEXT</label>
-                            <input type="text" class="form-control"
-                                   ng-model="review.text">
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="input-group input-group-static">
-                            <label>RATING</label>
-                            <input type="text" class="form-control"
-                                   ng-model="review.rating">
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="input-group input-group-static">
-                            <label>LIKES</label>
-                            <input type="number" class="form-control"
-                                   ng-model="review.likes">
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="input-group input-group-static">
-                            <label>DISLIKES</label>
-                            <input type="number" class="form-control"
-                                   ng-model="review.dislikes">
-                        </div>
-                    </div>
-                </form>
+                <table class="table align-items-center mb-0 ">
+                    <thead>
+                    <tr>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">
+                            USERNAME
+                        </th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">
+                            GAMES
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">
+                            CONTENT
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            RATING
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            LIKES
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            DISLIKES
+                        </th>
+                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                            CREATED AT
+                        </th>
+                        <th class="text-secondary opacity-7"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="r in review.content">
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div>
+                                    <img src="{{r.account.photo}}"
+                                         class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm text-uppercase">{{r.account.username}}</h6>
+                                    <p class="text-xs text-secondary mb-0">USERID: {{r.account.id}}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex px-2 py-1">
+                                <div>
+                                    <img src="{{r.game.header_image}}"
+                                         class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
+                                </div>
+                                <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm text-uppercase">{{r.game.name}}</h6>
+                                    <p class="text-xs text-secondary mb-0">GAMEID: {{r.game.appid}}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="text-xs text-wrap font-weight-bold mb-0">
+                                {{r.text}}
+                            </div>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs font-weight-bold mb-0">
+                                {{r.rating}}
+                            </p>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs font-weight-bold mb-0">
+                                {{r.likes}}
+                            </p>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs font-weight-bold mb-0">
+                                {{r.dislikes}}
+                            </p>
+                        </td>
+                        <td class="align-middle text-center text-sm">
+                            <p class="text-xs font-weight-bold mb-0">
+                                <a href="{{game.website}}" target="_blank">
+                                    {{r.createdAt | date:'yyyy-MM-dd'}}
+                                </a>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
+
 
 <script src="../assets/js/core/popper.min.js"></script>
 <script src="../assets/js/core/bootstrap.min.js"></script>

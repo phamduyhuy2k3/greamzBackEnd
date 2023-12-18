@@ -91,14 +91,15 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
     }
 
 
-    $scope.edit = async function (id) {
-        await $http.get(`/api/v1/review/${id}`, {
+    $scope.edit = async function (appid) {
+        await $http.get(`/api/v1/game/reviewsOfGame/${appid}`, {
             headers: {
                 'Authorization': 'Bearer ' + $cookies.get('accessToken')
             }
         }).then(resp => {
                 $scope.action = 'update';
                 $scope.review = resp.data;
+                console.log(resp.data)
             }, error => {
                 return error;
             }
