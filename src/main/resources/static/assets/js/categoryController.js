@@ -59,7 +59,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
         fetchPage() {
             $http.get(`/api/v1/category/findAllPagination?page=${this.number}&size=10`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                 $scope.pager = {
@@ -76,7 +76,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
         } else {
             $http.get(`/api/v1/category/search?term=${$scope.searchCategory}`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                 $scope.pager = {
@@ -133,7 +133,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
 
         $http.get("/api/v1/category/findAllPagination", {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(
             resp => {
@@ -149,7 +149,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
 
         $http.get("/api/v1/category/types", {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(
             resp => {
@@ -180,7 +180,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
                 if (id) {
                     $http.delete(`/api/v1/category/delete/${id}`, {
                         headers: {
-                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                            "Authorization": "Bearer " + $cookies.get("access_token")
                         }
                     }).then(resp => {
                         Swal.fire({
@@ -244,7 +244,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
         // Gán giá trị type từ selectedCategoryType vào form
         $http.post("/api/v1/category/save", $scope.form, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Authorization": "Bearer " + $cookies.get("access_token"),
                 "Content-Type": "application/json"
             },
         }).then(
@@ -272,7 +272,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
     $scope.edit = async function (id) {
         await $http.get(`/api/v1/category/${id}`, {
             headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                'Authorization': 'Bearer ' + $cookies.get('access_token')
             }
         }).then(resp => {
                 $scope.action = 'update';
@@ -284,7 +284,7 @@ app.controller("categoryController", function ($scope, $http, $document, $cookie
         $http.get(`/api/v1/category/findAllByCategory/${id}`,
             {
                 headers: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                    "Authorization": "Bearer " + $cookies.get("access_token")
                 }
             }).then(
             resp => {

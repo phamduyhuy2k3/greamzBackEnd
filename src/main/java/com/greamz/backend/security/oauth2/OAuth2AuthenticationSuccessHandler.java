@@ -7,6 +7,7 @@ import com.greamz.backend.model.Token;
 import com.greamz.backend.repository.IAccountRepo;
 import com.greamz.backend.repository.ITokenRepo;
 import com.greamz.backend.security.UserPrincipal;
+import com.greamz.backend.security.auth.AuthenticationResponse;
 import com.greamz.backend.security.auth.AuthenticationService;
 import com.greamz.backend.service.AccountService;
 import com.greamz.backend.util.CookieUtils;
@@ -23,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.Optional;
 
 import static com.greamz.backend.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
@@ -46,32 +48,35 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, IOException {
-        String targetUrl = determineTargetUrl(request, response,(UserPrincipal) authentication.getPrincipal());
-        System.out.println(targetUrl);
+        Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
+                .map(Cookie::getValue);
+
+        String targetUrl = UriComponentsBuilder.fromUriString(redirectUri.orElse(getDefaultTargetUrl()))
+                .build().toUriString();
+        AuthenticationResponse authenticationResponse = generateToken(request, response, (UserPrincipal) authentication.getPrincipal());
+        CookieUtils.addCookie(response, "access_token", authenticationResponse.getAccessToken(), Duration.ofMinutes(tokenProvider.getJwtExpiration()));
+        CookieUtils.addCookie(response, "refresh_token", authenticationResponse.getRefreshToken(),Duration.ofMinutes(tokenProvider.getRefreshExpiration()));
+        logger.info("targetUrl: " + targetUrl);
+        logger.info("From :" + request.getRequestURL());
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
-        CookieUtils.addCookie(response,"accessToken", EncryptionUtil.encrypt(targetUrl.substring(targetUrl.indexOf("token=")+6)));
 
         clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
     }
 
-    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, UserPrincipal authentication) {
-        Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
-                .map(Cookie::getValue);
-
-        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
+    protected AuthenticationResponse generateToken(HttpServletRequest request, HttpServletResponse response, UserPrincipal authentication) {
 
         String token = tokenProvider.generateToken(authentication);
+        String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
-
-
-        return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", token)
-                .build().toUriString();
+        return AuthenticationResponse.builder()
+                .accessToken(token)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {

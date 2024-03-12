@@ -25,6 +25,7 @@ import jakarta.persistence.StoredProcedureQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +53,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Page<Orders> getAllOrdersByAccountId(Integer accountId, int page, int size) {
-        Page<Orders> ordersPage = orderRepo.findAllByAccount_Id(accountId, PageRequest.of(page, size, Sort.by("createdAt").descending()));
+        Page<Orders> ordersPage = orderRepo.findAllByAccount_Id(accountId, PageRequest.of(page, size, Sort.by("createdOn").descending()));
         ordersPage.forEach(orders -> {
             orders.setAccount(null);
             orders.setOrdersDetails(null);
@@ -62,7 +63,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public Page<Orders> getAllOrdersByOrdersStatus(String ordersStatus, Integer accountId, int page, int size) {
-        Page<Orders> ordersPage = orderRepo.findAllByOrdersStatusAndAccount_Id(OrdersStatus.valueOf(ordersStatus), accountId, PageRequest.of(page, size, Sort.by("createdAt").descending()));
+        Page<Orders> ordersPage = orderRepo.findAllByOrdersStatusAndAccount_Id(OrdersStatus.valueOf(ordersStatus), accountId, PageRequest.of(page, size, Sort.by("createdOn").descending()));
         ordersPage.forEach(orders -> {
             orders.setAccount(null);
             orders.setOrdersDetails(null);
@@ -142,7 +143,7 @@ public class OrderService {
         Hibernate.initialize(orders.getOrdersDetails());
         OrderDTO orderDTO = OrderDTO.builder()
                 .id(orders.getId())
-                .createdAt(orders.getCreatedAt())
+                .createdOn(orders.getCreatedOn())
                 .ordersStatus(orders.getOrdersStatus())
                 .paymentmethod(orders.getPaymentmethod())
                 .totalPrice(orders.getTotalPrice())
@@ -186,8 +187,8 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Orders> findAllPagination(Pageable pageable) {
-        Page<Orders> ordersPage = orderRepo.findAll(pageable);
+    public Page<Orders> findAllPagination(int page, int size) {
+        Page<Orders> ordersPage = orderRepo.findAll(PageRequest.of(page, size));
         ordersPage.forEach(orders -> {
             orders.setAccount(null);
             orders.setOrdersDetails(null);
@@ -243,7 +244,7 @@ public class OrderService {
                     orderDetailsDTO.setOrder(
                             OrderDTO.builder()
                                     .id(ordersDetail.getOrders().getId())
-                                    .createdAt(ordersDetail.getOrders().getCreatedAt())
+                                    .createdOn(ordersDetail.getOrders().getCreatedOn())
                                     .paymentmethod(ordersDetail.getOrders().getPaymentmethod())
                                     .totalPrice(ordersDetail.getOrders().getTotalPrice())
                                     .ordersStatus(ordersDetail.getOrders().getOrdersStatus())

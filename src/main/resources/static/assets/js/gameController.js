@@ -232,7 +232,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                 if ($scope.searchGame === '') {
                     $http.get(`/api/v1/game/findAllPagination?page=${this.number}&size=7`, {
                         headers: {
-                            'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                            'Authorization': 'Bearer ' + $cookies.get('access_token')
                         }
                     }).then(resp => {
                         $scope.pager = {
@@ -244,7 +244,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                 } else {
                     $http.get(`/api/v1/game/search?term=${$scope.searchGame}&page=${this.number}&size=7`, {
                         headers: {
-                            'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                            'Authorization': 'Bearer ' + $cookies.get('access_token')
                         }
                     }).then(resp => {
                         $scope.pager = {
@@ -264,7 +264,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
             } else if ($scope.search === 'all') {
                 $http.get(`/api/v1/game/search?term=${$scope.searchGame}`, {
                     headers: {
-                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                        'Authorization': 'Bearer ' + $cookies.get('access_token')
                     }
                 }).then(resp => {
                     $scope.pager = {
@@ -276,7 +276,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
             } else if ($scope.search === 'name') {
                 $http.get(`/api/v1/game/searchFilterByName?term=${$scope.searchGame}`, {
                     headers: {
-                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                        'Authorization': 'Bearer ' + $cookies.get('access_token')
                     }
                 }).then(resp => {
                     $scope.pager = {
@@ -288,7 +288,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
             } else if ($scope.search === 'category') {
                 $http.get(`/api/v1/game/searchFilterByCategory?term=${$scope.searchGame}`, {
                     headers: {
-                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                        'Authorization': 'Bearer ' + $cookies.get('access_token')
                     }
                 }).then(resp => {
                     $scope.pager = {
@@ -300,7 +300,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
             } else {
                 $http.get(`/api/v1/game/search?term=${$scope.searchGame}`, {
                     headers: {
-                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                        'Authorization': 'Bearer ' + $cookies.get('access_token')
                     }
                 }).then(resp => {
                     $scope.pager = {
@@ -366,7 +366,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
             $http.get("/api/v1/game/findAllPagination",
                 {
                     headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken")
+                        "Authorization": "Bearer " + $cookies.get("access_token")
                     }
                 }).then(
                 resp => {
@@ -384,7 +384,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
 
             $http.get("/api/v1/category/findAll", {
                 headers: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                    "Authorization": "Bearer " + $cookies.get("access_token")
                 }
             }).then(
                 resp => {
@@ -443,7 +443,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
                     if (appid) {
                         $http.delete(`/api/v1/game/delete/${appid}`, {
                             headers: {
-                                "Authorization": "Bearer " + $cookies.get("accessToken")
+                                "Authorization": "Bearer " + $cookies.get("access_token")
                             }
                         }).then(resp => {
                                 Swal.fire({
@@ -513,7 +513,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
         $scope.edit = async function (appid) {
             await $http.get(`/api/v1/game/${appid}`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                     console.log(resp.data)
@@ -551,9 +551,20 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
         }
 
         $scope.view = async function (appid) {
+            $http.get(`/api/v1/review/findByGame/${appid}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
+                }
+            }).then(
+                resp => {
+                    $scope.reviews = resp.data;
+                    console.log($scope.reviews)
+                    $scope.isLoading = false;
+                }
+            )
             await $http.get(`/api/v1/game/${appid}`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                     console.log(resp.data)
@@ -604,18 +615,6 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
             })
             $scope.action = 'update';
 
-            $http.get(`/api/v1/review/findByGame/${appid}`, {
-                headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
-                }
-            }).then(
-                resp => {
-                    $scope.reviews = resp.data;
-                    $scope.isLoading = false;
-                    console.log($scope.reviews)
-                }
-            )
-
 
         }
         $scope.showAddBtn = function (scope) {
@@ -629,7 +628,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
         $scope.openFormKey = function (appid) {
             $http.get("/api/v1/platform/findAll", {
                 header: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken")
+                    "Authorization": "Bearer " + $cookies.get("access_token")
                 }
             }).then(
                 resp => {
@@ -641,7 +640,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
 
             $http.get(`/api/v1/game/${appid}`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                 return $scope.key.game.appid = resp.data.appid;
@@ -650,7 +649,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
             })
             $http.get(`/api/v1/codeActive/findByIdGame/${appid}`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                     $scope.keys = resp.data;
@@ -669,7 +668,7 @@ app.controller("gameController", function ($scope, $rootScope, $http, $document,
             $http.post("/api/v1/codeActive/create", $scope.key,
                 {
                     headers: {
-                        "Authorization": "Bearer " + $cookies.get("accessToken"),
+                        "Authorization": "Bearer " + $cookies.get("access_token"),
                         "Content-Type": "application/json"
                     }
                 }).then(resp => {
@@ -758,7 +757,7 @@ app.controller("modalCreateGameController", function ($scope, $rootScope, $http,
         $http.post("/api/v1/game/create", $rootScope.form,
             {
                 headers: {
-                    "Authorization": "Bearer " + $cookies.get("accessToken"),
+                    "Authorization": "Bearer " + $cookies.get("access_token"),
                     "Content-Type": "application/json"
                 }
             }).then(resp => {

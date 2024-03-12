@@ -30,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Objects;
 
 
@@ -46,29 +47,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        logger.info("Request URL: " + request.getServletPath());
+
         if (request.getServletPath().contains("/api/v1/auth/") || request.getServletPath().contains("/sign-in")) {
             filterChain.doFilter(request, response);
             return;
         }
         final String authHeader = request.getHeader("Authorization");
-        String jwt;
-        if (request.getServletPath().contains("/api") |request.getServletPath().equals("/")) {
-            if (CookieUtils.getCookie(request, "accessToken").isPresent()) {
-                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "accessToken")).get().getValue();
-                isValid(jwt, request, response, filterChain,true);
+        String jwt = authHeader == null ? "" : authHeader.substring(7);
+        if (request.getServletPath().equals("/") || !request.getServletPath().contains("/api")) {
+            if (CookieUtils.getCookie(request, "access_token").isPresent()) {
+                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "access_token")).get().getValue();
+                isValid(jwt, request, response, filterChain, true);
+            } else if(CookieUtils.getCookie(request, "refresh_token").isPresent()) {
+                autoRefreshToken(request, response, filterChain);
+            }else {
+                filterChain.doFilter(request, response);
                 return;
             }
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                filterChain.doFilter(request, response);
-            } else {
-                jwt = authHeader.substring(7);
-                isValid(jwt, request, response, filterChain,true);
-            }
-        } else {
-            filterChain.doFilter(request, response);
-        }
+            return;
 
+        }
+        if (request.getServletPath().contains("/api")) {
+            if (CookieUtils.getCookie(request, "access_token").isPresent()) {
+                jwt = Objects.requireNonNull(CookieUtils.getCookie(request, "access_token")).get().getValue();
+                isValid(jwt, request, response, filterChain, true);
+            } else if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+                filterChain.doFilter(request, response);
+                return;
+            } else {
+                if (jwt.equals("undefined") || jwt.equals("null") || jwt.equals("")) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not authorized");
+                    return;
+                }
+                isValid(jwt, request, response, filterChain, false);
+            }
+            return;
+        }
+        filterChain.doFilter(request, response);
     }
+
     private void isValid(
             String token,
             HttpServletRequest request,
@@ -76,18 +95,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain,
             boolean isDashBoard
     ) throws ServletException, IOException {
-        final String jwtAccessToken= EncryptionUtil.decrypt(token);
         try {
 
             final String userName;
-            userName = jwtService.extractUsername(jwtAccessToken);
-            logger.info("userName = " + userName);
+            userName = jwtService.extractUsername(token);
             if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserPrincipal userDetails = this.userDetailsService.loadUserByUsername(userName);
-                logger.info("istoken valid = " + jwtService.isTokenValid(jwtAccessToken, userDetails));
-                if (jwtService.isTokenValid(jwtAccessToken, userDetails)) {
-                    logger.info("jwt is valid");
-                    if(userDetails.isEnabled()){
+                if (jwtService.isTokenValid(token, userDetails)) {
+                    if (userDetails.isEnabled()) {
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
@@ -97,61 +112,66 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 new WebAuthenticationDetailsSource().buildDetails(request)
                         );
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-                        logger.info("set Authentication to security context for '{}', uri: {}");
                         filterChain.doFilter(request, response);
-                    }else {
+                    } else {
 
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Your account is temporarily locked, please contact admin to unlock your account");
 
                     }
-
-
                 }
-            }else {
+            } else {
                 logger.info("jwt is not valid");
                 filterChain.doFilter(request, response);
             }
         } catch (ExpiredJwtException e) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Bearer " + jwtAccessToken);
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-            ResponseEntity<AuthenticationResponse> authenticationResponse;
-            try {
-                authenticationResponse = restTemplate.postForEntity(
-                        "http://localhost:8080/api/v1/auth/refresh-token",
-                        entity,
-                        AuthenticationResponse.class
-                );
-            } catch (HttpClientErrorException e1) {
-                CookieUtils.deleteCookie(request,response, "accessToken");
-                if(request.getRequestURI().contains("api") ){
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token is expired, please make a new sign in request");
 
-                }else {
-                    response.sendRedirect("/sign-in");
-                }
+            if (isDashBoard) {
+                autoRefreshToken(request, response, filterChain);
                 return;
             }
-            if (authenticationResponse.getBody() != null) {
-                String newAccessToken = authenticationResponse.getBody().getAccessToken();
-                if (newAccessToken != null) {
-                    CookieUtils.addCookie(response, "accessToken", newAccessToken);
-                    isValid(newAccessToken, request, response, filterChain,false);
-                }
-            }else {
-                CookieUtils.deleteCookie(request,response, "accessToken");
-                if(request.getRequestURI().contains("api") ){
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Refresh token is expired, please make a new sign in request");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is expired");
 
-                }else {
-                    response.sendRedirect("/sign-in");
-                }
-
-            }
         } catch (ServletException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+    private void autoRefreshToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        var refreshOp= CookieUtils.getCookie(request,"refresh_token");
+        if(refreshOp.isEmpty()){
+            response.sendRedirect("/sign-in");
+            return;
+        }
+        String refreshToken = refreshOp.get().getValue();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + refreshToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<AuthenticationResponse> authenticationResponse;
+        try {
+            authenticationResponse = restTemplate.postForEntity(
+                    "http://localhost:8080/api/v1/auth/refresh-token?isDashboard=true",
+                    entity,
+                    AuthenticationResponse.class
+            );
+        } catch (HttpClientErrorException e1) {
+            CookieUtils.deleteCookie(request, response, "access_token");
+            CookieUtils.deleteCookie(request, response, "refresh_token");
+            response.sendRedirect("/sign-in");
+            return;
+        }
+        if (authenticationResponse.getBody() != null) {
+            logger.info("refresh token: " + authenticationResponse.getBody().getRefreshToken());
+            String newAccessToken = authenticationResponse.getBody().getAccessToken();
+            if (newAccessToken != null) {
+                CookieUtils.addCookie(response, "access_token", newAccessToken, Duration.ofMinutes(jwtService.getJwtExpiration()));
+                isValid(newAccessToken, request, response, filterChain, true);
+            }
+        } else {
+            CookieUtils.deleteCookie(request, response, "access_token");
+            CookieUtils.deleteCookie(request, response, "refresh_token");
+            response.sendRedirect("/sign-in");
+
         }
     }
 }

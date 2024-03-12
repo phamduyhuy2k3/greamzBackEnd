@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,38 +55,38 @@ public class JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
     public String generateTokenForResetPassword(UserPrincipal userDetails) {
-        return generateToken(new HashMap<>(), userDetails, 1000*60*60*24);
+        return generateToken(new HashMap<>(), userDetails, Duration.ofMinutes(15));
     }
 
     public String generateToken(
             Map<String, Object> extraClaims,
             UserPrincipal userDetails
     ) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+        return buildToken(extraClaims, userDetails, Duration.ofMinutes(jwtExpiration));
     }
     public String generateToken(
             Map<String, Object> extraClaims,
-            UserPrincipal userDetails,long expiration
+            UserPrincipal userDetails,Duration expiration
     ) {
         return buildToken(extraClaims, userDetails, expiration);
     }
     public String generateRefreshToken(
             UserPrincipal userDetails
     ) {
-        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+        return buildToken(new HashMap<>(), userDetails, Duration.ofMinutes(refreshExpiration));
     }
 
     private String buildToken(
             Map<String, Object> extraClaims,
             UserPrincipal userDetails,
-            long expiration
+            Duration expiration
     ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration.toMillis()))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -115,5 +116,13 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public long getJwtExpiration() {
+        return jwtExpiration;
+    }
+
+    public long getRefreshExpiration() {
+        return refreshExpiration;
     }
 }

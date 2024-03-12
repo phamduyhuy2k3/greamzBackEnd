@@ -1,7 +1,9 @@
 package com.greamz.backend.model;
 
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
+
 import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.enumeration.PAYMENTMETHOD;
 import jakarta.persistence.*;
@@ -18,7 +20,7 @@ import java.util.UUID;
 @Builder
 @Data
 @NoArgsConstructor
-public class Orders extends TimeStampEntity {
+public class Orders extends AbstractAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;

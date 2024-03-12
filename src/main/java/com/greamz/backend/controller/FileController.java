@@ -3,6 +3,7 @@ package com.greamz.backend.controller;
 import com.greamz.backend.dto.FileUpload;
 import com.greamz.backend.service.ImageService;
 import com.greamz.backend.service.MovieService;
+import jakarta.servlet.annotation.MultipartConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class FileController {
     private final ImageService imageService;
     private final MovieService movieService;
     @PostMapping("/image")
-    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadImage(@RequestPart("file") MultipartFile file) {
         FileUpload fileUpload = new FileUpload();
         fileUpload.setFile(file);
         return ResponseEntity.ok(imageService.uploadImage(fileUpload));

@@ -19,7 +19,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     IAccountRepo userRepository;
 
     @Override
-    @Transactional
     public UserPrincipal loadUserByUsername(String email)
             throws UsernameNotFoundException {
         AccountModel user = userRepository.findByUserNameOrEmail(email)
@@ -30,7 +29,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         return UserPrincipal.create(user);
     }
 
-    @Transactional
     public UserPrincipal loadUserById(Integer id) {
         AccountModel user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", id)

@@ -78,7 +78,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
 
         $http.get("/api/user/findAll", {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(
             resp => {
@@ -112,10 +112,10 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
             if (result.isConfirmed) {
                 if (scope) {
                     $http.put(`/api/user/${scope.id}/toggle-enable/${scope.statusApi}`, {
-                        headers: "Authorization: Bearer " + $cookies.get("accessToken")
+                        headers: "Authorization: Bearer " + $cookies.get("access_token")
                     }).then(() => {
                         $http.get(`/api/user/sendEmailToRevoke/${scope.email}/${scope.fullname}`, {
-                            headers: "Authentication: Bearer " + $cookies.get("accessToken")
+                            headers: "Authentication: Bearer " + $cookies.get("access_token")
                         }).then(() => {
                             Swal.fire({
                                 title: "Change success!",
@@ -159,7 +159,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                 if (id) {
                     $http.delete(`/api/user/delete/${id}`, {
                         headers: {
-                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                            "Authorization": "Bearer " + $cookies.get("access_token")
                         }
                     }).then(resp => {
                         Swal.fire({
@@ -206,7 +206,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         console.log($scope.form)
         $http.post("/api/user/save", $scope.form, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Authorization": "Bearer " + $cookies.get("access_token"),
                 "Content-Type": "application/json"
             },
         }).then(
@@ -235,7 +235,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
     $scope.update = function () {
         $http.put("/api/user/update", $scope.form, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Authorization": "Bearer " + $cookies.get("access_token"),
                 "Content-Type": "application/json"
             },
         }).then(
@@ -254,7 +254,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
-                    text: "Error creating account!",
+                    text: "Error update account!",
                 });
                 console.log(error)
             }
@@ -273,7 +273,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         $scope.action = 'view';
         $http.get(`/api/user/findOrdersByAccountId/${id}`, {
             headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                'Authorization': 'Bearer ' + $cookies.get('access_token')
             }
 
         }).then(resp => {
@@ -282,7 +282,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         })
         $http.get(`/api/user/findReviewByAccountId/${id}`, {
             headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                'Authorization': 'Bearer ' + $cookies.get('access_token')
             }
 
         }).then(resp => {
@@ -291,7 +291,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
         })
         $http.get(`/api/user/findVoucherByAccountId/${id}`, {
             headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                'Authorization': 'Bearer ' + $cookies.get('access_token')
             }
 
         }).then(resp => {

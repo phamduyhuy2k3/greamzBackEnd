@@ -14,5 +14,12 @@ public class MvcRoute {
     public String signIn() {
         return "sign-in";
     }
-
+    @GetMapping("/")
+    public String index(@AuthenticationPrincipal UserPrincipal userPrincipal, HttpServletResponse response) throws IOException {
+        System.out.println("User Principal: " + userPrincipal);
+        if (userPrincipal == null) {
+            response.sendRedirect("/sign-in");
+        }
+        return "index";
+    }
 }

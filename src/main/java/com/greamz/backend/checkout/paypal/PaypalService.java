@@ -29,6 +29,8 @@ public class PaypalService {
     private final OrderService orderService;
     private final GameModelService gameModelService;
     private final CheckoutService checkoutService;
+    private final GlobalState globalState;
+    private final RestTemplate restTemplate;
     private final String  BASE = "https://api-m.sandbox.paypal.com";
     @Value("${application.payment.paypal.client-id}")
     private String clientId ;
@@ -82,15 +84,21 @@ public class PaypalService {
             order.setOrdersStatus(OrdersStatus.SUCCESS);
             orderService.saveOrder(order);
             gameModelService.updateStockForGameFromOrder(order.getOrdersDetails());
-            String redirectURL = GlobalState.FRONTEND_URL + "/order/success?orderId=" + order.getId();
+            String redirectURL = globalState.FRONTEND_URL + "/order/success?orderId=" + order.getId();
             servletResponse.setStatus(201);
             servletResponse.getWriter().write("{\"redirectURL\": \"" + redirectURL + "\"}");
+
         } else {
             order.setOrdersStatus(OrdersStatus.FAILED);
             orderService.saveOrder(order);
-            String redirectURL = "/api/v1/checkout/failed?orderId=" + order.getId();
+            String requestUrl = String.format("/api/v1/checkout/failed?orderId=%s&status=%s", order.getId(), OrdersStatus.FAILED);
+            restTemplate.postForObject( requestUrl, null, String.class);
+
             servletResponse.setStatus(400);
+            String redirectURL = globalState.FRONTEND_URL + "/order/failed?orderId=" + order.getId();
+
             servletResponse.getWriter().write("{\"redirectURL\": \"" + redirectURL + "\"}");
+
         }
     }
     public Object createOrder(JsonNode paypalCreateOrderRequest) {

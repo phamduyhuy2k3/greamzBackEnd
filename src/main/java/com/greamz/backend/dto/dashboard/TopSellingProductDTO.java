@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Builder
-@AllArgsConstructor
+
 @NoArgsConstructor
 public class TopSellingProductDTO {
     private Long appid;
@@ -19,6 +19,15 @@ public class TopSellingProductDTO {
     private String website;
     private Integer discount;
     private Double price;
-    private BigDecimal totalQuantitySold;
+    private Long totalQuantitySold;
 
+    public TopSellingProductDTO(Long appid, String name, String image, String website, Integer discount, Double price, Long totalQuantitySold) {
+        this.appid = appid;
+        this.name = name;
+        this.image = image;
+        this.website = website;
+        this.discount = discount;
+        this.price = price;
+        this.totalQuantitySold = totalQuantitySold;
+    }
 }

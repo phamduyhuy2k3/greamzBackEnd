@@ -13,6 +13,8 @@ import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,16 +31,19 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class ReviewController {
     private final ReviewService service;
+
     @GetMapping("/findALl")
     public ResponseEntity<Iterable<Review>> findAll() {
         List<Review> reviews = service.findAll();
         return ResponseEntity.ok(reviews);
     }
+
     @GetMapping("/findAllPagination")
     public ResponseEntity<Page<ReviewResponseForAdmin>> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                                           @RequestParam(defaultValue = "7") int size) {
         return ResponseEntity.ok(service.findAll(PageRequest.of(page, size)));
     }
+
     @GetMapping("/findById/{id}")
     public ResponseEntity<Review> findByid(@PathVariable("id") Long id) {
         try {
@@ -48,6 +53,7 @@ public class ReviewController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/findByGame/{appid}")
     public ResponseEntity<List<ReviewsUserDTO>> findByGame(@PathVariable("appid") Long id) {
         try {
@@ -57,6 +63,7 @@ public class ReviewController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody Review review) {
         return ResponseEntity.ok().body(service.saveReviewModel(review));
@@ -78,20 +85,23 @@ public class ReviewController {
     public Review getOne(@PathVariable("id") Long appid) {
         return service.findByid(appid);
     }
+
     @PostMapping("/user/review")
     public ResponseEntity<?> createReview(@RequestBody ReviewFromUser review, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         review.setAccountId(userPrincipal.getId());
         return ResponseEntity.ok().body(service.saveReviewOfUser(review));
     }
+
     @PostMapping("/react")
     public ResponseEntity<ReactResponse> likeReview(@RequestBody UserReactTheReview userReactTheReview) {
-        log.info("userReactTheReview:"+userReactTheReview);
-       return ResponseEntity.ok(service.reactReview(userReactTheReview));
+        log.info("userReactTheReview:" + userReactTheReview);
+        return ResponseEntity.ok(service.reactReview(userReactTheReview));
     }
+
     @GetMapping("/findPage")
     public ResponseEntity<Page<ReviewOfGame>> findPage(@RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "18") int size) {
-        return ResponseEntity.ok(service.findAllPage(PageRequest.of(page, size).withSort(Sort.by("createdAt").descending())));
+        return ResponseEntity.ok(service.findAllPage(PageRequest.of(page, size).withSort(Sort.by("createdOn").descending())));
     }
 
 }

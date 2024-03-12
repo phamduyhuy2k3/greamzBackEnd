@@ -22,7 +22,7 @@ import java.net.URLEncoder;
 public class EmailService {
     private final JavaMailSender javaMailSender;
     private final ThymeleafService thymeleafService;
-
+    private final GlobalState globalState;
     public void sendEmail() throws MessagingException, IOException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -39,7 +39,7 @@ public class EmailService {
         helper.setTo(email);
         helper.setSubject("Reset password");
         Context context = new Context();
-        String url = GlobalState.FRONTEND_URL + "/reset-password-step-2?token=" + tokenEncrypt;
+        String url = globalState.FRONTEND_URL + "/reset-password-step-2?token=" + tokenEncrypt;
         context.setVariable("resetLink", url);
         String emailContent = thymeleafService.setContent(context, "resetPassword");
         helper.setText(emailContent, true);

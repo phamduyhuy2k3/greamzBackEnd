@@ -1,7 +1,6 @@
 package com.greamz.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,11 +14,12 @@ import java.sql.Date;
 @Builder
 @Data
 @NoArgsConstructor
-public class Voucher extends TimeStampEntity {
+public class Voucher extends AbstractAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(length = 1000)
     private String description;
     private Date dateAt;
     private Double dateExpired;

@@ -65,6 +65,10 @@ public class CodeActiveService {
         List<PlatformDTO> platformDTOList = repo.findPlatformByGameAppid(appid);
         return platformDTOList;
     }
+    @Transactional(readOnly = true)
+    public int countByGameAppid(Integer platformId,Long appid){
+        return repo.countByPlatform_IdAndGame_AppidAndAccountIsNullAndActiveIsFalse(platformId,appid);
+    }
 
     @Transactional(readOnly = true)
     public List<CodeActiveDTO> findByIdGame(Long appid) {

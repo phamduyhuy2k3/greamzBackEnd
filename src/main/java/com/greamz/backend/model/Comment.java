@@ -1,10 +1,10 @@
 package com.greamz.backend.model;
 
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
 import jakarta.persistence.*;
 
 @Entity
-public class Comment extends TimeStampEntity {
+public class Comment extends AbstractAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

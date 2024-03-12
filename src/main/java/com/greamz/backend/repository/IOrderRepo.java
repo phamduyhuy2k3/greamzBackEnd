@@ -13,8 +13,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface IOrderRepo extends JpaRepository<Orders, UUID> {
-    @Query("SELECT SUM(o.totalPrice) FROM Orders o WHERE DATE(o.createdAt) = CURRENT_DATE")
+    @Query("SELECT SUM(o.totalPrice) FROM Orders o WHERE o.createdOn = CURRENT_TIMESTAMP ")
     Double findRevenueForCurrentDay();
+
     Page<Orders> findAllByAccount_Id(Integer accountId, Pageable pageable);
     List<Orders> findAllByAccountId(Integer accountId);
     @Query("select o from Orders o where o.ordersStatus = ?1 and o.account.id = ?2")

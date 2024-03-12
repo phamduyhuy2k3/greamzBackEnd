@@ -1,11 +1,10 @@
 package com.greamz.backend.model;
 
 
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -13,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Review extends TimeStampEntity {
+public class Review extends AbstractAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,6 +23,8 @@ public class Review extends TimeStampEntity {
     private AccountModel account;
     @ManyToOne
     private GameModel game;
+    @ManyToOne
+    private Platform platform;
     @OneToMany(mappedBy = "review")
     private List<ReviewReaction> reviewReactions;
 }

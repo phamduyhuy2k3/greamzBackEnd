@@ -29,5 +29,7 @@ public class AccountRequest {
     @ValidPassword
     @NotBlank(message = "Password đang để trống")
     private String password;
+    private Role role;
+    private boolean isEnabled;
 
 }

@@ -14,6 +14,7 @@ import com.greamz.backend.util.Mapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class ReviewService {
                 .text(reviewFromUser.getText())
                 .rating(reviewFromUser.getRating())
                 .game(GameModel.builder().appid(reviewFromUser.getAppid()).build())
+                .platform(Platform.builder().id(reviewFromUser.getPlatformId()).build())
                 .account(AccountModel.builder().id(reviewFromUser.getAccountId()).build())
                 .build();
         Review review = repo.save(reviewModel);
@@ -64,8 +66,8 @@ public class ReviewService {
     public List<Review> findAll() {
         List<Review> reviews = repo.findAll();
         reviews.forEach(review -> {
-            review.setCreatedAt(null);
-            review.setUpdatedAt(null);
+            review.setCreatedOn(null);
+            review.setLastModifiedOn(null);
 
 //            review.setGame(null);
 //            review.setAccount(null);
@@ -76,6 +78,7 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
+
     public Page<ReviewOfGame> findAllPage(Pageable pageable) {
         Page<Review> reviews = repo.findAll(pageable);
         Page<ReviewOfGame> reviewsUserDTOS = reviews.map(review -> {

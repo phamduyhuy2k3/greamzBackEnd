@@ -1,6 +1,9 @@
 package com.greamz.backend.security;
 
 
+import com.greamz.backend.dto.account.AccountRequest;
+import com.greamz.backend.enumeration.Role;
+import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.greamz.backend.service.AccountService;
 import com.greamz.backend.service.CustomUserDetailsService;
@@ -16,7 +19,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 @Configuration
 public class AppSecurityConfig {
@@ -29,7 +35,7 @@ public class AppSecurityConfig {
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
 
@@ -39,6 +45,7 @@ public class AppSecurityConfig {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(accountService);
         authProvider.setPasswordEncoder(passwordEncoder());
+
         return authProvider;
     }
 

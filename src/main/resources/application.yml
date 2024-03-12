@@ -1,19 +1,18 @@
 spring:
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${MYSQL.HOST}/datn?useUnicode=yes&autoReconnect=true
+    url: jdbc:mysql://localhost:3306/datn?useUnicode=yes
     username: ${MYSQL.USERNAME}
     password: ${MYSQL.PASSWORD}
-    hikari:
-      max-lifetime: 54000
-
   servlet:
     multipart:
       max-file-size: 20MB
-      max-request-size: 5MB
+      max-request-size: 10MB
+      enabled: true
   jpa:
     hibernate.ddl-auto: update
-    generate-ddl: true
+    generate-ddl: off
     show-sql: true
 
     properties:
@@ -21,41 +20,53 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
 
-  profiles:
-    active: prod
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 174279917949-jldul43lq0as6pdkda9o51qbacf2ljuj.apps.googleusercontent.com
-            client-secret: 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
-            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_SECRET}
+            redirect-uri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - profile
+
 
 springdoc:
   api-docs:
     path: /api-docs
 
 application:
+  frontend:
+    url: ${BASE_URL_FRONT_END}
   security:
     jwt:
       secret-key: d63c169a95a1f1dbaa6fefa225bbee99189cd07374d56bd0cf7e9f6be712cc92
-      expiration: 7200000
+      expiration: 15 # 1h 30m
       refresh-token:
-        expiration: 6048000000
+        expiration: 10080 # 7d
+  cloudinary:
+    cloud-name: ${CLOUDINARY_CLOUD_NAME}
+    api-key: ${CLOUDINARY_API_KEY}
+    api-secret: ${CLOUDINARY_API_SECRET}
+
   payment:
     vnpay:
       payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-      returnUrl: http://localhost:8080/api/v1/payment/vnpay/call-back
-      tmnCode: KAZQ6EDF
-      secretKey: SFPMQNPZIKBZLXFEPKXQXSLOXMSHTQIB
+      returnUrl: ${BASE_URL_GREAMZ}/api/v1/payment/vnpay/call-back
+      tmnCode: ${VNPAY_TMN}
+      secretKey: ${VNPAY_SECRET}
       apiUrl: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
     paypal:
-      client-id: Ac6OunOSZY2Kv9TCwJRad598Rsi_pmPmKjEsQzRcvAb2vAAixdEEIlH6m6QliVM1Glv393bh3Iw0SUbQ
-      client-sec: EIU5icm_85DbGCTey09703tMfxcjXRkXiOoameTTF2YpbFv3AQwWUqIjoyuo_9VEWXJ_PPKECsxi_hgi
+      client-id: ${PAYPAL_ID}
+      client-sec: ${PAYPAL_SEC}
 server:
   port: 8080
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
 

@@ -16,7 +16,7 @@ public interface IReviewRepo extends JpaRepository<Review, Long> {
     List<Review> findAllByAccount_Id(Integer id);
     Integer countAllByGameAppid(Long appid);
     @Query("select avg(r.rating) from Review r where r.game.appid = ?1")
-    Double calculateAverageRating(Long appid);
+    Short calculateAverageRating(Long appid);
 
 
 }

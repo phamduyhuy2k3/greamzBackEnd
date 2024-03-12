@@ -1,7 +1,7 @@
 package com.greamz.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
 import com.greamz.backend.enumeration.CategoryTypes;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category extends TimeStampEntity {
+public class Category extends AbstractAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

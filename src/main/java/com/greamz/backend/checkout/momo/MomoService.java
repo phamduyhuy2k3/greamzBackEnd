@@ -9,6 +9,7 @@ import com.greamz.backend.service.GameModelService;
 import com.greamz.backend.service.OrderService;
 import com.greamz.backend.util.GlobalState;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -21,17 +22,18 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class MomoService {
-    @Autowired
-    private Environment env;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private GameModelService gameModelService;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final Environment env;
 
+    private final OrderService orderService;
+
+    private final GameModelService gameModelService;
+
+
+    private final RestTemplate restTemplate;
+    private final GlobalState globalState;
     public MomoResponse createMomoPayment(Orders order, String fullname)
             throws NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
 
@@ -111,14 +113,16 @@ public class MomoService {
     public void momoResult(MomoResult response, HttpServletResponse httpServletResponse) throws IOException {
         Orders order = orderService.getOrdersById(UUID.fromString(response.getOrderId()));
         if (response.getResultCode() == 0) {
-            order.setOrdersStatus(OrdersStatus.SUCCESS);
-            orderService.saveOrder(order);
-            gameModelService.updateStockForGameFromOrder(order.getOrdersDetails());
-            httpServletResponse.sendRedirect(GlobalState.FRONTEND_URL + "/order/success?orderId=" + order.getId());
-        } else {
-            order.setOrdersStatus(OrdersStatus.FAILED);
-            orderService.saveOrder(order);
-            httpServletResponse.sendRedirect("/api/v1/checkout/failed?orderId=" + order.getId());
+            httpServletResponse.sendRedirect("/api/v1/checkout/callback?orderId=" + order.getId());
+        }
+        else
+        if(response.getResultCode() == 1006){
+            httpServletResponse.sendRedirect(globalState.FRONTEND_URL + "/order/failed?orderId=" + order.getId()+"&status=CANCELLED");
+        }
+        else {
+//            order.setOrdersStatus(OrdersStatus.FAILED);
+//            orderService.saveOrder(order);
+            httpServletResponse.sendRedirect("/api/v1/checkout/failed?orderId=" + order.getId()+"&status=FAILED");
         }
 
 

@@ -7,10 +7,13 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
+
 @NoArgsConstructor
 public class RevenueDTO {
-    private Long year;
-    private Long month;
+    private String month;
     private Double revenue;
+    public RevenueDTO(String month, Double revenue) {
+        this.month = month;
+        this.revenue = revenue;
+    }
 }

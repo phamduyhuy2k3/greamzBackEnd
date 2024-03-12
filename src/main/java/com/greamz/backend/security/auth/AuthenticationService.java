@@ -1,10 +1,12 @@
 package com.greamz.backend.security.auth;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greamz.backend.config.JwtService;
 import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.enumeration.TokenType;
+import com.greamz.backend.model.AccountAuthProvider;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Token;
 import com.greamz.backend.repository.IAccountRepo;
@@ -13,6 +15,7 @@ import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.util.EncryptionUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +24,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,11 +45,15 @@ public class AuthenticationService {
                 .fullname(request.getFullname())
                 .username(request.getUsername())
                 .email(request.getEmail())
+                .emailVerified(true)
                 .role(Role.USER)
                 .isEnabled(true)
-                .provider(AuthProvider.local)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
+        var authProvider = AccountAuthProvider.builder()
+                .provider(AuthProvider.local)
+                .build();
+        user.setAuthProviders(List.of(authProvider));
         var savedUser = repository.save(user);
         UserPrincipal userPrincipal = UserPrincipal.create(savedUser);
         var jwtToken = jwtService.generateToken(userPrincipal);
@@ -52,13 +61,17 @@ public class AuthenticationService {
         saveUserToken(savedUser, refreshToken);
 
         return AuthenticationResponse.builder()
-                .accessToken(EncryptionUtil.encrypt(jwtToken))
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .accessTokenExpiresIn(jwtService.getJwtExpiration())
+                .refreshTokenExpiresIn(jwtService.getRefreshExpiration())
                 .build();
 
 
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletRequest servletRequest) {
+        System.out.println(request.getUsername());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -73,7 +86,10 @@ public class AuthenticationService {
         revokeAllUserTokens(savedUser);
         saveUserToken(savedUser, refreshToken);
         return AuthenticationResponse.builder()
-                .accessToken(EncryptionUtil.encrypt(jwtToken))
+                .accessToken(jwtToken)
+                .accessTokenExpiresIn(jwtService.getJwtExpiration())
+                .refreshTokenExpiresIn(jwtService.getRefreshExpiration())
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -109,30 +125,63 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse refreshToken(
-            HttpServletRequest request
-    ) throws ExpiredJwtException {
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws ExpiredJwtException, IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
         }
-        final String jwt = authHeader.substring(7);
-        final String username = jwtService.extractUsernameThatTokenExpired(jwt);
-        if (username != null) {
-            var user = this.repository.findByUserNameOrEmail(username)
-                    .orElseThrow();
-            log.info("user:" + user.getId());
-            var refreshToken = this.tokenRepository.findByUser_Id(user.getId())
-                    .orElseThrow().getToken();
+        String jwt = authHeader.substring(7);
+        if (jwt.isEmpty()) {
+            return null;
+        }
+        Optional<Token> tokenOptional = tokenRepository.findByTokenAndAndExpiredIsFalseAndRevokedIsFalse(jwt);
+        if (tokenOptional.isEmpty()) {
+            return null;
+        } else {
+            Token token = tokenOptional.get();
+            if (token.getUser().getId() != null) {
 
-            if (jwtService.isTokenValid(refreshToken, UserPrincipal.create(user))) {
-                UserPrincipal userPrincipal = UserPrincipal.create(user);
-                var accessToken = jwtService.generateToken(userPrincipal);
-                log.info("Refresh token successfully");
-                return AuthenticationResponse.builder()
-                        .accessToken(EncryptionUtil.encrypt(accessToken))
-                        .build();
+                var user = this.repository.findById(token.getUser().getId())
+                        .orElseThrow();
+            if (request.getParameter("isDashboard") != null && !request.getParameter("isDashboard").isEmpty()) {
+
+                var refreshToken = this.tokenRepository.findByUser_IdAndToken(user.getId(), token.getToken())
+                        .orElseThrow().getToken();
+                if (jwtService.isTokenValid(refreshToken, UserPrincipal.create(user))) {
+                    UserPrincipal userPrincipal = UserPrincipal.create(user);
+                    var accessToken = jwtService.generateToken(userPrincipal);
+                    log.info("Refresh token successfully");
+                    return AuthenticationResponse.builder()
+                            .accessToken(accessToken)
+                            .refreshToken(refreshToken)
+                            .refreshTokenExpiresIn(jwtService.getRefreshExpiration())
+                            .accessTokenExpiresIn(jwtService.getJwtExpiration())
+                            .build();
+                }
+            } else {
+
+                    if (jwtService.isTokenValid(token.getToken(), UserPrincipal.create(user))) {
+                        var accessToken = jwtService.generateToken(UserPrincipal.create(user));
+                        var authResponse = AuthenticationResponse.builder()
+                                .accessToken(accessToken)
+                                .refreshToken(token.getToken())
+                                .refreshTokenExpiresIn(jwtService.getRefreshExpiration())
+                                .accessTokenExpiresIn(jwtService.getJwtExpiration())
+                                .build();
+                        log.info("Refresh token successfully 2");
+                        return authResponse;
+                    }
+                }
             }
         }
+
+
         return null;
+    }
+
+    public Token findTokenByUserAndToken(String token, Integer id) {
+        return tokenRepository.findByUser_IdAndToken(id, token).orElseThrow();
     }
 }

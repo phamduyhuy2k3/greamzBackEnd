@@ -14,5 +14,6 @@ public class ReviewFromUser {
     private int rating;
     private Long appid;
     private Long orderDetailId;
+    private Integer platformId;
     private Integer accountId;
 }

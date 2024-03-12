@@ -2,12 +2,15 @@ package com.greamz.backend.controller;
 
 import com.greamz.backend.dto.game.GameBasicDTO;
 import com.greamz.backend.dto.game.GameDetailClientDTO;
+import com.greamz.backend.dto.game.GenreDTO;
 import com.greamz.backend.dto.review.ReviewOfGame;
 import com.greamz.backend.model.GameModel;
 import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.GameModelService;
 import com.greamz.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -104,6 +107,33 @@ public class GameRestController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/totalReviewed/{appid}")
+    public ResponseEntity<Integer> getTotalReviewed(@PathVariable("appid") Long appid) {
+        try {
+            Integer totalReviewed = service.totalReviewed(appid);
+            return ResponseEntity.ok(totalReviewed);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/averageRating/{appid}")
+    public ResponseEntity<Short> getAverageRating(@PathVariable("appid") Long appid) {
+        try {
+            Short averageRating = service.calculateAverageRating(appid);
+            return ResponseEntity.ok(averageRating);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/categories/{appid}")
+    public ResponseEntity<List<GenreDTO>> getCategories(@PathVariable("appid") Long appid) {
+        try {
+            List<GenreDTO> categories = service.getCategoriesForGame(appid);
+            return ResponseEntity.ok(categories);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @GetMapping("/gameids")
     public ResponseEntity<List<GameDetailClientDTO>> findGamesByIds(@RequestParam String appids,@RequestParam String platformIds) {
@@ -118,7 +148,6 @@ public class GameRestController {
     }
 
     @DeleteMapping("/delete/{appid}")
-
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','EMPLOYEE')")
     public ResponseEntity<?> delete(@PathVariable("appid") Long appid) {
         try {

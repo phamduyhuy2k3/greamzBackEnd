@@ -40,7 +40,7 @@ app.controller("orderController", function ($scope, $http, $document, $cookies, 
         fetchPage() {
             $http.get(`/api/v1/order/findAllPagination?page=${this.number}&size=10`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                 $scope.pager = {
@@ -54,7 +54,7 @@ app.controller("orderController", function ($scope, $http, $document, $cookies, 
     $scope.initialize = function () {
         $http.get(`/api/v1/order/findAllPagination`, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(
             resp => {
@@ -84,7 +84,7 @@ app.controller("orderController", function ($scope, $http, $document, $cookies, 
                 if (id) {
                     $http.delete(`/api/v1/order/delete/${id}`, {
                         headers: {
-                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                            "Authorization": "Bearer " + $cookies.get("access_token")
                         }
                     }).then(resp => {
                         Swal.fire({
@@ -116,7 +116,7 @@ app.controller("orderController", function ($scope, $http, $document, $cookies, 
     $scope.view = async function (id) {
         await $http.get(`/api/v1/order/findByOrder/${id}`, {
             headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                'Authorization': 'Bearer ' + $cookies.get('access_token')
             }
         }).then(resp => {
                 $scope.orderDetails = resp.data;

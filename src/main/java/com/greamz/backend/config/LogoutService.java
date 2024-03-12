@@ -1,7 +1,6 @@
 package com.greamz.backend.config;
 
 
-
 import com.greamz.backend.repository.ITokenRepo;
 import com.greamz.backend.service.AccountService;
 import com.greamz.backend.util.CookieUtils;
@@ -13,6 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,31 +25,38 @@ public class LogoutService implements LogoutHandler {
     private final AccountService accountService;
 
     @Override
+    @Transactional
     public void logout(
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication
     ) {
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        String jwt = "";
+        if (authHeader == null) {
             return;
         }
-        jwt = EncryptionUtil.decrypt(authHeader.substring(7));
-        String username = jwtService.extractUsernameThatTokenExpired(jwt);
-        try {
-            var user = accountService.findByUserNameOrEmail(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+        final boolean isRequestFromDashboard = authHeader.startsWith("Dashboard");
+        if (isRequestFromDashboard) {
+            if (CookieUtils.getCookie(request, "refresh_token").isPresent()) {
+                jwt = CookieUtils.getCookie(request, "refresh_token").get().getValue();
+            }
 
-            var storedToken = tokenRepository.findByUser_Id(user.getId()).orElseThrow(() -> new RuntimeException("Token not found"));
+        }
+        if (authHeader.startsWith("Bearer ")) {
+            jwt = authHeader.substring(7);
+        }
+
+        try {
+            var storedToken = tokenRepository.findByToken( jwt).orElseThrow(() -> new RuntimeException("Token not found"));
             if (storedToken != null) {
-                storedToken.setExpired(true);
-                storedToken.setRevoked(true);
-                tokenRepository.save(storedToken);
-                CookieUtils.deleteCookie(request, response, "accessToken");
+                tokenRepository.delete(storedToken);
+                tokenRepository.deleteAllByUser_IdAndExpiredOrRevoked(storedToken.getUser().getId(), true, true);
                 SecurityContextHolder.clearContext();
             }
-        }catch (RuntimeException e){
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }

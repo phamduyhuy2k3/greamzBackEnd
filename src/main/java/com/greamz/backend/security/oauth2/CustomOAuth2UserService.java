@@ -5,8 +5,10 @@ import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.enumeration.TokenType;
 import com.greamz.backend.exception.OAuth2AuthenticationProcessingException;
+import com.greamz.backend.model.AccountAuthProvider;
 import com.greamz.backend.model.AccountModel;
 import com.greamz.backend.model.Token;
+import com.greamz.backend.repository.IAccountAuthProvider;
 import com.greamz.backend.repository.IAccountRepo;
 import com.greamz.backend.repository.ITokenRepo;
 import com.greamz.backend.security.UserPrincipal;
@@ -21,6 +23,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,7 +36,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private JwtService jwtService;
     @Autowired
     private ITokenRepo tokenRepository;
-
+    @Autowired
+    private IAccountAuthProvider accountAuthProviderRepository;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
@@ -58,12 +62,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         AccountModel user;
         if(userOptional.isPresent()) {
             user = userOptional.get();
-            if(!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
-                throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
-                        user.getProvider() + " account. Please use your " + user.getProvider() +
-                        " account to login.");
-            }
-            user = updateExistingUser(user, oAuth2UserInfo);
+            var accountAuthProvider = accountAuthProviderRepository.findAllByAccount_Id(user.getId());
+            accountAuthProvider.forEach(authProvider -> {
+                if (authProvider.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))){
+                    throw new OAuth2AuthenticationProcessingException("Looks like you're signed up with " +
+                            accountAuthProvider + " account. Please use your " + accountAuthProvider +
+                            " account to login.");
+                }
+            });
+
+            user = updateExistingUser(user, oAuth2UserInfo,oAuth2UserRequest);
         } else {
             user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
         }
@@ -91,20 +99,28 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private AccountModel registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         AccountModel user = new AccountModel();
-        user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-        user.setProviderId(oAuth2UserInfo.getId());
         user.setFullname(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setPhoto(oAuth2UserInfo.getImageUrl());
         user.setRole(Role.USER);
         user.setLocale(oAuth2UserInfo.getAttributes().get("locale").toString());
+        AccountAuthProvider accountAuthProvider =AccountAuthProvider.builder()
+                .provider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))
+                .providerId(oAuth2UserInfo.getId())
+                .account(user)
+                .build();
+        user.setAuthProviders(List.of(accountAuthProvider));
         return userRepository.save(user);
     }
-    private AccountModel updateExistingUser(AccountModel existingUser, OAuth2UserInfo oAuth2UserInfo) {
-        existingUser.setFullname(oAuth2UserInfo.getName());
-        existingUser.setPhoto(oAuth2UserInfo.getImageUrl());
-        existingUser.setProviderId(oAuth2UserInfo.getId());
+    private AccountModel updateExistingUser(AccountModel existingUser, OAuth2UserInfo oAuth2UserInfo,OAuth2UserRequest oAuth2UserRequest) {
+        var accountAuthProvider = accountAuthProviderRepository.findAllByAccount_Id(existingUser.getId());
+        accountAuthProvider.forEach(authProvider -> {
+            if (authProvider.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))){
+                authProvider.setProviderId(oAuth2UserInfo.getId());
 
+            }
+        });
+        existingUser.setAuthProviders(accountAuthProvider);
         return userRepository.save(existingUser);
     }
 

@@ -1,6 +1,6 @@
 package com.greamz.backend.model;
 
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +13,7 @@ import lombok.*;
         @UniqueConstraint(columnNames = {"game_appid", "platform_id", "code"})
 })
 
-public class CodeActive extends TimeStampEntity {
+public class CodeActive extends AbstractAuditEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

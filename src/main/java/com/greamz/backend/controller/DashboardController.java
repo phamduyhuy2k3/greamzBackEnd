@@ -5,6 +5,7 @@ import com.greamz.backend.dto.game.GameBasicDTO;
 import com.greamz.backend.dto.game.GameDetailClientDTO;
 import com.greamz.backend.service.DashboardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,11 +35,13 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.getRevenueByMonth(year));
     }
     @GetMapping("/specialOffer")
-    public ResponseEntity<List<GameBasicDTO>> getSpecialOffer() {
 
+    public ResponseEntity<List<GameBasicDTO>> getSpecialOffer() throws InterruptedException {
+      
         return ResponseEntity.ok(dashboardService.getSpecialOffer());
     }
     @GetMapping("/getTopSellingClient")
+
     public ResponseEntity<List<GameDetailClientDTO>> getTopSellingClient(
             @RequestParam int year, @RequestParam(defaultValue = "1") int month) {
 

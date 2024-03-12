@@ -1,6 +1,6 @@
 package com.greamz.backend.model;
 
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
 import com.greamz.backend.enumeration.AuthProvider;
 import com.greamz.backend.enumeration.Role;
 import jakarta.persistence.*;
@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "Account")
 @AllArgsConstructor
-public class AccountModel extends TimeStampEntity  {
+public class AccountModel extends AbstractAuditEntity  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -30,9 +30,6 @@ public class AccountModel extends TimeStampEntity  {
     private String photo;
     private boolean isEnabled;
     private Boolean emailVerified = false;
-    @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
-    private String providerId;
     private String locale;
     @OneToMany
     private List<Voucher> vouchers;
@@ -42,6 +39,9 @@ public class AccountModel extends TimeStampEntity  {
     private List<Review> reviews;
     @Enumerated(EnumType.STRING)
     private Role role;
-    private BigDecimal balance;
+    @Column(columnDefinition = "DECIMAL(10, 2) DEFAULT 0.00")
+    private BigDecimal balance = BigDecimal.ZERO;
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccountAuthProvider> authProviders;
 
 }

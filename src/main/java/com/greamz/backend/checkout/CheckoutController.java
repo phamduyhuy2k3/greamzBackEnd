@@ -1,6 +1,7 @@
 package com.greamz.backend.checkout;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.greamz.backend.enumeration.OrdersStatus;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.OrderService;
@@ -8,6 +9,7 @@ import com.greamz.backend.util.GlobalState;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class CheckoutController {
     private final CheckoutService checkoutService;
     private final OrderService orderService;
+    private final GlobalState globalState;
     @PostMapping("/placeorder")
     public ResponseEntity<?> checkout(
             @RequestBody Orders orders,
@@ -45,14 +48,10 @@ public class CheckoutController {
     public ResponseEntity<String> callbackClient(@RequestParam String orderId,HttpServletResponse response) throws IOException {
       return  ResponseEntity.ok(checkoutService.callbackFromClient(UUID.fromString(orderId),response));
     }
-//    @GetMapping("/callback/client")
-//    public ResponseEntity<String> callbackClient(@RequestParam String orderId,HttpServletResponse response) throws IOException {
-//      return  ResponseEntity.ok(checkoutService.callbackFromClient(UUID.fromString(orderId),response));
-//    }
     @GetMapping("/failed")
-    public void failed(@RequestParam("orderId") UUID orderId,HttpServletResponse response) throws IOException {
-        checkoutService.failed(orderId);
-        response.sendRedirect(GlobalState.FRONTEND_URL+"/order/failed");
+    public void failed(@RequestParam("orderId") UUID orderId, @RequestParam("status")OrdersStatus ordersStatus, HttpServletResponse response) throws IOException {
+        checkoutService.failed(orderId,ordersStatus);
+        response.sendRedirect(globalState.FRONTEND_URL+"/order/failed");
     }
 
 }

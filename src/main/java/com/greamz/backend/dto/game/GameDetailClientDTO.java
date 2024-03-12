@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +14,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GameDetailClientDTO {
+public class GameDetailClientDTO implements java.io.Serializable{
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private Long appid;
     private String name;
     private Double price;
@@ -25,11 +29,11 @@ public class GameDetailClientDTO {
     private String capsule_image;
     private Integer discount;
     private Integer totalReviewed;
-    private Double averageRating;
+    private Short averageRating;
     private Set<String> images;
     private Set<String> movies;
     private List<PlatformDTO> platforms;
-    private List<GenreDTO> categories;
+//    private List<GenreDTO> categories;
 
     public GameDetailClientDTO(Long appid, String name, Double price, String header_image) {
         this.appid = appid;

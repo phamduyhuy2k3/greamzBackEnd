@@ -14,7 +14,7 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
         console.log($scope.review)
         $http.post("/api/v1/review/create", $scope.review, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Authorization": "Bearer " + $cookies.get("access_token"),
                 "Content-Type": "application/json"
             }
         }).then(
@@ -61,7 +61,7 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
                     if (id) {
                         $http.delete(`/api/v1/review/delete/${id}`, {
                             headers: {
-                                "Authorization": "Bearer " + $cookies.get("accessToken")
+                                "Authorization": "Bearer " + $cookies.get("access_token")
                             }
                         }).then(resp => {
                                 Swal.fire({
@@ -94,7 +94,7 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
     $scope.edit = async function (appid) {
         await $http.get(`/api/v1/game/reviewsOfGame/${appid}`, {
             headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                'Authorization': 'Bearer ' + $cookies.get('access_token')
             }
         }).then(resp => {
                 $scope.action = 'update';
@@ -142,7 +142,7 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
         fetchPage() {
             $http.get(`/api/v1/review/findAllPagination?page=${this.number}&size=7`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                 $scope.pager = {
@@ -158,7 +158,7 @@ app.controller("reviewController", function ($scope, $http, $document, $cookies)
     $scope.initialize = function () {
         $http.get("/api/v1/review/findAllPagination", {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(
             resp => {

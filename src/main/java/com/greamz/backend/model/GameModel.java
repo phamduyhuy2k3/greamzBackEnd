@@ -3,7 +3,7 @@ package com.greamz.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GameModel extends TimeStampEntity {
+public class GameModel extends AbstractAuditEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -66,5 +66,6 @@ public class GameModel extends TimeStampEntity {
     private List<Review> reviews;
     @OneToMany(mappedBy = "game",cascade = CascadeType.ALL)
     private List<CodeActive> codeActives;
+
 
 }

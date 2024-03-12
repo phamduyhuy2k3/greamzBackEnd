@@ -1,6 +1,7 @@
 package com.greamz.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.greamz.backend.common.AbstractAuditEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class OrdersDetail implements Serializable {
+public class OrdersDetail  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

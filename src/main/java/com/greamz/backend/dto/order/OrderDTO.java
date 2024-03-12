@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,5 +20,5 @@ public class OrderDTO {
     private Double totalPrice;
     private PAYMENTMETHOD paymentmethod;
     private OrdersStatus ordersStatus;
-    private Date createdAt;
+    private ZonedDateTime createdOn;
 }

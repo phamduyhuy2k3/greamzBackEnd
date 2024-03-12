@@ -1,6 +1,6 @@
 package com.greamz.backend.model;
 
-import com.greamz.backend.common.TimeStampEntity;
+import com.greamz.backend.common.AbstractAuditEntity;
 import com.greamz.backend.enumeration.ReactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(uniqueConstraints = {
         @UniqueConstraint(columnNames = {"review_id", "user_id"})
 })
-public class ReviewReaction extends TimeStampEntity {
+public class ReviewReaction extends AbstractAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reactionId;

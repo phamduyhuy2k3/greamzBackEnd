@@ -7,6 +7,8 @@ import com.greamz.backend.model.GameModel;
 import com.greamz.backend.service.CategoryService;
 import com.greamz.backend.service.GameModelService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +48,7 @@ public class CategoryController {
         List<Category> gameCategories = service.findAll();
         return ResponseEntity.ok(gameCategories);
     }
+
 
     @GetMapping("/findAllFromClient")
     public ResponseEntity<List<CategoryBasicDTO>> findAllFromClient() {

@@ -70,20 +70,22 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
     // Hàm để duyệt qua các tháng và lấy ra mảng các giá trị revenue
     function getRevenues(data) {
         const revenues = Array(12).fill(0); // Khởi tạo mảng với 12 phần tử, mỗi phần tử có giá trị là 0
-
+        /*dataSample:{
+            Tháng 1: 2123,
+            Tháng 2: 3123213
+        }
+        */
         // Duyệt qua từng tháng trong năm
-        for (const key in data) {
-            if (data.hasOwnProperty(key) && Array.isArray(data[key])) {
-                // Duyệt qua từng phần tử trong mảng tháng và kiểm tra nếu có thuộc tính revenue
-                data[key].forEach(item => {
-                    if (item && item.revenue !== undefined) {
-                        // Thay thế giá trị 0 bằng giá trị revenue tại vị trí tương ứng với tháng trong mảng
-                        const monthIndex = parseInt(key.replace('month', '')) - 1; // Lấy chỉ số của tháng từ tên tháng (vd: month11)
-                        revenues[monthIndex] = item.revenue;
-                    }
-                });
+        for (let i = 1; i <= 12; i++) {
+            const month = i.toString();
+            // Nếu có dữ liệu revenue của tháng đó
+            if (data[`Tháng ${month}`]) {
+                revenues[i - 1] = data[`Tháng ${month}`];
+            }else {
+                revenues[i - 1] = 0;
             }
         }
+
 
         return revenues;
     }
@@ -107,7 +109,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
                 backgroundColor: "transparent",
                 fill: true,
                 data: [],
-                maxBarThickness: 6
+                maxBarThickness: 100
 
             }],
         },
@@ -173,6 +175,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
 
     // Hàm cập nhật dữ liệu trong biểu đồ
     function updateChart(data) {
+
         chartRevenue.data.datasets[0].data = data;
         chartRevenue.update();
     }
@@ -198,7 +201,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
         const currentDate = new Date();
         // Tạo mảng năm
         $scope.years = generateYears();
-        $scope.month = currentDate.getMonth();
+        $scope.month = currentDate.getMonth()+1;
         $scope.year = currentDate.getFullYear();
         console.log($scope.month)
         console.log($scope.year)
@@ -242,7 +245,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
         });
 
         await $http.get(`/api/v1/category/countTotalCategory`, {
-            headers: "Authorization: Bearer " + $cookies.get("accessToken")
+            headers: "Authorization: Bearer " + $cookies.get("access_token")
         }).then(resp => {
             $scope.totalCategory = resp.data;
             console.log(resp.data);
@@ -250,14 +253,14 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
         })
 
         await $http.get(`/api/v1/category/countByCategoryTypes`, {
-            headers: "Authorization: Bearer " + $cookies.get("accessToken")
+            headers: "Authorization: Bearer " + $cookies.get("access_token")
         }).then(resp => {
             $scope.totalCategoryByCategoryType = resp.data;
             console.log(resp.data);
         })
 
         await $http.get(`/api/v1/order/getRevenueForCurrentDay`, {
-            headers: "Authorization: Bearer " + $cookies.get("accessToken")
+            headers: "Authorization: Bearer " + $cookies.get("access_token")
         }).then(resp => {
             $scope.revenueToday = resp.data;
             console.log(resp.data);
@@ -265,7 +268,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
 
         $http.get(`/api/v1/dashboard/getTopSellingProductsInMonthYear?year=${$scope.year}&month=${$scope.month}`, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(resp => {
             $scope.gameOfTheMonth = resp.data;
@@ -274,14 +277,13 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
             $scope.isLoading = false;
         })
 
-        await $http.get(`/api/v1/dashboard/getRevenueByMonth?year=2023`, {
+        await $http.get(`/api/v1/dashboard/getRevenueByMonth?year=${$scope.year}`, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(resp => {
-            $scope.revenueByMonth = resp.data;
-            console.log(resp.data)
-            $scope.resultRevenue = getRevenues($scope.revenueByMonth);
+
+            $scope.resultRevenue = getRevenues(resp.data);
             console.log($scope.resultRevenue);
             updateChart($scope.resultRevenue);
         })
@@ -290,7 +292,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
     $scope.getGameBestSeller = async function () {
         await $http.get(`/api/v1/dashboard/getTopSellingProductsInMonthYear?year=${$scope.selectedYear}`, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(resp => {
             $scope.gameOfTheYear = resp.data;
@@ -305,7 +307,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
 
         await $http.get(`/api/v1/dashboard/getTopSellingProductsInMonthYear?year=${$scope.selectedYear}&month=${$scope.selectedMonth}`, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(resp => {
             $scope.gameOfTheMonth = resp.data;
@@ -317,7 +319,7 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
     $scope.getRevenueByYear = function () {
         $http.get(`/api/v1/dashboard/getRevenueByMonth?year=${$scope.selectedYearForRevenue}`, {
             headers: {
-                "Authentication": "Bearer " + $cookies.get("accessToken")
+                "Authentication": "Bearer " + $cookies.get("access_token")
             }
         }).then(resp => {
             $scope.revenueByMonth = resp.data;

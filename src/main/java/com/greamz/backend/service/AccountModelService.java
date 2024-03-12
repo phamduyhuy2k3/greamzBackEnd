@@ -38,6 +38,7 @@ public class AccountModelService {
             accountModel.setOrders(null);
             accountModel.setReviews(null);
             accountModel.setVouchers(null);
+            accountModel.setAuthProviders(null);
         }
         return accountModels;
     }
@@ -82,11 +83,12 @@ public class AccountModelService {
     }
 
     @Transactional
-    public AccountModel updateAccount(@Validated AccountRequest account) {
+    public AccountModel updateAccount( AccountRequest account) {
         AccountModel accountModel = repo.findById(account.getId()).orElseThrow(() -> new NoSuchElementException("Not found account with id: " + account.getId()));
         accountModel.setUsername(account.getUsername());
         accountModel.setEmail(account.getEmail());
         accountModel.setFullname(account.getFullname());
+        accountModel.setRole(account.getRole());
         if (account.getPassword() != null || !account.getPassword().isEmpty()) {
             account.setPassword(passwordEncoder.encode(account.getPassword()));
         }else{

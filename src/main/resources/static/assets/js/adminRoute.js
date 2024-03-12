@@ -52,12 +52,10 @@ app.config(function ($routeProvider) {
 app.run(function ($rootScope, $location, $http, $cookies, $route) {
     $rootScope.requireRoles = ["ADMIN", "MANAGER", "EMPLOYEE"];
     $rootScope.requireRolesAdmin = ["ADMIN", "MANAGER"];
-    if ($cookies.get('accessToken') === 'undefined') {
+    if ($cookies.get('access_token') === 'undefined') {
         window.location.href = "/sign-in";
 
     } else {
-        console.log($cookies.get('accessToken'))
-
         $rootScope.checkRoleAdmin = function () {
             return $rootScope.requireRolesAdmin.some(role => role === $rootScope.account.role)
         }
@@ -69,12 +67,7 @@ app.run(function ($rootScope, $location, $http, $cookies, $route) {
             }
         }
         $rootScope.fetchAccount = async function () {
-            let reult = await $http.get(`/api/user/currentUser`,
-                {
-                    headers: {
-                        'Authorization': 'Bearer ' + $cookies.get('accessToken')
-                    }
-                }).then(resp => {
+            let reult = await $http.get(`/api/user/currentUser`).then(resp => {
                     if (resp.data) {
                         $rootScope.account = resp.data;
                         console.log($rootScope.account)
@@ -90,8 +83,14 @@ app.run(function ($rootScope, $location, $http, $cookies, $route) {
             return reult;
         }
         $rootScope.logout = function () {
-            $cookies.remove('accessToken');
-            window.location.href = "/sign-in"
+            $http.post("/api/v1/auth/logout",  {
+                headers: {
+                    "Authorization": "Dashboard"
+                }
+            }).then(resp => {
+                window.location.href = "/sign-in"
+            })
+
         }
         $rootScope.$on('$routeChangeStart', function () {
             $rootScope.fetchAccount().then(resp => {
@@ -104,10 +103,8 @@ app.run(function ($rootScope, $location, $http, $cookies, $route) {
                     window.location.href = "/sign-in?error=access_denied"
                 }
                 if ($route.current.templateUrl=='/pages/userList.html') {
-                    console.log("dawdawdawddawdaw")
                     $rootScope.logoutForUserDontHaveRole();
                 }
-                console.log($route.current.templateUrl)
 
             });
         });
@@ -116,7 +113,6 @@ app.run(function ($rootScope, $location, $http, $cookies, $route) {
         });
         $rootScope.$on('$routeChangeError', function () {
 
-            alert("Lỗi");
         });
 
     }

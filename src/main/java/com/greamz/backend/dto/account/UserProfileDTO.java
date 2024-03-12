@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.security.auth.Subject;
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -31,7 +32,7 @@ public class UserProfileDTO  {
     private String photo;
     private String fullname;
     private Role role;
-    private Date createdAt;
+    private ZonedDateTime createdOn;
     private AuthProvider provider;
 
 }

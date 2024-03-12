@@ -29,6 +29,8 @@ public interface ICodeActiveRepo extends JpaRepository<CodeActive, Long> {
                       
             """)
     List<PlatformDTO> findPlatformByGameAppid(Long appid);
+
+    int countByPlatform_IdAndGame_AppidAndAccountIsNullAndActiveIsFalse(Integer platformId, Long appid);
     @Query("""
                         SELECT new com.greamz.backend.dto.game.GameLibrary(
                          c.game.appid,

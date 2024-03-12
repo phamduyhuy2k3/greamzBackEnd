@@ -3,25 +3,18 @@ package com.greamz.backend.controller;
 import com.greamz.backend.dto.account.*;
 import com.greamz.backend.enumeration.Role;
 import com.greamz.backend.model.AccountModel;
-import com.greamz.backend.model.Orders;
 import com.greamz.backend.model.Review;
-
 import com.greamz.backend.model.Voucher;
-
 import com.greamz.backend.security.UserPrincipal;
 import com.greamz.backend.service.*;
-
 import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -117,11 +110,11 @@ public class AccountRestController {
         return service.findById(id);
     }
 
-    @GetMapping("/findOrdersByAccountId/{id}")
-    public ResponseEntity<List<Orders>> findOrdersByAccountId(@PathVariable("id") Integer id) {
-        List<Orders> ordersDTOS = orderService.findAllOrdersByAccountId(id);
-        return ResponseEntity.ok(ordersDTOS);
-    }
+//    @GetMapping("/findOrdersByAccountId/{id}")
+//    public ResponseEntity<List<Orders>> findOrdersByAccountId(@PathVariable("id") Integer id) {
+//        List<Orders> ordersDTOS = orderService.findAllOrdersByAccountId(id);
+//        return ResponseEntity.ok(ordersDTOS);
+//    }
 
     @GetMapping("/findReiewsByAccountId/{id}")
     public ResponseEntity<List<Review>> findReiewsByAccountId(@PathVariable("id") Integer id) {
@@ -148,7 +141,7 @@ public class AccountRestController {
     }
 
     @PutMapping("/update")
-    public AccountModel update( @RequestBody AccountRequest account) {
+    public AccountModel update( @RequestBody @Validated AccountRequest account) {
         return service.updateAccount(account);
     }
 

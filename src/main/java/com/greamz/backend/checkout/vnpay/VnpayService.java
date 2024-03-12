@@ -10,6 +10,7 @@ import com.greamz.backend.util.GlobalState;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,8 @@ public class VnpayService {
     private final ConfigVnpay ConfigVnpay;
     private final OrderService orderService;
     private final GameModelService gameModelService;
+    @Value("${application.frontend.url}")
+    private String FRONTEND_URL;
     public CheckOutResponse createPaymentUrl(Orders orders, HttpServletRequest req) throws UnsupportedEncodingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
@@ -228,17 +231,16 @@ public class VnpayService {
             if ("00".equals(vnp_ResponseCode)) {
                 // Giao dịch thành công
                 // Thực hiện các xử lý cần thiết, ví dụ: cập nhật CSDL
-                Orders orders = orderService.getOrdersById(UUID.fromString(queryParams.get("orderId")));
-                orders.setOrdersStatus(OrdersStatus.SUCCESS);
-                orderService.saveOrder(orders);
-                gameModelService.updateStockForGameFromOrder(orders.getOrdersDetails());
-                response.sendRedirect(GlobalState.FRONTEND_URL+"/order/success?orderId="+queryParams.get("orderId") );
-            } else {
+                response.sendRedirect("/api/v1/checkout/callback?orderId=" + queryParams.get("orderId"));
+            }
+            else if("24".equals(vnp_ResponseCode)){
+                response.sendRedirect("http://localhost:8080/api/v1/checkout/failed?orderId="+queryParams.get("orderId")+"status=CANCELLED");
+
+            }
+            else {
                 // Giao dịch thất bại
                 // Thực hiện các xử lý cần thiết, ví dụ: không cập nhật CSDL\
-
-                response.addHeader("Authorization", "*");
-                response.sendRedirect("http://localhost:8080/api/v1/checkout/failed?orderId="+queryParams.get("orderId"));
+                response.sendRedirect("http://localhost:8080/api/v1/checkout/failed?orderId="+queryParams.get("orderId")+"status=FAILED");
 
             }
         }

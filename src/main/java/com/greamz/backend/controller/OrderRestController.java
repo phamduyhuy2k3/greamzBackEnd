@@ -4,6 +4,7 @@ import com.greamz.backend.dto.order_detail.OrderDetailsDTO;
 import com.greamz.backend.model.Orders;
 import com.greamz.backend.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,7 @@ public class OrderRestController {
     }
 
     @GetMapping("findById/{id}")
+
     public ResponseEntity<Orders> findById(@PathVariable("id") UUID id) {
         try {
             Orders order = service.findById(id);
@@ -65,9 +67,10 @@ public class OrderRestController {
     }
 
     @GetMapping("/findAllPagination")
+
     public ResponseEntity<Iterable<Orders>> findAllPagination(@RequestParam(defaultValue = "0") int page,
                                                                @RequestParam(defaultValue = "10") int size) {
-        Iterable<Orders> orders = service.findAllPagination(PageRequest.of(page, size));
+        Iterable<Orders> orders = service.findAllPagination(page, size);
         return ResponseEntity.ok(orders);
     }
 }

@@ -16,7 +16,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         console.log($scope.voucher)
         $http.post("/api/voucher/create", $scope.voucher, {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken"),
+                "Authorization": "Bearer " + $cookies.get("access_token"),
                 "Content-Type": "application/json"
             }
         }).then(
@@ -65,7 +65,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
                 if (id) {
                     $http.delete(`/api/voucher/delete/${id}`, {
                         headers: {
-                            "Authorization": "Bearer " + $cookies.get("accessToken")
+                            "Authorization": "Bearer " + $cookies.get("access_token")
                         }
                     }).then(resp => {
                         Swal.fire({
@@ -113,7 +113,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         $scope.action = 'update';
         await $http.get(`/api/voucher/${id}`, {
             headers: {
-                'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                'Authorization': 'Bearer ' + $cookies.get('access_token')
             }
         }).then(resp => {
                 $scope.voucher = resp.data;
@@ -151,7 +151,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
         fetchPage() {
             $http.get(`/api/voucher/findAllPagination?page=${this.number}&size=7`, {
                 headers: {
-                    'Authorization': 'Bearer ' + $cookies.get('accessToken')
+                    'Authorization': 'Bearer ' + $cookies.get('access_token')
                 }
             }).then(resp => {
                 $scope.pager = {
@@ -166,7 +166,7 @@ app.controller("voucherController", function ($scope, $http, $document, $cookies
     $scope.initialize = function () {
         $http.get("/api/voucher/findAllPagination", {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("accessToken")
+                "Authorization": "Bearer " + $cookies.get("access_token")
             }
         }).then(
             resp => {
