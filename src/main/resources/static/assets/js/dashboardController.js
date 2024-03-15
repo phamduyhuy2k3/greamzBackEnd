@@ -79,8 +79,8 @@ app.controller("dashboardController", function ($scope, $http, $document, $cooki
         for (let i = 1; i <= 12; i++) {
             const month = i.toString();
             // Nếu có dữ liệu revenue của tháng đó
-            if (data[`Tháng ${month}`]) {
-                revenues[i - 1] = data[`Tháng ${month}`];
+            if (data[`${month}`]) {
+                revenues[i - 1] = data[`${month}`];
             }else {
                 revenues[i - 1] = 0;
             }

@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
-public class DatabaseConfig {
+public class AuditingConfig {
     @Bean
     public AuditorAware<String> auditorAware() {
         return () -> {

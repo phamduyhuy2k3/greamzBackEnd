@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class RevenueDTO {
-    private String month;
+    private Integer month;
     private Double revenue;
-    public RevenueDTO(String month, Double revenue) {
+    public RevenueDTO(Integer month, Double revenue) {
         this.month = month;
         this.revenue = revenue;
     }
