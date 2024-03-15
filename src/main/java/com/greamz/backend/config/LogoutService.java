@@ -57,6 +57,9 @@ public class LogoutService implements LogoutHandler {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            CookieUtils.deleteCookie(request, response, "refresh_token");
+            CookieUtils.deleteCookie(request, response, "access_token");
         }
 
     }

@@ -29,10 +29,12 @@ public class DashboardService {
 
 
     @Transactional
+    @Cacheable(value = "topSellingInYearAndMonth", key = "#yearParam + '_'+ #monthParam")
     public List<TopSellingProductDTO>getTopSellingProductsInMonthYear(int yearParam, int monthParam) {
         return gameRepo.getTopSellingProductsInMonthYear(yearParam, monthParam);
     }
     @Transactional
+    @Cacheable(value = "revenueByYearAndMonth", key = "#yearParam + '_'+ #monthParam")
     public List<GameDetailClientDTO>getTopSellingClient(int yearParam, int monthParam) {
         List<GameModel> resultList= gameRepo.getTopSellingProductsInMonthYearFromClient(yearParam, monthParam);
         List<GameDetailClientDTO> dtos = resultList.stream().map(gameModel -> {
@@ -41,6 +43,7 @@ public class DashboardService {
         return dtos;
     }
     @Transactional
+    @Cacheable(value = "revenueByYear", key = "#yearParam")
     public Map<String, Object> getRevenueByMonth(int yearParam) {
         Map<String, Object> map = new HashMap<>();
         gameRepo.getRevenueByMonth(yearParam).stream().forEach(revenueDTO -> {
@@ -50,6 +53,7 @@ public class DashboardService {
         return map;
     }
     @Transactional(readOnly = true)
+    @Cacheable(value = "specialOffer", key = "#root.method.name")
     public List<GameBasicDTO> getSpecialOffer() {
         List<GameModel> gameModels=gameRepo.specialOffer();
         return gameModels.stream().map(gameModel -> {

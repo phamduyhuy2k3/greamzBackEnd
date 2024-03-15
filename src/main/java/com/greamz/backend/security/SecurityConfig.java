@@ -131,7 +131,12 @@ public class SecurityConfig {
                 .logout(httpSecurityLogoutConfigurer -> {
                     httpSecurityLogoutConfigurer
                             .logoutUrl("/api/v1/auth/logout")
-                            .addLogoutHandler(logoutHandler);
+                            .addLogoutHandler(logoutHandler)
+                            .deleteCookies("access_token", "refresh_token")
+                            .logoutSuccessHandler((request, response, authentication) -> {
+                                response.setStatus(200);
+
+                            });
 
                 });
 

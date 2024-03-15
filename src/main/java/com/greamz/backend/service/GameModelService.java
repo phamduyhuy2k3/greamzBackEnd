@@ -101,9 +101,7 @@ public class GameModelService {
                 .name(gameModel.getName())
 //                .averageRating(reviewRepo.calculateAverageRating(gameModel.getAppid()))
 //                .totalReviewed(reviewRepo.countAllByGameAppid(gameModel.getAppid()))
-                .detailed_description(gameModel.getDetailed_description())
-                .about_the_game(gameModel.getAbout_the_game())
-                .short_description(gameModel.getShort_description())
+
                 .header_image(gameModel.getHeader_image())
                 .website(gameModel.getWebsite())
                 .capsule_image(gameModel.getCapsule_image())

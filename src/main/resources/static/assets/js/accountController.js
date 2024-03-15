@@ -78,7 +78,7 @@ app.controller("userController", function ($scope, $http, $document, $cookies) {
 
         $http.get("/api/user/findAll", {
             headers: {
-                "Authorization": "Bearer " + $cookies.get("access_token")
+                "Authorization": "Dashboard"
             }
         }).then(
             resp => {

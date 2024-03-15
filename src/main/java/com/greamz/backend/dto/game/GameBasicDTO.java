@@ -12,14 +12,10 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameBasicDTO implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class GameBasicDTO  {
+
     private Long appid;
     private String name;
-    private String detailed_description;
-    private String about_the_game;
-    private String short_description;
     private String header_image;
     private String website;
     private String capsule_image;

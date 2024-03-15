@@ -57,20 +57,7 @@ public interface IGameRepo extends JpaRepository<GameModel, Long>, JpaSpecificat
                                                      @Param("monthParam") int monthParam);
     @Query("""
     select distinct new com.greamz.backend.dto.dashboard.RevenueDTO(
-         case month(o.createdOn)
-                    when 1 then 'Tháng 1'
-                    when 2 then 'Tháng 2'
-                    when 3 then 'Tháng 3'
-                    when 4 then 'Tháng 4'
-                    when 5 then 'Tháng 5'
-                    when 6 then 'Tháng 6'
-                    when 7 then 'Tháng 7'
-                    when 8 then 'Tháng 8'
-                    when 9 then 'Tháng 9'
-                    when 10 then 'Tháng 10'
-                    when 11 then 'Tháng 11'
-                    when 12 then 'Tháng 12'
-                end
+         month(o.createdOn)    
         ,
         sum(o.totalPrice) 
     )
