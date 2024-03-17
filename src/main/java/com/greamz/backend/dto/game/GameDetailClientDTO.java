@@ -14,7 +14,10 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GameDetailClientDTO {
+public class GameDetailClientDTO implements java.io.Serializable{
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private Long appid;
     private String name;
     private Double price;
