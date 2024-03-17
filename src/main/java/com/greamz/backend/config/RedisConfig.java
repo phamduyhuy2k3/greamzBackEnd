@@ -19,15 +19,8 @@ import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
-//    @Bean
-//    JedisConnectionFactory lettuceConnectionFactory() {
-//        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration("localhost", 6379);
-//        return new JedisConnectionFactory(config);
-//    }
 @Bean
 public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
-
-
     Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer(objectMapper,Object.class);
     RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
     redisTemplate.setConnectionFactory(redisConnectionFactory);
